@@ -12,12 +12,21 @@ health products.
 
 | File | What it is |
 |---|---|
-| `design-system.html` | The whole system. Self-contained, no build step, no network. **Source of truth.** |
-| `tokens.css` | Just the custom properties, extracted, for importing into another codebase or tool. |
+| `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **Source of truth.** |
+| `src/index.html` | Same page, markup only. Start here when reading the system. |
+| `src/design-system.css` | The stylesheet, ~30 KB and readable — no base64 blobs. |
+| `src/tokens.css` | The 43 custom properties on their own, for importing elsewhere. |
 
-`design-system.html` opens in any browser straight from disk. Fonts are embedded as base64
-`woff2` and every graphic is an inline SVG data URI, so it renders identically offline and
-inside a strict CSP.
+Read `src/`. Ship or share `design-system.html`.
+
+`design-system.html` opens in any browser straight from disk and renders identically offline
+and inside a strict CSP, because every font and graphic is inlined. `src/` is the same page
+split for legibility; it pulls Figtree and Caveat from Google Fonts, so it needs a network
+connection to typeset correctly. The two are verified equivalent — computed styles match
+across 39 selectors once the webfonts load.
+
+If you change a token, change it in `src/tokens.css` and re-inline, or change
+`design-system.html` and re-split. Don't let them drift.
 
 ## The four styles, in strict hierarchy
 

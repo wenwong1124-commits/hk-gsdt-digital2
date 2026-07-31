@@ -76,9 +76,12 @@
    1. TOKENS
    -------------------------------------------------------------------------- */
 :root{
-  /* ground — pure white, edge to edge, no ruling */
+  /* ground — pure white, ruled with a faint notebook grid.
+     the header and the hero banner both sit on plain white. */
   --paper:      #FFFFFF;
   --paper-sunk: #F6F6F5;   /* L* 96.9 — spec panels, cover slots */
+  --grid-line:  rgba(23,24,26,.038);
+  --grid-size:  72px;      /* 9 × base unit */
 
   /* ink — three weights, all AA on both grounds */
   --ink:   #17181A;        /* 17.77:1 on white — AAA */
@@ -136,6 +139,10 @@ html{ -webkit-font-smoothing:antialiased; scroll-behavior:smooth }
 body{
   margin:0; color:var(--ink);
   background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:var(--grid-size) var(--grid-size);
   font-family:var(--sans); font-weight:400;
   font-size:1.0625rem; line-height:1.65; letter-spacing:-.005em;
   font-variant-numeric:tabular-nums;
@@ -174,18 +181,19 @@ section.band{ padding:var(--s-8) 0 }
       with a deliberate two-step jump to display for scale contrast.
    -------------------------------------------------------------------------- */
 .t-display{
-  font-family:var(--sans); font-weight:600;
+  font-family:var(--sans); font-weight:400;
   font-size:clamp(2.5rem,5.8vw,4.5rem);
-  line-height:1.04; letter-spacing:-.03em; text-wrap:balance;
+  line-height:1.05; letter-spacing:-.028em; text-wrap:balance;
 }
-/* hero variant — sized to fill the banner */
+/* hero variant — sized to fill the banner. slim by design: at 112px the
+   scale supplies the presence, so stroke weight does not have to. */
 .t-hero{
-  font-family:var(--sans); font-weight:600;
+  font-family:var(--sans); font-weight:400;
   font-size:clamp(2.75rem,7.6vw,7rem);
-  line-height:1.04; letter-spacing:-.034em; text-wrap:balance;
+  line-height:1.06; letter-spacing:-.032em; text-wrap:balance;
 }
-.t-h1{ font-size:clamp(2rem,3.6vw,2.75rem); font-weight:600; line-height:1.1;  letter-spacing:-.03em }
-.t-h2{ font-size:clamp(1.5rem,2.4vw,2rem);  font-weight:600; line-height:1.16; letter-spacing:-.024em }
+.t-h1{ font-size:clamp(2rem,3.6vw,2.75rem); font-weight:500; line-height:1.12; letter-spacing:-.028em }
+.t-h2{ font-size:clamp(1.5rem,2.4vw,2rem);  font-weight:500; line-height:1.18; letter-spacing:-.022em }
 .t-h3{ font-size:1.5rem;    font-weight:500; line-height:1.25; letter-spacing:-.016em }
 .t-sub{ font-size:1.25rem;  font-weight:300; font-style:italic; line-height:1.4; letter-spacing:-.01em; color:var(--ink-2) }
 .t-body{ font-size:1.0625rem; line-height:1.65; max-width:var(--prose) }
@@ -301,7 +309,7 @@ section.band{ padding:var(--s-8) 0 }
 .pict.slot{
   border:1px solid var(--rule-strong); border-radius:var(--radius);
   background:var(--paper-sunk);
-  font-family:var(--hand); font-size:.68em; font-weight:500; font-style:normal;
+  font-family:var(--hand); font-size:.68em; font-weight:400; font-style:normal;
   letter-spacing:.01em; text-transform:lowercase; color:var(--ink-3);
   line-height:calc(var(--pict-h) / .68); padding:0 .45em;
   text-indent:0; white-space:nowrap;
@@ -558,6 +566,36 @@ figcaption{
 .griddemo{ display:grid; grid-template-columns:repeat(12,1fr); gap:var(--gutter); height:88px }
 .griddemo span{ background:var(--paper-sunk); border:1px solid var(--rule); border-radius:var(--radius) }
 
+/* hero banner — plain white, unruled. full-bleed backing so the grid
+   stops at the banner edge instead of showing through the side margins. */
+.hero-banner{ position:relative; z-index:0 }
+.hero-banner::before{
+  content:""; position:absolute; z-index:-1;
+  top:0; bottom:0; left:50%; width:100vw; margin-left:-50vw;
+  background:var(--paper);
+}
+
+/* hero entrance — staged reveal. each step uncovers content, nothing
+   decorates. driven by the same IntersectionObserver as every reveal,
+   so it plays when the banner is reached rather than on load. */
+.hero-banner .metastrip.reveal{ transition-delay:0ms }
+.hero-banner .t-hero.reveal   { transition-delay:90ms }
+.hero-banner .t-body.reveal   { transition-delay:210ms }
+.hero-banner .hero-cta.reveal { transition-delay:300ms }
+.hero-banner .t-hero.reveal{
+  transition-duration:420ms;      /* the long line needs a longer settle */
+}
+/* pictograms pin in after the sentence has landed */
+.hero-banner .t-hero[data-in="1"] .pict{
+  animation:pict-pin 220ms var(--ease) backwards;
+}
+.hero-banner .t-hero[data-in="1"] .pict:nth-of-type(1){ animation-delay:460ms }
+.hero-banner .t-hero[data-in="1"] .pict-bind .pict{ animation-delay:580ms }
+@keyframes pict-pin{
+  from{ opacity:0; transform:scale(.88) }
+  to  { opacity:1; transform:none }
+}
+
 /* scroll cue — invites the reader into the case sequence */
 .scrollcue{ text-align:center; padding:var(--s-8) 0 var(--s-7) }
 .scrollcue .cue-text{
@@ -649,6 +687,8 @@ figcaption{
   .btn::after, .card::after{ transform:none }
   .btn:hover::after, a.card:hover::after{ transform:none }
   .scrollcue .cue-arrow{ animation:none }
+  .hero-banner .reveal{ transition-delay:0ms }
+  .hero-banner .t-hero[data-in="1"] .pict{ animation:none }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
   *,*::before,*::after{ animation:none !important }
 }
@@ -693,8 +733,8 @@ figcaption{
   <h1 class="t-display" style="max-width:19ch">Clinical field notebook.</h1>
 
   <p class="t-sub" style="margin-top:var(--s-4);max-width:46ch">
-    Pure white, plain ink, handwritten margins. The only colour on the page
-    arrives inside a photographic cutout.
+    Pure white, faint ruling, plain ink, handwritten margins. The only colour
+    on the page arrives inside a photographic cutout.
   </p>
 
   <p class="t-body" style="margin-top:var(--s-5)">
@@ -721,10 +761,10 @@ figcaption{
       <h3 class="t-h3" style="margin-bottom:var(--s-3)">Colour</h3>
       <p class="t-body">
         The interface has no colour. Ground is pure white — <span class="mono">#FFFFFF</span> —
-        edge to edge, with no ruling and no tint. Everything above it is one of three ink
-        weights or one of two hairline values. That is the whole palette. The notebook now
-        lives entirely in the writing: the hand that captions the figures and numbers the
-        cases, never in a printed grid behind it.
+        ruled with a 72px grid at 3.8% ink, faint enough to read as paper stock rather than
+        as a drawn line. Everything above it is one of three ink weights or one of two
+        hairline values. That is the whole palette. Two zones stay unruled: the header, and
+        the hero banner — the one line that has to land without anything behind it.
       </p>
       <p class="t-body" style="margin-top:var(--s-3)">
         Ink is neutral and near-black at <span class="mono">#17181A</span> — 17.8:1 on white,
@@ -757,8 +797,14 @@ figcaption{
         face — tuned for 14px interface text, it goes soft and bureaucratic at display size —
         and the harder grotesks that fix that (Archivo, Space Grotesk) turn squarish and
         robotic in running prose. Figtree sits between: a geometric-humanist sans with open,
-        even counters that reads effortless at body size, and enough structure at 600 to hold
-        −0.034em tracking across a hero set at 112px without gumming together.
+        even counters that reads effortless at body size, and even, consistent stroke
+        modulation that stays composed when the hero is set light at 112px.
+      </p>
+      <p class="t-body" style="margin-top:var(--s-3)">
+        Display sizes run at 400, not 600. Past roughly 64px the scale already supplies the
+        presence a line needs, and adding stroke weight on top reads as shouting rather than
+        confidence — the slim setting is what keeps a 112px sentence minimal instead of merely
+        large. Headings step to 500 and body stays 400, so weight only ever rises as size falls.
       </p>
       <p class="t-body" style="margin-top:var(--s-3)">
         It also satisfies the constraint that matters most for Rebus: cap-height and baseline
@@ -816,20 +862,22 @@ figcaption{
   <div class="sec-head">
     <span class="kicker">01 / colour carries information, and there is none</span>
     <h2 class="t-h1">Palette</h2>
-    <p class="t-small">Nine values, all achromatic. Ratios measured against pure white.
+    <p class="t-small">Ten values, all achromatic. Ratios measured against pure white.
       WCAG 2.1 relative luminance.</p>
   </div>
 
   <p class="t-micro ink3" style="margin-bottom:var(--s-3)">ground</p>
   <div class="swatches">
     <div class="sw"><div class="chip" style="background:#FFFFFF"></div>
-      <div class="meta"><b>paper</b><span class="val">#FFFFFF · pure white</span>whole page, edge to edge</div></div>
+      <div class="meta"><b>paper</b><span class="val">#FFFFFF · pure white</span>whole page; unruled in header and hero</div></div>
     <div class="sw"><div class="chip" style="background:#F6F6F5"></div>
       <div class="meta"><b>paper-sunk</b><span class="val">#F6F6F5 · L* 96.9</span>cover slots, spec panels</div></div>
     <div class="sw"><div class="chip" style="background:#E9E9E7"></div>
       <div class="meta"><b>rule</b><span class="val">#E9E9E7 · 1.22:1</span>default hairline</div></div>
     <div class="sw"><div class="chip" style="background:#D6D5D2"></div>
       <div class="meta"><b>rule-strong</b><span class="val">#D6D5D2 · 1.47:1</span>emphasis hairline, outlines</div></div>
+    <div class="sw"><div class="chip" style="background-image:linear-gradient(rgba(23,24,26,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(23,24,26,.038) 1px,transparent 1px);background-size:36px 36px"></div>
+      <div class="meta"><b>grid-line</b><span class="val">3.8% ink · 72px cell</span>page ruling; off in header + hero</div></div>
   </div>
 
   <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">ink — three weights</p>
@@ -920,19 +968,19 @@ figcaption{
   </div>
 
   <div class="tsrow">
-    <div class="tsmeta"><b>hero</b>figtree 600<br>clamp 44 → 112px<br>lh 1.04 · ls −0.034em</div>
+    <div class="tsmeta"><b>hero</b>figtree 400<br>clamp 44 → 112px<br>lh 1.06 · ls −0.032em</div>
     <div><p class="t-hero">Speech, on record.</p></div>
   </div>
   <div class="tsrow">
-    <div class="tsmeta"><b>display</b>figtree 600<br>clamp 40 → 72px<br>lh 1.04 · ls −0.03em</div>
+    <div class="tsmeta"><b>display</b>figtree 400<br>clamp 40 → 72px<br>lh 1.05 · ls −0.028em</div>
     <div><p class="t-display">Speech becomes a record.</p></div>
   </div>
   <div class="tsrow">
-    <div class="tsmeta"><b>h1</b>figtree 600<br>clamp 32 → 44px<br>lh 1.1 · ls −0.03em</div>
+    <div class="tsmeta"><b>h1</b>figtree 500<br>clamp 32 → 44px<br>lh 1.12 · ls −0.028em</div>
     <div><p class="t-h1">Turning a clinician-led test into an instrument</p></div>
   </div>
   <div class="tsrow">
-    <div class="tsmeta"><b>h2</b>figtree 600<br>clamp 24 → 32px<br>lh 1.16 · ls −0.024em</div>
+    <div class="tsmeta"><b>h2</b>figtree 500<br>clamp 24 → 32px<br>lh 1.18 · ls −0.022em</div>
     <div><p class="t-h2">Three user types, one system</p></div>
   </div>
   <div class="tsrow">
@@ -1593,6 +1641,12 @@ figcaption{
           <span>spark burst</span><span>120/200ms</span>
           <span class="decision">opacity then scale, on hover only — confirms the same action</span></div>
         <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>hero entrance</span><span>320–420ms</span>
+          <span class="decision">metastrip → line → subline → buttons, staggered 90/210/300ms</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>pict-pin</span><span>220ms</span>
+          <span class="decision">pictograms scale in at 460/580ms, once the sentence has landed</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
           <span>cue-bob</span><span>2.2s loop</span>
           <span class="decision">scroll cue arrow — the one looping animation on the page</span></div>
       </div>
@@ -1642,7 +1696,7 @@ figcaption{
   </div>
 
   <!-- hero -->
-  <div style="text-align:center;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
+  <div class="hero-banner" style="text-align:center;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
     <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-6)">
       <span>Hong Kong</span><span class="sep">·</span>
       <span>AI Product &amp; Design @ CPII</span><span class="sep">·</span>
@@ -1663,7 +1717,7 @@ figcaption{
       increasingly the code.
     </p>
 
-    <div class="reveal" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-5);flex-wrap:wrap">
+    <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-5);flex-wrap:wrap">
       <a class="btn" href="#case01">see the work <span aria-hidden="true">→</span></a>
       <a class="btn btn--outline" href="#case05">how I work with AI</a>
     </div>

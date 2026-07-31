@@ -90,6 +90,18 @@
   --ink-hover: #2C2E31;    /* 13.62:1 — filled button hover */
   --select:    #EBEBEA;    /* text selection ground */
 
+  /* accent — one warm hue, used for vector marks and emphasis only.
+     never for body prose, never as a mood wash. */
+  --accent:       #B84A1B;   /* 5.21:1 on white — AA for text        */
+  --accent-vivid: #C2531F;   /* 4.61:1 — vector marks, fills, sparks */
+  --accent-wash:  rgba(184,74,27,.14);
+
+  /* metric families — pattern is the primary channel, colour is redundant.
+     worst simulated CVD separation across the trio is dE 38. */
+  --fam-1: #B84A1B;   /* terracotta · solid  · 5.21:1 */
+  --fam-2: #1F4E7A;   /* blue       · dashed · 8.65:1 */
+  --fam-3: #17181A;   /* ink        · dotted · 17.8:1 */
+
   /* hairlines — warmer and lighter than any ink weight, so they never
      read as text. 1px rules do all the structural work. */
   --rule:        #E9E9E7;
@@ -290,7 +302,7 @@ section.band{ padding:var(--s-8) 0 }
   color:var(--ink-2);
   display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:baseline;
 }
-.metastrip .sep{ color:var(--rule-strong) }
+.metastrip .sep{ color:var(--ink-3) }   /* 5.28:1 — visible separators, not hairline ghosts */
 
 /* --------------------------------------------------------------------------
    9. COMPONENT 04 — REBUS DISPLAY LINE (inline image, baseline-locked)
@@ -326,7 +338,7 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
    -------------------------------------------------------------------------- */
 /* spark burst — shared by buttons and cards. accentuates on hover only. */
 :root{
-  --spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23696C70' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='16' y1='1' x2='16' y2='8'/%3E%3Cline x1='27.6' y1='4.4' x2='22.6' y2='9.4'/%3E%3Cline x1='31' y1='16' x2='24' y2='16'/%3E%3Cline x1='27.6' y1='27.6' x2='22.6' y2='22.6'/%3E%3Cline x1='16' y1='31' x2='16' y2='24'/%3E%3Cline x1='4.4' y1='27.6' x2='9.4' y2='22.6'/%3E%3Cline x1='1' y1='16' x2='8' y2='16'/%3E%3Cline x1='4.4' y1='4.4' x2='9.4' y2='9.4'/%3E%3C/g%3E%3C/svg%3E");
+  --spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23C2531F' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='16' y1='1' x2='16' y2='8'/%3E%3Cline x1='27.6' y1='4.4' x2='22.6' y2='9.4'/%3E%3Cline x1='31' y1='16' x2='24' y2='16'/%3E%3Cline x1='27.6' y1='27.6' x2='22.6' y2='22.6'/%3E%3Cline x1='16' y1='31' x2='16' y2='24'/%3E%3Cline x1='4.4' y1='27.6' x2='9.4' y2='22.6'/%3E%3Cline x1='1' y1='16' x2='8' y2='16'/%3E%3Cline x1='4.4' y1='4.4' x2='9.4' y2='9.4'/%3E%3C/g%3E%3C/svg%3E");
 }
 .btn{
   position:relative;
@@ -366,7 +378,7 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
   transition:transform var(--dur-confirm) var(--ease);
 }
 .stamp--shipped{ background:var(--ink); border-color:var(--ink); color:var(--paper) }
-.stamp--trial{   background:var(--paper); border-color:var(--ink); color:var(--ink) }
+.stamp--trial{   background:var(--paper); border-color:var(--accent); color:var(--accent) }
 .stamp--nda{     background:transparent; border-style:dashed; border-color:var(--ink-3); color:var(--ink-3) }
 
 /* --------------------------------------------------------------------------
@@ -437,9 +449,12 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   font-family:var(--hand); font-size:.9375rem; letter-spacing:.02em;
   color:var(--ink-3); display:block; margin-bottom:var(--s-3);
 }
-.m1{ border-top-style:solid }
-.m2{ border-top-style:dashed }
-.m3{ border-top-style:dotted }
+.m1{ border-top-style:solid;  border-top-color:var(--fam-1) }
+.m2{ border-top-style:dashed; border-top-color:var(--fam-2) }
+.m3{ border-top-style:dotted; border-top-color:var(--fam-3) }
+.m1 .t-metric{ color:var(--fam-1) }
+.m2 .t-metric{ color:var(--fam-2) }
+.m3 .t-metric{ color:var(--fam-3) }
 @media (max-width:640px){ .metrics{ grid-template-columns:1fr } }
 
 /* inline metric emphasis inside prose — weight and underline, never colour */
@@ -501,7 +516,7 @@ figcaption{
 .logrow:hover{ color:var(--ink) }
 .logrow .date{ color:var(--ink-3) }
 .logrow .decision{ color:var(--ink) }
-.logrow .tradeoff::before{ content:"↳ "; color:var(--rule-strong) }
+.logrow .tradeoff::before{ content:"↳ "; color:var(--ink-3) }
 .log-head{
   display:grid; grid-template-columns:104px 132px 1fr 1fr; gap:var(--s-4);
   padding-bottom:var(--s-2); color:var(--ink-3);
@@ -565,6 +580,68 @@ figcaption{
 /* grid diagram */
 .griddemo{ display:grid; grid-template-columns:repeat(12,1fr); gap:var(--gutter); height:88px }
 .griddemo span{ background:var(--paper-sunk); border:1px solid var(--rule); border-radius:var(--radius) }
+
+/* ==========================================================================
+   ACCENT MARKS — simple vectors that point at a detail. Never decorative
+   for its own sake: each one marks something the reader should not miss.
+   Budget: one mark per viewport, same as any other loud element.
+   ========================================================================== */
+:root{
+  --mk-under:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3 11 Q40 2.5 88 7.5 T150 6 T197 10' fill='none' stroke='%23C2531F' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --mk-ring:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80' preserveAspectRatio='none'%3E%3Cellipse cx='100' cy='40' rx='96' ry='35' fill='none' stroke='%23C2531F' stroke-width='3'/%3E%3C/svg%3E");
+  --mk-arrow:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23C2531F' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 4 C10 14 14 18.5 20 20.5'/%3E%3Cpath d='M20.5 13 L20.5 20.5 L13 20.5'/%3E%3C/g%3E%3C/svg%3E");
+  --mk-star:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg stroke='%23C2531F' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='12' y1='3' x2='12' y2='21'/%3E%3Cline x1='4' y1='7.5' x2='20' y2='16.5'/%3E%3Cline x1='20' y1='7.5' x2='4' y2='16.5'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* a — highlighter wash behind a word */
+.mk-wash{
+  background-image:linear-gradient(var(--accent-wash),var(--accent-wash));
+  background-size:100% 60%; background-position:0 92%; background-repeat:no-repeat;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+  padding:0 .06em;
+}
+/* b — swoosh under a phrase. band and offset are em-relative so it stays
+   tucked under the baseline at 17px and at 112px alike. */
+.mk-under{
+  background-image:var(--mk-under);
+  background-size:100% .3em; background-position:0 .9em; background-repeat:no-repeat;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
+/* c — ring around a word */
+.mk-ring{
+  background-image:var(--mk-ring);
+  background-size:100% 100%; background-position:center; background-repeat:no-repeat;
+  padding:.1em .5em .14em;
+}
+/* d — arrow, points at the thing beside it */
+.mk-arrow{
+  display:inline-block; width:1.05em; height:1.05em; vertical-align:-.16em;
+  background:var(--mk-arrow) center/contain no-repeat;
+}
+/* e — asterisk burst, flags a single detail */
+.mk-star{
+  display:inline-block; width:.72em; height:.72em; vertical-align:.28em;
+  background:var(--mk-star) center/contain no-repeat;
+}
+/* f — corner brackets around a block */
+.mk-bracket{ position:relative }
+.mk-bracket::before,.mk-bracket::after{
+  content:""; position:absolute; width:14px; height:14px; pointer-events:none;
+}
+.mk-bracket::before{ top:-5px;    left:-5px;  border-top:2px solid var(--accent-vivid);    border-left:2px solid var(--accent-vivid) }
+.mk-bracket::after { bottom:-5px; right:-5px; border-bottom:2px solid var(--accent-vivid); border-right:2px solid var(--accent-vivid) }
+
+/* accent applied to recurring furniture */
+.sec-head .kicker{ color:var(--accent) }
+.sec-head .kicker::before{ color:var(--accent) }
+.caseno{ color:var(--accent) }
+.nav a[aria-current="page"] .n{ color:var(--accent) }
+.nav-underscore{ background:var(--accent-vivid); height:2px }
+.scrollcue .cue-text{ color:var(--accent) }
+.scrollcue .cue-arrow{ background:var(--accent-vivid) }
+.scrollcue .cue-arrow::after{ border-color:var(--accent-vivid) }
+.ph{ border-bottom-color:var(--accent) }
+.tag{ transition:border-color var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease) }
+.card:hover .tag{ border-color:var(--accent); color:var(--accent) }
 
 /* hero banner — plain white, unruled. full-bleed backing so the grid
    stops at the banner edge instead of showing through the side margins. */
@@ -723,18 +800,18 @@ figcaption{
 <!-- ═══════════════════════════ MASTHEAD ═══════════════════════════ -->
 <section class="wrap band" style="padding-top:var(--s-7)">
   <div class="metastrip" style="margin-bottom:var(--s-6)">
-    <span>design system</span><span class="sep">·</span>
-    <span>v1.0</span><span class="sep">·</span>
-    <span>light mode only</span><span class="sep">·</span>
-    <span>monochrome ui</span><span class="sep">·</span>
+    <span>design system</span><span class="sep" aria-hidden="true">·</span>
+    <span>v1.0</span><span class="sep" aria-hidden="true">·</span>
+    <span>light mode only</span><span class="sep" aria-hidden="true">·</span>
+    <span>monochrome ui</span><span class="sep" aria-hidden="true">·</span>
     <span>2026·07·30</span>
   </div>
 
   <h1 class="t-display" style="max-width:19ch">Clinical field notebook.</h1>
 
   <p class="t-sub" style="margin-top:var(--s-4);max-width:46ch">
-    Pure white, faint ruling, plain ink, handwritten margins. The only colour
-    on the page arrives inside a photographic cutout.
+    Pure white, faint ruling, plain ink, handwritten margins. One warm accent,
+    spent only on marks — everything else waits for the photography.
   </p>
 
   <p class="t-body" style="margin-top:var(--s-5)">
@@ -780,13 +857,18 @@ figcaption{
         The token is left commented in the stylesheet — reinstating it is one line.
       </p>
       <p class="t-body" style="margin-top:var(--s-3)">
-        Removing hue dissolves the hardest constraint rather than solving it. Metric families
-        were to be told apart by three gradient-derived colours safe for a red-green
-        colour-blind reader; with no hue in the system, they are told apart by a solid, dashed
-        or dotted 3px rule plus their case numeral. Nothing depends on colour perception,
-        because nothing has colour. The same logic runs through status: shipped is filled ink,
-        in trial is a solid hairline, under NDA is a dashed hairline with no fill — three fill
-        treatments, three words, zero hues.
+        One hue is then spent deliberately: a warm terracotta, on vector marks only. It is
+        the same temperature as the wood, skin and paper tones the cutouts will carry, so the
+        marks and the photography read as a single palette instead of competing.
+      </p>
+      <p class="t-body" style="margin-top:var(--s-3)">
+        Colour still never carries a distinction alone. Metric families are separated by a
+        solid, dashed or dotted rule and only then tinted — terracotta, blue, plain ink,
+        a trio whose worst simulated separation is ΔE 38 under both deuteranopia and
+        protanopia, against ΔE 5 for the olive-and-terracotta pairing I tested first and
+        discarded. Status works the same way: shipped is filled ink, in trial is an accent
+        hairline, under NDA is a dashed grey hairline with no fill — three fill treatments and
+        three words, so greyscale loses nothing.
       </p>
     </div>
 
@@ -895,31 +977,31 @@ figcaption{
   </div>
 
   <div class="spec" style="margin-top:var(--s-6)">
-    <div class="spec-label"><span>the chroma budget</span><span>spent entirely on photography</span></div>
+    <div class="spec-label"><span>the chroma budget</span><span>one hue · photography · nothing else</span></div>
     <div class="spec-body on-paper">
       <div class="grid">
         <div class="col-6">
           <p class="t-body">
-            No hue may enter the stylesheet. Not a link colour, not a hover state, not a
-            success green. Every colour a reader sees comes from inside a knocked-out
-            photograph — the brushed grey of a microphone, the warm skin of an older adult's
-            hand, the blue biro on a signed form.
+            Exactly one hue enters the stylesheet: a warm terracotta, chosen because it sits
+            in the same family as the wood, skin and card tones the cutouts will bring, so
+            the marks and the photography read as one palette rather than two.
           </p>
           <p class="t-body" style="margin-top:var(--s-3)">
-            This is what makes the cutouts land. Against a page with its own accent palette
-            a photograph is one voice among several; against nine warm greys it is the only
-            thing in the room with a temperature.
+            It is spent on vector marks only — a swoosh, a ring, an arrow, a wash — never on
+            prose, never on a panel fill, never as mood. A mark means "do not miss this".
+            Spend it more than once per viewport and it stops meaning anything, which is the
+            same budget the Rebus lines and the filled stamp already answer to.
           </p>
         </div>
         <div class="col-6">
           <ul class="listrule">
             <li>no gradient, retired from the system</li>
-            <li>no metric highlight hues</li>
-            <li>no status hues</li>
-            <li>no link, hover or focus colour</li>
-            <li>no tinted fills</li>
+            <li>no second accent hue</li>
+            <li>no coloured prose or panel fills</li>
+            <li>no colour used decoratively</li>
           </ul>
           <ul class="listrule ok" style="margin-top:var(--s-4)">
+            <li>accent — marks and emphasis only</li>
             <li>weight — 400 / 500 / 600</li>
             <li>fill treatment — solid / hairline / dashed</li>
             <li>rule pattern — solid / dashed / dotted</li>
@@ -929,13 +1011,34 @@ figcaption{
       </div>
     </div>
     <p class="spec-note">
-      Every distinction the system needs to draw is drawn with one of the four devices on the
-      right. That is a harder discipline than picking three safe hues, and it is why the
-      colour-blind constraint no longer needs a verification table.
+      Colour never carries a distinction on its own. The metric families are told apart by a
+      solid, dashed or dotted rule first and tinted second; strip the colour out and nothing
+      is lost. Verified against both dichromacies — worst-case simulated separation across
+      the trio is ΔE 38.
     </p>
   </div>
 
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">status — three fill treatments, zero hues</p>
+  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">accent — one hue, marks only</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#B84A1B"></div>
+      <div class="meta"><b>accent</b><span class="val">#B84A1B · 5.21:1 AA</span>accent text, kickers, case numbers</div></div>
+    <div class="sw"><div class="chip" style="background:#C2531F"></div>
+      <div class="meta"><b>accent-vivid</b><span class="val">#C2531F · 4.61:1</span>vector marks, sparks, underscore</div></div>
+    <div class="sw"><div class="chip" style="background:#F5E3DB"></div>
+      <div class="meta"><b>accent-wash</b><span class="val">14% accent</span>highlighter; ink on it holds 14.3:1</div></div>
+  </div>
+
+  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">metric families — pattern first, colour redundant</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#B84A1B"></div>
+      <div class="meta"><b>fam-1 · solid</b><span class="val">#B84A1B · 5.21:1</span>terracotta</div></div>
+    <div class="sw"><div class="chip" style="background:#1F4E7A"></div>
+      <div class="meta"><b>fam-2 · dashed</b><span class="val">#1F4E7A · 8.65:1</span>blue</div></div>
+    <div class="sw"><div class="chip" style="background:#17181A"></div>
+      <div class="meta"><b>fam-3 · dotted</b><span class="val">#17181A · 17.8:1</span>plain ink</div></div>
+  </div>
+
+  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">status — three fill treatments</p>
   <div class="swatches">
     <div class="sw"><div class="chip" style="display:grid;place-items:center;background:var(--paper)">
         <span class="stamp stamp--shipped">shipped</span></div>
@@ -1097,8 +1200,8 @@ figcaption{
           <p class="t-small" style="margin:0">
             85% quiet Utilitarian · 10% Bento structure · 5% loud.
             Never more than one loud element per viewport — one Rebus line, or one filled
-            stamp. Not two. With no colour in the system, "loud" now means a cutout, a solid
-            ink mass, or display scale, and those are the only three things that can shout.
+            stamp, or one accent mark. Not two. Four things are allowed to shout: a cutout,
+            a solid ink mass, display scale, and the accent. Only ever one at a time.
           </p>
         </div>
       </div>
@@ -1209,9 +1312,9 @@ figcaption{
     <div>
       <p class="t-micro ink3" style="margin-bottom:var(--s-3)">forbidden — not even as accents</p>
       <p class="t-small" style="margin:0 0 var(--s-3)">
-        Amended: the original ban on hand-drawn marks is lifted for two controlled cases —
-        the handwritten secondary, and the spark burst on hover. Both are systematised,
-        neither is illustrative. Sketch texture stays out.
+        Amended twice: the ban on hand-drawn marks is lifted for the handwritten secondary
+        and the hover spark, and the page now spends one accent hue on vector marks. Both are
+        systematised and budgeted, neither is illustrative. Sketch texture stays out.
       </p>
       <ul class="listrule">
         <li>glassmorphism · blur · frosted panels</li>
@@ -1221,7 +1324,8 @@ figcaption{
         <li>neo-brutalist loud colour · type maximalism</li>
         <li>drop shadows, anywhere</li>
         <li>dark mode, or a toggle for it</li>
-        <li>any hue in the stylesheet</li>
+        <li>a second accent hue</li>
+        <li>colour used decoratively rather than to mark</li>
       </ul>
     </div>
     <div>
@@ -1268,6 +1372,7 @@ figcaption{
     <a href="#c11"><span class="n">11</span> figure + caption</a>
     <a href="#c12"><span class="n">12</span> proof row</a>
     <a href="#c13"><span class="n">13</span> full-bleed rule</a>
+    <a href="#marks"><span class="n">a–f</span> accent marks</a>
     <a href="#c14"><span class="n">14</span> log entry row</a>
     <a href="#c15"><span class="n">15</span> footer</a>
   </div>
@@ -1319,8 +1424,8 @@ figcaption{
         <div class="spec-label"><span>03 — metadata strip</span><span>single row · · separators</span></div>
         <div class="spec-body on-paper">
           <div class="metastrip">
-            <span>Hong Kong</span><span class="sep">·</span>
-            <span>AI Product &amp; Design @ CPII</span><span class="sep">·</span>
+            <span>Hong Kong</span><span class="sep" aria-hidden="true">·</span>
+            <span>AI Product &amp; Design @ CPII</span><span class="sep" aria-hidden="true">·</span>
             <span>Psychology + MSc HCI (UCL)</span>
           </div>
         </div>
@@ -1542,6 +1647,44 @@ figcaption{
     </p>
   </div>
 
+  <!-- accent marks -->
+  <div class="spec reveal" id="marks" style="margin-top:var(--s-4)">
+    <div class="spec-label"><span>accent marks — a to f</span><span>one hue · one mark per viewport</span></div>
+    <div class="spec-body on-paper">
+      <div class="grid">
+        <div class="col-6">
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">a — wash</p>
+          <p class="t-h3" style="margin-bottom:var(--s-5)">Completion without <span class="mk-wash">assistance</span></p>
+
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">b — swoosh</p>
+          <p class="t-h3" style="margin-bottom:var(--s-5)">Screening older adults <span class="mk-under">can finish alone</span></p>
+
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">c — ring</p>
+          <p class="t-h3" style="margin-bottom:var(--s-2)">Shipped in <span class="mk-ring">one weekend</span></p>
+        </div>
+        <div class="col-6">
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">d — arrow</p>
+          <p class="t-h3" style="margin-bottom:var(--s-5)">Try it live <span class="mk-arrow" aria-hidden="true"></span></p>
+
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">e — asterisk</p>
+          <p class="t-h3" style="margin-bottom:var(--s-5)">Under NDA<span class="mk-star" aria-hidden="true"></span></p>
+
+          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">f — brackets</p>
+          <div class="mk-bracket" style="display:inline-block;padding:var(--s-3) var(--s-4);border:1px solid var(--rule)">
+            <span class="t-micro">the one thing to read</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="spec-note">
+      Marks are decoration only in the sense that they carry no text — every one of them
+      points at something the reader must not miss, and a mark with nothing behind it is
+      noise. They are purely presentational, so each is <span class="mono">aria-hidden</span>
+      or a background image: a screen reader hears the sentence, never the swoosh. Colour is
+      the only thing they add, which is why the budget is one per viewport.
+    </p>
+  </div>
+
   <!-- 14 log -->
   <div class="spec reveal" id="c14" style="margin-top:var(--s-4)">
     <div class="spec-label"><span>14 — log entry row</span><span>date · project · decision · trade-off</span></div>
@@ -1696,28 +1839,28 @@ figcaption{
   </div>
 
   <!-- hero -->
-  <div class="hero-banner" style="text-align:center;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
-    <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-6)">
-      <span>Hong Kong</span><span class="sep">·</span>
-      <span>AI Product &amp; Design @ CPII</span><span class="sep">·</span>
+  <div class="hero-banner" style="text-align:left;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
+    <div class="metastrip reveal" style="margin-bottom:var(--s-6)">
+      <span>Hong Kong</span><span class="sep" aria-hidden="true">·</span>
+      <span>AI Product &amp; Design @ CPII</span><span class="sep" aria-hidden="true">·</span>
       <span>Psychology + MSc HCI (UCL)</span>
     </div>
 
-    <h2 class="t-hero reveal" style="max-width:17ch;margin:0 auto">
+    <h2 class="t-hero reveal" style="max-width:16ch;margin:0">
       I design AI&#8209;powered processes and
       <span class="pict slot" role="img" aria-label="solutions">solutions</span><span class="pict-word">solutions</span>
-      that meet real
+      that meet <span class="mk-under">real</span>
       <span class="pict-bind"><span class="pict slot" role="img" aria-label="people">people</span>&rsquo;s</span><span class="pict-word">people&rsquo;s</span>
       health needs.
     </h2>
 
-    <p class="t-body reveal" style="margin:var(--s-5) auto 0;color:var(--ink-2)">
+    <p class="t-body reveal" style="margin:var(--s-5) 0 0;color:var(--ink-2)">
       Speech-based neurocognitive screening that older adults can complete without a
       clinician in the room. I lead the product strategy, the interaction design, and
       increasingly the code.
     </p>
 
-    <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-5);flex-wrap:wrap">
+    <div class="reveal hero-cta" style="display:flex;gap:12px;margin-top:var(--s-6);flex-wrap:wrap">
       <a class="btn" href="#case01">see the work <span aria-hidden="true">→</span></a>
       <a class="btn btn--outline" href="#case05">how I work with AI</a>
     </div>
@@ -1923,8 +2066,8 @@ figcaption{
       and the <em style="font-weight:300">shipped thing</em>.
     </h2>
     <div class="metastrip" style="justify-content:center;margin-top:var(--s-5)">
-      <span>wenwong1124@gmail.com</span><span class="sep">·</span>
-      <span>linkedin</span><span class="sep">·</span>
+      <span>wenwong1124@gmail.com</span><span class="sep" aria-hidden="true">·</span>
+      <span>linkedin</span><span class="sep" aria-hidden="true">·</span>
       <span>hong kong</span>
     </div>
   </div>

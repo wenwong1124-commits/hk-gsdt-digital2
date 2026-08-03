@@ -373,21 +373,55 @@ a.wcard:hover .go{ color:var(--accent) }
    -------------------------------------------------------------------------- */
 .collage{
   display:flex; justify-content:center; align-items:flex-end;
-  margin-top:var(--s-7); padding-bottom:var(--s-4);
+  /* clearance for the pop: the tile lifts 26px and its caption sits above
+     that, so anything less than ~66px collides with the CTA row. */
+  margin-top:var(--s-8); padding-bottom:var(--s-4);
 }
 .collage .tile{
+  position:relative;
   width:clamp(96px,12vw,168px); aspect-ratio:3/4;
   border-radius:var(--radius-card); flex:0 0 auto;
   display:grid; place-items:center; padding:var(--s-2);
-  text-align:center; color:var(--ink);
+  text-align:center; color:var(--ink); cursor:pointer;
+  transition:transform var(--dur-reveal) var(--ease),
+             opacity var(--dur-confirm) var(--ease);
 }
-.collage .tile span{ opacity:.66 }
+.collage .tile .obj{ opacity:.66 }
+/* pop — the hovered tile straightens, lifts and comes forward;
+   the rest step back so the eye has somewhere to land. */
+.collage:hover .tile,
+.collage:focus-within .tile{ opacity:.55 }
+.collage .tile:hover,
+.collage .tile:focus-visible{ opacity:1; z-index:6 }
+.collage .tile:hover .obj,
+.collage .tile:focus-visible .obj{ opacity:1 }
+.collage .tile-cap{
+  position:absolute; left:50%; bottom:calc(100% + 10px);
+  transform:translateX(-50%) translateY(6px);
+  font-family:var(--sans); font-size:.8125rem; font-weight:500;
+  letter-spacing:-.005em; white-space:nowrap;
+  background:var(--ink); color:var(--paper);
+  border-radius:var(--radius-pill); padding:6px 12px;
+  opacity:0; pointer-events:none;
+  transition:opacity var(--dur-confirm) var(--ease),
+             transform var(--dur-reveal) var(--ease);
+}
+.collage .tile:hover .tile-cap,
+.collage .tile:focus-visible .tile-cap{ opacity:1; transform:translateX(-50%) translateY(0) }
+/* A pop-on-hover caption has no role on touch, and at narrow widths its
+   nowrap box overhangs the viewport. Gate it on hover capability. */
+@media (hover:none), (max-width:760px){
+  .collage .tile-cap{ display:none }
+}
 .collage .tile:not(:first-child){ margin-left:clamp(-56px,-4vw,-28px) }
 .collage .tile:nth-child(1){ transform:rotate(-9deg)  translateY(10px) }
 .collage .tile:nth-child(2){ transform:rotate(-4deg)  translateY(-4px) }
 .collage .tile:nth-child(3){ transform:rotate(1deg)   translateY(-14px); z-index:2 }
 .collage .tile:nth-child(4){ transform:rotate(5deg)   translateY(-4px) }
 .collage .tile:nth-child(5){ transform:rotate(10deg)  translateY(10px) }
+/* straighten and lift, whichever tile it is */
+.collage .tile:hover,
+.collage .tile:focus-visible{ transform:rotate(0deg) translateY(-26px) scale(1.1) }
 @media (max-width:640px){ .collage .tile:nth-child(n+5){ display:none } }
 
 /* --------------------------------------------------------------------------
@@ -763,6 +797,10 @@ figcaption{
   a.wcard:hover, .chip:hover{ transform:none }
   a.wcard::after, a.wcard:hover::after{ transform:none }
   .collage .tile{ transform:none }
+  .collage .tile:hover, .collage .tile:focus-visible{ transform:none }
+  .collage .tile-cap{ transform:translateX(-50%) }
+  .collage .tile:hover .tile-cap,
+  .collage .tile:focus-visible .tile-cap{ transform:translateX(-50%) }
   .collage .tile:not(:first-child){ margin-left:var(--s-2) }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
   *,*::before,*::after{ animation:none !important }

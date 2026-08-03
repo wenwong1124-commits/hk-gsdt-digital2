@@ -12,12 +12,15 @@ health products.
 
 | File | What it is |
 |---|---|
-| `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **Source of truth.** |
+| `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **The only source of truth.** |
+| `build.py` | Regenerates everything below from it. Run after any edit. |
 | `src/index.html` | Same page, markup only. Start here when reading the system. |
-| `src/design-system.css` | The stylesheet, ~30 KB and readable — no base64 blobs. |
-| `src/tokens.css` | The 43 custom properties on their own, for importing elsewhere. |
+| `src/design-system.css` | The stylesheet, ~35 KB and readable — no base64 blobs. |
+| `src/tokens.css` | The custom properties on their own, for importing elsewhere. |
+| `dist/artifact.html` | Publish copy, document skeleton stripped. |
 
-Read `src/`. Ship or share `design-system.html`.
+Read `src/`. Ship or share `design-system.html`. Everything except
+`design-system.html` is generated — edit the source, then `python3 build.py`.
 
 `design-system.html` opens in any browser straight from disk and renders identically offline
 and inside a strict CSP, because every font and graphic is inlined. `src/` is the same page
@@ -25,8 +28,9 @@ split for legibility; it pulls Figtree and Caveat from Google Fonts, so it needs
 connection to typeset correctly. The two are verified equivalent — computed styles match
 across 39 selectors once the webfonts load.
 
-If you change a token, change it in `src/tokens.css` and re-inline, or change
-`design-system.html` and re-split. Don't let them drift.
+Edit `design-system.html`, then run `python3 build.py`. Don't hand-edit anything
+under `src/` or `dist/` — it will be overwritten, and the split has two traps the
+script already handles (see its docstring).
 
 ## The four styles, in strict hierarchy
 
@@ -36,6 +40,10 @@ If you change a token, change it in `src/tokens.css` and re-inline, or change
 | **Utilitarian** | The body and the default. Grid-based, muted, zero decoration. | ~85% of the page |
 | **Bento** | The architecture. Modular blocks for cards, metric groups, credential strip. | ~10% |
 | **Accent** | The signature. One warm hue on vector marks only. | ~5%, one mark per viewport |
+
+Colour arrives in two places and nowhere else: the terracotta accent on marks, and
+the five card tints on the work carousel, hero collage and tool chips. The tints say
+*which case*, never *what state* — state stays in the stamp.
 
 ## Foundations
 
@@ -52,8 +60,9 @@ weight only ever rises as size falls. Past ~64px the scale supplies the presence
 terracotta accent spent only on marks.
 
 **Grid.** 8px base unit, 12 columns, 1120px container, 24px gutter, responsive margins at
-80 / 48 / 24px. 2px radius everywhere — squared, not rounded. **No drop shadows anywhere:**
-separation comes from hairline rules and whitespace only.
+80 / 48 / 24px. 2px radius by default — squared, not rounded — with a documented exception:
+16px on work cards, collage tiles and cover panels, pill on chips. **No drop shadows
+anywhere:** separation comes from hairline rules and whitespace only.
 
 **Measure.** Prose is locked to 65–72 characters via `--prose: 46ch`. The value was set by
 measuring rendered lines in the browser, not by arithmetic — `1ch` is the advance of `0`,
@@ -75,8 +84,10 @@ contradict itself.
 - **Every pictogram carries `alt` equal to the exact word it replaces.** A sentence built
   from images is hostile to screen readers, so this is mandatory. Accent marks are
   `aria-hidden` or background images — a screen reader hears the sentence, never the swoosh.
+- **Text on a card tint is always primary ink** (≥9.07:1). `--ink-2` fails AA on four of
+  the five tints, so it is never used on one.
 - **`prefers-reduced-motion: reduce`** disables every transform and retains opacity fades
-  only. Verified in both motion modes.
+  only — including the card tilt, chip tilt and collage rotation. Verified in both modes.
 
 ## Known gaps
 
@@ -92,7 +103,6 @@ evidence the page exists to present.
 
 ## Regenerating the hosted version
 
-The publish wrapper supplies its own document skeleton, so the hosted copy is
-`design-system.html` with the `<!DOCTYPE>`, `<html>`, `<head>` and `<body>` tags stripped,
-keeping the `<style>` blocks and body content, plus a short rule pinning the ground to white
-(the system is light-mode only by requirement, and the viewer's theme must not show through).
+`python3 build.py` writes `dist/artifact.html`. Publish that file — the wrapper supplies its
+own document skeleton, so the copy carries no `<head>`, and it pins the ground to white
+because the system is light-mode only and the viewer's theme must not show through.

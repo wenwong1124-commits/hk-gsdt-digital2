@@ -131,6 +131,15 @@ to change which cell becomes which sticker, or set a cell to `None` to skip it.
 The pipeline is tested end to end against a synthetic sheet: background knocked to alpha 0,
 256x256 RGBA squares, images rendering in the physics field with no errors.
 
+**The hero set is 11 of the 24**, already encoded in both `NAMES` and `ORDER`: microphone,
+brain, ear, research-to-product pipeline, two generations, health data, hands, feature
+cluster, mind, pen, wand. The other thirteen are rejected — shield, component squares,
+magnet, globe, selection marquee, flame, peace hand, ID cards, asterisk, link, blend, browser
+window, eye — because they are generic or they say software company. The object vocabulary is
+the one place in the system that has to be specific to this work, so a shallower pile of
+objects that all mean something beats a deeper one padded with an ID card. `ORDER` skips any
+key whose artwork has not arrived, so it names the final set now and renders nine until then.
+
 ## Regenerating the hosted version
 
 `python3 build.py` writes `dist/artifact.html`. Publish that file — the wrapper supplies its

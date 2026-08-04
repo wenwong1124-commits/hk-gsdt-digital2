@@ -1024,10 +1024,13 @@
       <div id="stickerStrip" style="display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:center"></div>
     </div>
     <p class="spec-note">
-      Nine die-cut stickers drawn from the same domain vocabulary as the Rebus shot list —
-      microphone, brain, ear, two generations, health data, hands, mind, pen, wand. The
-      corporate ones in the source sets (shield, ID cards, selection marquee, magnet, flame)
-      were left out: they say software company, not clinical research.
+      Eleven die-cut stickers, chosen from twenty-four across the two sheets: microphone,
+      brain, ear, research-to-product pipeline, two generations, health data, hands, feature
+      cluster, mind, pen, wand. Thirteen were rejected — shield, component squares, magnet,
+      globe, selection marquee, flame, peace hand, ID cards, asterisk, link, blend, browser
+      window, eye. They are generic or they say software company, and the object vocabulary
+      is the one place in the system that has to be specific to this work. A shallower pile
+      of objects that all mean something beats a deeper one padded with an ID card.
       <br><br>
       On the live page they sprinkle in from above the fold when the hero is first reached,
       fall under gravity, collide, and pile above the collage. Any one can be dragged and
@@ -1555,7 +1558,15 @@
           '<path class="f-orange" d="M28 20c1.5 7 2.5 8 9.5 9.5-7 1.5-8 2.5-9.5 9.5-1.5-7-2.5-8-9.5-9.5 7-1.5 8-2.5 9.5-9.5z"/>'+
           '<path class="f-blue" d="M86 62c1.2 6 2 6.8 8 8-6 1.2-6.8 2-8 8-1.2-6-2-6.8-8-8 6-1.2 6.8-2 8-8z"/>'
     };
-    var ORDER = ['mic','brain','ear','faces','heart','hands','mind','pen','wand'];
+    /* The hero set: 11 objects, every one of them the subject matter of the
+       work. Rejected from the sheets: shield, component squares, magnet,
+       globe, selection marquee, flame, peace hand, ID cards, asterisk, link,
+       blend, browser window, eye — generic or corporate, and the object
+       vocabulary is the one place the personality has to be specific.
+       Keys without artwork yet are skipped, so this list can name the final
+       set before every cutout has landed. */
+    var ORDER = ['mic','brain','ear','pipeline','faces','heart','hands',
+                 'cluster','mind','pen','wand'];
 
     /* Real artwork goes here. Any key present in IMAGES is used instead of the
        drawn SVG above — same key, same physics, no other change needed. Values
@@ -1582,7 +1593,9 @@
 
     function build(){
       host.innerHTML = '';
-      bodies = ORDER.map(function(key, i){
+      bodies = ORDER.filter(function(key){
+        return IMAGES[key] || ART[key];      // name it now, render it when it exists
+      }).map(function(key, i){
         var el = document.createElement('div');
         el.className = 'sticker';
         el.innerHTML = IMAGES[key]
@@ -1617,7 +1630,7 @@
         // seeded across the middle band, not the full width, so they land on
         // each other and pile two deep instead of forming a tidy single row
         var lane = (i + 0.5) / bodies.length;
-        p.x = W * (0.22 + lane * 0.56) + (Math.random() - 0.5) * W * 0.09;
+        p.x = W * (0.27 + lane * 0.46) + (Math.random() - 0.5) * W * 0.08;
         p.y = -size * (1.2 + i * 0.9 + Math.random());   // stagger above the top
         p.vx = (Math.random() - 0.5) * 40;
         p.vy = 0;

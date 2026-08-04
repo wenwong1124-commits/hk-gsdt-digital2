@@ -33,16 +33,16 @@ SIZE = 256        # final square px
 
 # Reading order, sheet A then sheet B. None = skip this cell.
 NAMES = [
-    # sheet A
-    "mic", "brain", "ear",
-    "pipeline", "faces", None,          # None = shield, too corporate
-    "heart", None, None,                # squares, magnet
-    "hands", "cluster", "mind",
-    # sheet B
-    "eye", "globe", None,               # selection marquee
-    None, "peace", None,                # flame, id cards
-    "asterisk", "link", "blend",
-    "pen", "window", "wand",
+    # ---- sheet A ----
+    "mic",      "brain",    "ear",        # speech capture · cognition · hearing
+    "pipeline", "faces",    None,         # research->product · two generations · (shield)
+    "heart",    None,       None,         # health data · (squares) · (magnet)
+    "hands",    "cluster",  "mind",       # care · feature cluster · human-centred AI
+    # ---- sheet B ----
+    None,       None,       None,         # (eye) · (globe) · (marquee)
+    None,       None,       None,         # (flame) · (peace) · (id cards)
+    None,       None,       None,         # (asterisk) · (link) · (blend)
+    "pen",      None,       "wand",       # design craft · (window) · AI
 ]
 
 

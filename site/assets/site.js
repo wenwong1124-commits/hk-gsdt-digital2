@@ -3,19 +3,33 @@
 (function(){
   'use strict';
 
-  /* ---- reveal: fires once, then unobserves ---- */
-  if ('IntersectionObserver' in window){
+  /* ---- reveal: fires once, then unobserves ----
+     .reveal moves itself in; .reveal-stagger holds still and lets its
+     children arrive in sequence. Same flag, two observers, because they
+     cannot share a threshold: a stagger group is often a wrapper with no
+     height of its own — the chip cluster positions every chip absolutely and
+     collapses to a zero-height line — and a proportional threshold on a
+     zero-area target is a ratio of nothing, so it never fires and the group
+     stays invisible for ever. Stagger groups are watched at threshold 0 and
+     held back by a deeper bottom margin instead, which gets the same "not
+     until you have reached it" timing without depending on the element
+     having a size. */
+  function revealer(sel, opts){
+    if (!('IntersectionObserver' in window)){
+      document.querySelectorAll(sel).forEach(function(el){ el.dataset.in = '1'; });
+      return;
+    }
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
         if (!e.isIntersecting) return;
         e.target.dataset.in = '1';
         io.unobserve(e.target);
       });
-    }, { threshold: .12, rootMargin: '0px 0px -5% 0px' });
-    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
-  } else {
-    document.querySelectorAll('.reveal').forEach(function(el){ el.dataset.in = '1'; });
+    }, opts);
+    document.querySelectorAll(sel).forEach(function(el){ io.observe(el); });
   }
+  revealer('.reveal',          { threshold: .12, rootMargin: '0px 0px -5% 0px' });
+  revealer('.reveal-stagger',  { threshold: 0,   rootMargin: '0px 0px -12% 0px' });
 
   /* ---- sticky hairline ---- */
   var tb = document.getElementById('topbar');
@@ -201,7 +215,7 @@
       var available = ORDER.filter(function(k){ return IMAGES[k] || ART[k]; }).length;
       maxBodies = Math.min(available, Math.max(4, perRow * 2 - 1));
       var rows = Math.ceil(maxBodies / perRow);
-      var bandH = Math.round(rows * size * 0.92 + 26 + size * 0.13);
+      var bandH = Math.round(rows * size * 0.92 + 18 + size * 0.13);
       hero.style.paddingBottom = (bandH + 24) + 'px';
 
       // top of the band = below the lowest content, measured after the

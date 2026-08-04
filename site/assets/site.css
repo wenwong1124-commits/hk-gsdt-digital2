@@ -268,6 +268,7 @@ section.band{ padding:var(--s-8) 0 }
   pointer-events:none;
 }
 @media (max-width:1080px){ .topbar .plate{ display:none } }
+/* the mark stays at every width — it is the one thing that must not drop */
 @media (max-width:680px){ .nav ul{ gap:var(--s-3) } .nav a{ font-size:.6875rem } }
 
 /* --------------------------------------------------------------------------
@@ -279,6 +280,18 @@ section.band{ padding:var(--s-8) 0 }
   color:var(--ink-3); white-space:nowrap;
 }
 .plate b{ font-weight:400; color:var(--ink-2) }
+
+/* The mark in the bar. One name, in the hand, at full ink — the same mark
+   the footer signs off with, because a wordmark that changes between the
+   top and the bottom of a page is two wordmarks. It replaced a three-line
+   notebook plate, which was atmosphere where a portfolio needs a name. */
+.brand{
+  font-family:var(--hand); font-size:1.75rem; line-height:1;
+  letter-spacing:.01em; color:var(--ink); white-space:nowrap;
+  transition:opacity var(--dur-confirm) var(--ease);
+}
+.brand:hover{ opacity:.72 }
+@media (max-width:680px){ .brand{ font-size:1.375rem } }
 
 /* --------------------------------------------------------------------------
    8. COMPONENT 03 — METADATA STRIP (single mono row, · separators)
@@ -429,6 +442,14 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   margin-top:-84px;
   /* bleed to the viewport edge so the row reads as continuing off-screen */
   margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50% );
+}
+/* the hint belongs to the row, not to the container, so it bleeds with it
+   and sits over the edge the row actually scrolls towards. Left in the
+   container it stopped 160px short of the cards and pointed at nothing. */
+.row-hint{
+  text-align:right;
+  margin-inline:calc(50% - 50vw);
+  padding-inline:var(--margin);
 }
 .work-row::-webkit-scrollbar{ height:6px }
 .work-row::-webkit-scrollbar-thumb{ background:var(--rule-strong); border-radius:var(--radius-pill) }
@@ -1007,10 +1028,46 @@ figcaption{
 }
 .reveal[data-in="1"]{ opacity:1; transform:none }
 
+/* Staggered reveal — a group whose children arrive in sequence instead of
+   as one block. Still a reveal and nothing more: what moves is the thing
+   being uncovered, on its way in, once.
+
+   The rise runs as an animation rather than a transition on purpose. A
+   transition leaves `transform:none` sitting on the element for ever, and a
+   rule like `.reveal-stagger[data-in="1"] > *` outranks `a.card:hover` —
+   which is exactly how the card tilt was silently killed once already. An
+   animation with `backwards` fill paints the same entrance and then gets out
+   of the way, leaving hover to own transform again.
+
+   The fade is a transition, and that split is the point. Reduced motion ends
+   with `*{animation:none !important}`, so a fade living in the keyframe would
+   be deleted along with the movement. On the transition it survives, keeping
+   both the fade and the sequence while the rise disappears — which is exactly
+   the contract this system states. */
+.reveal-stagger > *{
+  opacity:0;
+  transition:opacity var(--dur-enter) var(--ease);
+}
+.reveal-stagger[data-in="1"] > *{
+  opacity:1; animation:stagger-in var(--dur-enter) var(--ease) backwards;
+}
+.reveal-stagger > *:nth-child(2){ animation-delay: 70ms; transition-delay: 70ms }
+.reveal-stagger > *:nth-child(3){ animation-delay:140ms; transition-delay:140ms }
+.reveal-stagger > *:nth-child(4){ animation-delay:210ms; transition-delay:210ms }
+.reveal-stagger > *:nth-child(5){ animation-delay:280ms; transition-delay:280ms }
+.reveal-stagger > *:nth-child(6){ animation-delay:350ms; transition-delay:350ms }
+.reveal-stagger > *:nth-child(7){ animation-delay:420ms; transition-delay:420ms }
+.reveal-stagger > *:nth-child(8){ animation-delay:490ms; transition-delay:490ms }
+.reveal-stagger > *:nth-child(n+9){ animation-delay:560ms; transition-delay:560ms }
+@keyframes stagger-in{ from{ opacity:0; transform:translateY(12px) } }
+
 @media (prefers-reduced-motion:reduce){
   /* every transform disabled. opacity fades retained. */
   .reveal{ transform:none }
   .reveal[data-in="1"]{ transform:none }
+  /* the stagger keeps its fade and its sequence — both live on the opacity
+     transition — and loses its rise to the blanket rule at the end of this
+     block, which is the whole reason the two are split. */
   .stamp{ transform:none }
   .card:hover .stamp{ transform:none }
   .btn:hover, a.card:hover{ transform:none }

@@ -89,10 +89,11 @@ prose, headlines, buttons, Rebus display lines, and the whole label layer (micro
 captions, tags, stamps, metrics, log entries) set small and uppercase with wide tracking.
 Its digits are equal-width, so metric and log columns align without a monospace.
 
-Caveat appears in exactly three places — the notebook plate, the scroll cue, and the footer
-wordmark — and nowhere else. That is **3.4% of characters and 3.97% of ink** on the portfolio
-page, measured in-browser. It is a signature, not a voice. Handwriting carrying the label
-layer turned the page into a notebook pastiche and did not hold up at 11px.
+Caveat has exactly two jobs — the wordmark, once at the top of the page and once at the
+bottom, and the scroll cue — and nowhere else. That is **3.87% of characters and 3.27% of
+ink** on the landing page, measured in-browser. It is a signature, not a voice: a name
+written is the one thing on the page that should not look typeset. Handwriting carrying the
+label layer turned the page into a notebook pastiche and did not hold up at 11px.
 
 **Display runs light.** Hero and display sit at weight 400, headings at 500, body at 400 —
 weight only ever rises as size falls. Past ~64px the scale supplies the presence.
@@ -133,6 +134,11 @@ the page cannot contradict itself.
 - **`prefers-reduced-motion: reduce`** disables every transform and retains opacity fades
   only — including the card tilt, chip tilt and collage rotation. The hero sticker field is
   removed outright rather than frozen. Verified in both modes.
+- **The staggered reveal splits its fade from its rise on purpose.** The block ends with
+  `*{animation:none !important}`, so a fade written into the keyframe would be deleted along
+  with the movement. The fade lives on an opacity transition instead and survives, which is
+  why the credentials, cards, chips and log still arrive in sequence under reduced motion —
+  they just stop rising. Measured frame by frame in both modes.
 - **The sticker field is decorative and knows it.** `aria-hidden`, occupying a band below all
   hero content rather than sitting behind it, carries no information, and is exempt from the
   contrast rules precisely because nothing depends on reading it. The band clips the field

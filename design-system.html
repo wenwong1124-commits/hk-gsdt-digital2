@@ -329,6 +329,7 @@ section.band{ padding:var(--s-8) 0 }
   pointer-events:none;
 }
 @media (max-width:1080px){ .topbar .plate{ display:none } }
+/* the mark stays at every width — it is the one thing that must not drop */
 @media (max-width:680px){ .nav ul{ gap:var(--s-3) } .nav a{ font-size:.6875rem } }
 
 /* --------------------------------------------------------------------------
@@ -340,6 +341,18 @@ section.band{ padding:var(--s-8) 0 }
   color:var(--ink-3); white-space:nowrap;
 }
 .plate b{ font-weight:400; color:var(--ink-2) }
+
+/* The mark in the bar. One name, in the hand, at full ink — the same mark
+   the footer signs off with, because a wordmark that changes between the
+   top and the bottom of a page is two wordmarks. It replaced a three-line
+   notebook plate, which was atmosphere where a portfolio needs a name. */
+.brand{
+  font-family:var(--hand); font-size:1.75rem; line-height:1;
+  letter-spacing:.01em; color:var(--ink); white-space:nowrap;
+  transition:opacity var(--dur-confirm) var(--ease);
+}
+.brand:hover{ opacity:.72 }
+@media (max-width:680px){ .brand{ font-size:1.375rem } }
 
 /* --------------------------------------------------------------------------
    8. COMPONENT 03 — METADATA STRIP (single mono row, · separators)
@@ -490,6 +503,14 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   margin-top:-84px;
   /* bleed to the viewport edge so the row reads as continuing off-screen */
   margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50% );
+}
+/* the hint belongs to the row, not to the container, so it bleeds with it
+   and sits over the edge the row actually scrolls towards. Left in the
+   container it stopped 160px short of the cards and pointed at nothing. */
+.row-hint{
+  text-align:right;
+  margin-inline:calc(50% - 50vw);
+  padding-inline:var(--margin);
 }
 .work-row::-webkit-scrollbar{ height:6px }
 .work-row::-webkit-scrollbar-thumb{ background:var(--rule-strong); border-radius:var(--radius-pill) }
@@ -1068,10 +1089,46 @@ figcaption{
 }
 .reveal[data-in="1"]{ opacity:1; transform:none }
 
+/* Staggered reveal — a group whose children arrive in sequence instead of
+   as one block. Still a reveal and nothing more: what moves is the thing
+   being uncovered, on its way in, once.
+
+   The rise runs as an animation rather than a transition on purpose. A
+   transition leaves `transform:none` sitting on the element for ever, and a
+   rule like `.reveal-stagger[data-in="1"] > *` outranks `a.card:hover` —
+   which is exactly how the card tilt was silently killed once already. An
+   animation with `backwards` fill paints the same entrance and then gets out
+   of the way, leaving hover to own transform again.
+
+   The fade is a transition, and that split is the point. Reduced motion ends
+   with `*{animation:none !important}`, so a fade living in the keyframe would
+   be deleted along with the movement. On the transition it survives, keeping
+   both the fade and the sequence while the rise disappears — which is exactly
+   the contract this system states. */
+.reveal-stagger > *{
+  opacity:0;
+  transition:opacity var(--dur-enter) var(--ease);
+}
+.reveal-stagger[data-in="1"] > *{
+  opacity:1; animation:stagger-in var(--dur-enter) var(--ease) backwards;
+}
+.reveal-stagger > *:nth-child(2){ animation-delay: 70ms; transition-delay: 70ms }
+.reveal-stagger > *:nth-child(3){ animation-delay:140ms; transition-delay:140ms }
+.reveal-stagger > *:nth-child(4){ animation-delay:210ms; transition-delay:210ms }
+.reveal-stagger > *:nth-child(5){ animation-delay:280ms; transition-delay:280ms }
+.reveal-stagger > *:nth-child(6){ animation-delay:350ms; transition-delay:350ms }
+.reveal-stagger > *:nth-child(7){ animation-delay:420ms; transition-delay:420ms }
+.reveal-stagger > *:nth-child(8){ animation-delay:490ms; transition-delay:490ms }
+.reveal-stagger > *:nth-child(n+9){ animation-delay:560ms; transition-delay:560ms }
+@keyframes stagger-in{ from{ opacity:0; transform:translateY(12px) } }
+
 @media (prefers-reduced-motion:reduce){
   /* every transform disabled. opacity fades retained. */
   .reveal{ transform:none }
   .reveal[data-in="1"]{ transform:none }
+  /* the stagger keeps its fade and its sequence — both live on the opacity
+     transition — and loses its rise to the blanket rule at the end of this
+     block, which is the whole reason the two are split. */
   .stamp{ transform:none }
   .card:hover .stamp{ transform:none }
   .btn:hover, a.card:hover{ transform:none }
@@ -1097,12 +1154,8 @@ figcaption{
 <!-- ═══════════════ COMPONENT 01 — NAV BAR (in situ, sticky) ═══════════════ -->
 <header class="topbar" id="topbar" data-stuck="0">
   <div class="topbar-inner">
-    <!-- COMPONENT 02 — NOTEBOOK PLATE -->
-    <div class="plate">
-      field notebook — vol. 01<br>
-      <b>hong kong · 2026</b><br>
-      speech × cognition × care
-    </div>
+    <!-- COMPONENT 02 — WORDMARK -->
+    <a class="brand" href="#work">Wendy Wong</a>
     <nav class="nav" aria-label="Primary">
       <ul>
         <li><a href="#work" aria-current="page"><span class="n">/01</span> work</a></li>
@@ -1220,10 +1273,12 @@ figcaption{
         <b style="font-weight:600">Caveat</b> is the secondary, and it is deliberately
         starved. Handwriting carrying the whole label layer turned the page into a notebook
         pastiche — every caption, tag and stamp in a hand that was never going to hold up at
-        11px with wide tracking. It now appears in exactly three places: the notebook plate,
-        the scroll cue, and the footer wordmark. Measured on the portfolio page itself that
-        is 3.4% of characters and 3.97% of ink — an accent, a signature at the bottom of the
-        page, not a voice that talks over everything.
+        11px with wide tracking. It now appears in exactly two jobs: the wordmark, once at
+        the top of the page and once at the bottom, and the scroll cue. Measured on the
+        portfolio landing page that is 3.87% of characters
+        and 3.27% of ink — an accent and a signature, not a
+        voice that talks over everything. Losing the three-line notebook plate to the
+        wordmark cut it further: a name is shorter than a masthead.
       </p>
       <p class="t-body" style="margin-top:var(--s-3)">
         Which puts the label layer back on Figtree: micro-labels, captions, tags, stamps,
@@ -1790,18 +1845,17 @@ figcaption{
   <div class="grid" style="margin-top:var(--s-4)">
     <div class="col-6">
       <div class="spec reveal" id="c02" style="height:100%">
-        <div class="spec-label"><span>02 — notebook plate</span><span>3 lines · tertiary ink</span></div>
+        <div class="spec-label"><span>02 — wordmark</span><span>the hand · top and bottom · one mark</span></div>
         <div class="spec-body on-paper">
-          <div class="plate">
-            field notebook — vol. 01<br>
-            <b>hong kong · 2026</b><br>
-            speech × cognition × care
-          </div>
+          <a class="brand" href="#c02">Wendy Wong</a>
         </div>
         <p class="spec-note">
-          Top-left, always three lines, always lowercase. The metaphor's entire visual budget
-          is spent here. Middle line steps up to ink-2 to give the block an internal
-          hierarchy without adding size.
+          Top-left, and the same mark again in the footer — a wordmark that changes between
+          the top and the bottom of a page is two wordmarks. It is the larger of Caveat's two
+          remaining jobs and it earns the hand: a name written is a signature, which is the
+          one thing on this page that should not look typeset. It replaced a three-line
+          notebook plate reading <em>field notebook — vol. 01</em>, which was atmosphere in
+          the position where a portfolio owes the reader a name.
         </p>
       </div>
     </div>
@@ -2293,7 +2347,10 @@ figcaption{
           <span class="decision">pictograms scale in at 460/580ms, once the sentence has landed</span></div>
         <div class="logrow" style="grid-template-columns:132px 90px 1fr">
           <span>sticker field</span><span>rAF, sleeps</span>
-          <span class="decision">gravity 2100px/s², restitution 0.34, sleeps after 40 idle frames</span></div>
+          <span class="decision">gravity 2100px/s², restitution 0.34, sleeps on measured rest or a 10s deadline</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>stagger-in</span><span>320ms, +70ms</span>
+          <span class="decision">a group's children arrive in sequence — credentials, cards, chips, log</span></div>
         <div class="logrow" style="grid-template-columns:132px 90px 1fr">
           <span>cue-bob</span><span>2.2s loop</span>
           <span class="decision">scroll cue arrow — the one looping animation on the page</span></div>
@@ -2354,10 +2411,10 @@ figcaption{
   </div>
 
   <!-- hero -->
-  <div class="hero-banner" style="text-align:center;min-height:auto;display:flex;flex-direction:column;justify-content:center;padding:var(--s-7) 0 0">
+  <div class="hero-banner" style="text-align:center;min-height:auto;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
     <div class="stickers" id="stickers" aria-hidden="true"></div>
 
-    <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-6)">
+    <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-5)">
       <span>Hong Kong</span><span class="sep" aria-hidden="true">·</span>
       <span>AI Product &amp; Design @ CPII</span><span class="sep" aria-hidden="true">·</span>
       <span>Psychology + MSc HCI (UCL)</span>
@@ -2371,11 +2428,11 @@ figcaption{
       people <span class="mk-under">actually use</span>.
     </h2>
 
-    <p class="t-body reveal" style="margin:var(--s-5) auto 0;color:var(--ink-2)">
+    <p class="t-body reveal" style="margin:var(--s-4) auto 0;color:var(--ink-2)">
       From research to shipped — AI-powered experiences across health, wellbeing and everyday digital products.
     </p>
 
-    <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-6);flex-wrap:wrap">
+    <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-5);flex-wrap:wrap">
       <a class="btn" href="#case01">see the work <span aria-hidden="true">→</span></a>
       <a class="btn btn--outline" href="#case05">how I work with AI</a>
     </div>
@@ -2385,7 +2442,7 @@ figcaption{
   <div style="margin-top:var(--s-7)"><hr class="bleed-rule"></div>
 
   <!-- credential strip (bento) -->
-  <div class="creds t-micro reveal" style="text-align:center;color:var(--ink-2);border-top:0">
+  <div class="creds t-micro reveal-stagger" style="text-align:center;color:var(--ink-2);border-top:0">
     <div>20,000+ users served</div>
     <div>Fortune 500 partnerships</div>
     <div>4 products in trial</div>
@@ -2397,8 +2454,8 @@ figcaption{
     <span class="cue-arrow" aria-hidden="true"></span>
   </div>
 
-  <p class="t-micro ink3 reveal" style="text-align:right;margin-bottom:var(--s-2)">drag or scroll sideways →</p>
-  <div class="work-row reveal">
+  <p class="t-micro ink3 reveal row-hint" style="margin-bottom:var(--s-2)">drag or scroll sideways →</p>
+  <div class="work-row reveal-stagger">
     <a class="wcard" href="#case01" id="case01" data-sticker="brain">
       <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
@@ -2482,11 +2539,11 @@ figcaption{
 <!-- the stack — image 2/3 reference: chips over the statement -->
 <section class="wrap band" id="stack">
   <div class="sec-head reveal">
-    <span class="kicker">the stack, at a glance</span>
+    <span class="kicker">what I do with AI</span>
   </div>
   <div class="stack reveal">
-    <p class="stack-type">Tools in the daily practice, not the pitch.</p>
-    <div class="chips">
+    <p class="stack-type">I prototype, evaluate and ship with AI in the loop.</p>
+    <div class="chips reveal-stagger">
       <span class="chip"><span class="dot tint-1" aria-hidden="true"></span>Claude Code</span>
       <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Claude Design</span>
       <span class="chip"><span class="dot tint-3" aria-hidden="true"></span>Cowork</span>
@@ -2498,10 +2555,6 @@ figcaption{
       <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Hugging Face</span>
     </div>
   </div>
-  <p class="t-small reveal" style="margin-top:var(--s-6)">
-    Where each one earns its place — and where it produced confident nonsense — is
-    <a href="#case05" style="border-bottom:1px solid var(--accent);color:var(--accent)">case no. 05</a>.
-  </p>
 </section>
 
 <div><hr class="bleed-rule bleed-rule--quiet"></div>
@@ -2510,8 +2563,8 @@ figcaption{
 <section class="wrap band" id="contact">
   <div class="reveal" style="text-align:center;padding:var(--s-6) 0">
     <h2 class="t-h1" style="max-width:26ch;margin:0 auto">
-      Looking for the team that wants both — the
-      <span class="pict slot" role="img" aria-label="research paper">research paper</span><span class="pict-word">research paper</span>
+      Looking for the team that wants both the
+      <span class="pict slot" role="img" aria-label="research">research</span><span class="pict-word">research</span>
       and the <em style="font-weight:300">shipped thing</em>.
     </h2>
     <div class="metastrip" style="justify-content:center;margin-top:var(--s-5)">
@@ -2534,7 +2587,6 @@ figcaption{
     <div class="socials">
       <a href="#">linkedin</a><a href="#">github</a><a href="#">email</a>
     </div>
-    <p class="lastship">design system v1.0 · light mode only · monochrome ui</p>
   </div>
 </footer>
 
@@ -2547,19 +2599,33 @@ figcaption{
 (function(){
   'use strict';
 
-  /* ---- reveal: fires once, then unobserves ---- */
-  if ('IntersectionObserver' in window){
+  /* ---- reveal: fires once, then unobserves ----
+     .reveal moves itself in; .reveal-stagger holds still and lets its
+     children arrive in sequence. Same flag, two observers, because they
+     cannot share a threshold: a stagger group is often a wrapper with no
+     height of its own — the chip cluster positions every chip absolutely and
+     collapses to a zero-height line — and a proportional threshold on a
+     zero-area target is a ratio of nothing, so it never fires and the group
+     stays invisible for ever. Stagger groups are watched at threshold 0 and
+     held back by a deeper bottom margin instead, which gets the same "not
+     until you have reached it" timing without depending on the element
+     having a size. */
+  function revealer(sel, opts){
+    if (!('IntersectionObserver' in window)){
+      document.querySelectorAll(sel).forEach(function(el){ el.dataset.in = '1'; });
+      return;
+    }
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
         if (!e.isIntersecting) return;
         e.target.dataset.in = '1';
         io.unobserve(e.target);
       });
-    }, { threshold: .12, rootMargin: '0px 0px -5% 0px' });
-    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
-  } else {
-    document.querySelectorAll('.reveal').forEach(function(el){ el.dataset.in = '1'; });
+    }, opts);
+    document.querySelectorAll(sel).forEach(function(el){ io.observe(el); });
   }
+  revealer('.reveal',          { threshold: .12, rootMargin: '0px 0px -5% 0px' });
+  revealer('.reveal-stagger',  { threshold: 0,   rootMargin: '0px 0px -12% 0px' });
 
   /* ---- sticky hairline ---- */
   var tb = document.getElementById('topbar');
@@ -2745,7 +2811,7 @@ figcaption{
       var available = ORDER.filter(function(k){ return IMAGES[k] || ART[k]; }).length;
       maxBodies = Math.min(available, Math.max(4, perRow * 2 - 1));
       var rows = Math.ceil(maxBodies / perRow);
-      var bandH = Math.round(rows * size * 0.92 + 26 + size * 0.13);
+      var bandH = Math.round(rows * size * 0.92 + 18 + size * 0.13);
       hero.style.paddingBottom = (bandH + 24) + 'px';
 
       // top of the band = below the lowest content, measured after the

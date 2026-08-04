@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Nav bar",
+    "path": "components/c01-nav-bar.html",
+    "subtitle": "sliding underscore \u00b7 mono routes",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Wordmark",
+    "path": "components/c02-wordmark.html",
+    "subtitle": "the hand \u00b7 top and bottom \u00b7 one mark",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Metadata strip",
+    "path": "components/c03-metadata-strip.html",
+    "subtitle": "single row \u00b7 \u00b7 separators",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Rebus display line",
+    "path": "components/c04-rebus-display-line.html",
+    "subtitle": "inline image \u00b7 baseline-locked",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Button, filled",
+    "path": "components/c05-button-filled.html",
+    "subtitle": "ink fill \u00b7 paper label",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Button, outline",
+    "path": "components/c06-button-outline.html",
+    "subtitle": "hairline border \u00b7 no fill",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Status stamp",
+    "path": "components/c07-status-stamp.html",
+    "subtitle": "rotate(\u22121.8deg) \u00b7 three variants",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Project card",
+    "path": "components/c08-project-card.html",
+    "subtitle": "full-width bento cell \u00b7 shipped variant",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Metric block",
+    "path": "components/c09-metric-block.html",
+    "subtitle": "bento group \u00b7 tabular \u00b7 no hue",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Tag pill",
+    "path": "components/c10-tag-pill.html",
+    "subtitle": "hairline outline \u00b7 no fill",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Figure + caption",
+    "path": "components/c11-figure-caption.html",
+    "subtitle": "fig. 0X \u2014 mono caption",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Proof row",
+    "path": "components/c12-proof-row.html",
+    "subtitle": "links above a hairline",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Full-bleed rule",
+    "path": "components/c13-full-bleed-rule.html",
+    "subtitle": "replaces the aurora gradient",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Work card, carousel",
+    "path": "components/c16-work-card-carousel.html",
+    "subtitle": "16px radius \u00b7 tinted cover \u00b7 horizontal row",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Object collage",
+    "path": "components/c17-object-collage.html",
+    "subtitle": "retired from the hero \u00b7 case study pages",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Tool chip",
+    "path": "components/c18-tool-chip.html",
+    "subtitle": "pill \u00b7 tint dot \u00b7 floats over the statement",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Sticker field",
+    "path": "components/c19-sticker-field.html",
+    "subtitle": "hero only \u00b7 one instance \u00b7 decorative",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Accent marks \u2014 a to f",
+    "path": "components/marks-accent-marks-a-to-f.html",
+    "subtitle": "one hue \u00b7 one mark per viewport",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Log entry row",
+    "path": "components/c14-log-entry-row.html",
+    "subtitle": "date \u00b7 project \u00b7 decision \u00b7 trade-off",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Footer",
+    "path": "components/c15-footer.html",
+    "subtitle": "wordmark \u00b7 socials \u00b7 last shipped",
+    "group": "Components",
+    "viewport": {
+      "width": 900,
+      "height": 420
+    }
+  },
+  {
+    "name": "Colour",
+    "path": "foundations/palette.html",
+    "subtitle": "Colour",
+    "group": "Foundations",
+    "viewport": {
+      "width": 900,
+      "height": 520
+    }
+  },
+  {
+    "name": "Type scale",
+    "path": "foundations/type.html",
+    "subtitle": "Type scale",
+    "group": "Foundations",
+    "viewport": {
+      "width": 900,
+      "height": 520
+    }
+  },
+  {
+    "name": "Grid and space",
+    "path": "foundations/grid.html",
+    "subtitle": "Grid and space",
+    "group": "Foundations",
+    "viewport": {
+      "width": 900,
+      "height": 520
+    }
+  }
+]

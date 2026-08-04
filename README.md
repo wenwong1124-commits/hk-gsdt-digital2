@@ -16,12 +16,14 @@ health products.
 | `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **The only source of truth.** |
 | `build.py` | Regenerates the `src/` and `dist/` copies from it. Run after any edit. |
 | `build_site.py` | Regenerates the site's shared assets from it. Run after any edit. |
+| `build_design_sync.py` | Regenerates the Claude Design push bundle from it. |
 | `slice_stickers.py` | Cuts the sticker sheets into transparent cutouts and inlines them. |
 | `src/index.html` | Same page, markup only. Start here when reading the system. |
 | `src/design-system.css` | The stylesheet, ~44 KB and readable — no base64 blobs. |
 | `src/tokens.css` | The custom properties on their own, for importing elsewhere. |
 | `dist/artifact.html` | Publish copy, document skeleton stripped. |
 | `site/` | **The portfolio itself.** See below. |
+| `design-sync/` | Generated. The design system as Claude Design cards. |
 
 Read `src/`. Ship or share `design-system.html`. Everything except
 `design-system.html` is generated — edit the source, then `python3 build.py`.
@@ -67,6 +69,42 @@ the earlier hairline grey measured 1.47:1. `/05 contact` is an anchor on this pa
 **Still to wire:** the five work cards and the two "more work" rows link to their own
 anchors, so nothing is broken, but nothing navigates either. They get real `href`s when the
 case pages exist.
+
+## Sending it to Claude Design
+
+`python3 build_design_sync.py` writes `design-sync/` — 23 cards, 20 components and
+3 foundations, plus the stylesheet:
+
+```
+design-sync/
+  components/c01-nav-bar.html … c19-sticker-field.html
+  foundations/palette.html · type.html · grid.html
+  styles/tokens.css · design-system.css · fonts.css
+  _cards.json          the card index, if a target needs it explicitly
+```
+
+**The components are not written twice.** Each card is lifted from that component's own
+`.spec` block in `design-system.html` — the same demo the system documents — so a card can
+never show something the system does not, and adding a component to the system adds a card
+on the next build. Two cards are exceptions, and both say so in the script: the sticker
+field is drawn by the page's own JavaScript, so the card bakes the ten cutouts in as a
+still; and the grid card takes a balanced two-column block rather than a regex slice.
+
+Every preview is a **complete self-contained document**. The Design System pane renders each
+card in its own frame, and a card that renders unstyled is worse than no card, so nothing
+depends on a sibling path resolving. The cost is the stylesheet repeated per file. Fonts are
+the one exception — 218 KB of base64 per card would be absurd, so previews pull Figtree and
+Caveat from Google Fonts and the offline copy stays in `styles/fonts.css`.
+
+All 23 are render-checked headless before shipping: laid out, styled, Figtree resolving, no
+console errors, no horizontal overflow. That check is what caught `.chip` going absolute
+above 900px outside `.stack` — a bug that was scattering the chips on the component demo
+too, now scoped.
+
+**Pushing needs an interactive terminal.** `DesignSync` authorizes through `/design-login`,
+which a remote session cannot run. Either open this repo in a local Claude Code session and
+push from there, or use Claude Design's **Send to Claude Code Web** on the target project,
+which seeds it into a workspace that is already authorized.
 
 ## The four styles, in strict hierarchy
 

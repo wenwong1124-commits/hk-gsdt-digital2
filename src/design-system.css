@@ -536,19 +536,23 @@ a.wcard:hover .go{ color:var(--accent) }
 }
 .chip:hover{ transform:rotate(-2deg); border-color:var(--ink-3) }
 .chip:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
+/* Scoped to .stack on purpose. Unscoped, every chip anywhere on the page
+   went absolute above 900px and scattered itself against whatever box
+   happened to be positioned — which is what the component demo, and its
+   Design System card, were doing. */
 @media (min-width:900px){
   .stack{ min-height:440px }
-  .chips{ margin-top:0 }
-  .chip{ position:absolute; z-index:2; margin:0 }
-  .chip:nth-of-type(1){ top:2%;  left:46% }
-  .chip:nth-of-type(2){ top:20%; left:70% }
-  .chip:nth-of-type(3){ top:38%; left:52% }
-  .chip:nth-of-type(4){ top:56%; left:74% }
-  .chip:nth-of-type(5){ top:74%; left:44% }
-  .chip:nth-of-type(6){ top:88%; left:64% }
-  .chip:nth-of-type(7){ top:70%; left:27% }
-  .chip:nth-of-type(8){ top:90%; left:6%  }
-  .chip:nth-of-type(9){ top:46%; left:28% }
+  .stack .chips{ margin-top:0 }
+  .stack .chip{ position:absolute; z-index:2; margin:0 }
+  .stack .chip:nth-of-type(1){ top:2%;  left:46% }
+  .stack .chip:nth-of-type(2){ top:20%; left:70% }
+  .stack .chip:nth-of-type(3){ top:38%; left:52% }
+  .stack .chip:nth-of-type(4){ top:56%; left:74% }
+  .stack .chip:nth-of-type(5){ top:74%; left:44% }
+  .stack .chip:nth-of-type(6){ top:88%; left:64% }
+  .stack .chip:nth-of-type(7){ top:70%; left:27% }
+  .stack .chip:nth-of-type(8){ top:90%; left:6%  }
+  .stack .chip:nth-of-type(9){ top:46%; left:28% }
 }
 
 /* --------------------------------------------------------------------------

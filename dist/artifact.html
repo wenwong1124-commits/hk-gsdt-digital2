@@ -729,6 +729,52 @@ figcaption{
 .tag{ transition:border-color var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease) }
 .card:hover .tag{ border-color:var(--accent); color:var(--accent) }
 
+/* ==========================================================================
+   COMPONENT 19 — STICKER FIELD
+   Die-cut stickers that sprinkle in from above, settle under gravity, and
+   can be dragged and thrown. Decorative: aria-hidden, behind all hero
+   content, and entirely absent under reduced motion.
+   ========================================================================== */
+.stickers{
+  /* the floor sits above the collage, not at the hero's true bottom —
+     otherwise the pile lands behind the tiles and is never seen. */
+  position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
+  z-index:0; overflow:hidden; pointer-events:none;
+}
+.hero-banner > *:not(.stickers){ position:relative; z-index:1 }
+
+.sticker{
+  position:absolute; top:0; left:0;
+  width:var(--st-size,74px); height:var(--st-size,74px);
+  pointer-events:auto; cursor:grab; touch-action:none;
+  will-change:transform;
+  -webkit-user-select:none; user-select:none;
+}
+.sticker:active{ cursor:grabbing }
+.sticker:focus-visible{ outline:2px solid var(--ink); outline-offset:4px; border-radius:12px }
+.sticker svg{ width:100%; height:100%; display:block; overflow:visible }
+.sticker-demo{ display:inline-block; width:72px; height:72px }
+.sticker-demo svg{ width:100%; height:100%; display:block; overflow:visible }
+.sticker-demo .cut *{ fill:#fff; stroke:#fff; stroke-width:15; stroke-linejoin:round; stroke-linecap:round }
+/* the die-cut edge: the same shapes painted once in thick white underneath */
+.sticker .cut *{
+  fill:#fff; stroke:#fff; stroke-width:15;
+  stroke-linejoin:round; stroke-linecap:round;
+}
+.f-blue{ fill:var(--sticker-blue) }
+.f-lime{ fill:var(--sticker-lime) }
+.f-orange{ fill:var(--accent-vivid) }
+.f-ink{ fill:var(--ink) }
+.f-white{ fill:#fff }
+.s-ink{ fill:none; stroke:var(--ink); stroke-width:5.5; stroke-linecap:round; stroke-linejoin:round }
+.s-ink-thin{ fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round }
+
+@media (prefers-reduced-motion:reduce){
+  /* no sprinkle, no gravity, no throw — the field is purely decorative,
+     so it is removed rather than frozen mid-air. */
+  .stickers{ display:none }
+}
+
 /* hero banner — plain white, unruled. full-bleed backing so the grid
    stops at the banner edge instead of showing through the side margins. */
 .hero-banner{ position:relative; z-index:0 }
@@ -1153,6 +1199,24 @@ figcaption{
     <span class="mono">--ink</span> clears 9:1 on all of them.
   </p>
 
+  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">sticker palette — artwork only</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="height:76px;background:#2C5CE8;border-bottom:1px solid var(--rule)"></div>
+      <div class="meta"><b>sticker-blue</b><span class="val">#2C5CE8</span>sticker artwork only</div></div>
+    <div class="sw"><div class="chip" style="height:76px;background:#C8ED3A;border-bottom:1px solid var(--rule)"></div>
+      <div class="meta"><b>sticker-lime</b><span class="val">#C8ED3A</span>sticker artwork only</div></div>
+    <div class="sw"><div class="chip" style="height:76px;background:#C2531F;border-bottom:1px solid var(--rule)"></div>
+      <div class="meta"><b>accent-vivid</b><span class="val">#C2531F</span>reused, not a new hue</div></div>
+    <div class="sw"><div class="chip" style="height:76px;background:#17181A;border-bottom:1px solid var(--rule)"></div>
+      <div class="meta"><b>ink</b><span class="val">#17181A</span>reused, not a new hue</div></div>
+  </div>
+  <p class="t-small" style="margin-top:var(--s-4)">
+    Two new hues, and they may appear nowhere except inside sticker artwork — not in text,
+    not in a border, not in a fill. The stickers carry no information, so these values are
+    exempt from the contrast and colour-blind rules that govern every other colour in the
+    system; that exemption is the reason they are fenced this tightly.
+  </p>
+
   <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">status — three fill treatments</p>
   <div class="swatches">
     <div class="sw"><div class="chip" style="display:grid;place-items:center;background:var(--paper)">
@@ -1480,7 +1544,7 @@ figcaption{
 <!-- ═══════════════════════════ §05 COMPONENTS ═══════════════════════════ -->
 <section class="wrap band" id="components">
   <div class="sec-head">
-    <span class="kicker">05 / eighteen components, each in use</span>
+    <span class="kicker">05 / nineteen components, each in use</span>
     <h2 class="t-h1">Components</h2>
     <p class="t-small">Real portfolio content throughout. Figures shown as
       <span class="mono ph">[XX%]</span> are placeholders awaiting Wendy's actual numbers —
@@ -1505,6 +1569,7 @@ figcaption{
     <a href="#c16"><span class="n">16</span> work card, carousel</a>
     <a href="#c17"><span class="n">17</span> object collage</a>
     <a href="#c18"><span class="n">18</span> tool chip</a>
+    <a href="#c19"><span class="n">19</span> sticker field</a>
     <a href="#marks"><span class="n">a–f</span> accent marks</a>
     <a href="#c14"><span class="n">14</span> log entry row</a>
     <a href="#c15"><span class="n">15</span> footer</a>
@@ -1850,6 +1915,31 @@ figcaption{
     </p>
   </div>
 
+  <div class="spec reveal" id="c19" style="margin-top:var(--s-4)">
+    <div class="spec-label"><span>19 — sticker field</span><span>hero only · one instance · decorative</span></div>
+    <div class="spec-body on-paper">
+      <div id="stickerStrip" style="display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:center"></div>
+    </div>
+    <p class="spec-note">
+      Nine die-cut stickers drawn from the same domain vocabulary as the Rebus shot list —
+      microphone, brain, ear, two generations, health data, hands, mind, pen, wand. The
+      corporate ones in the source sets (shield, ID cards, selection marquee, magnet, flame)
+      were left out: they say software company, not clinical research.
+      <br><br>
+      On the live page they sprinkle in from above the fold when the hero is first reached,
+      fall under gravity, collide, and pile above the collage. Any one can be dragged and
+      thrown; the rest scatter and re-settle. Bodies are circles — the artwork is
+      roughly as wide as it is tall, so a bounding circle is a close proxy, where the
+      reference used capsules because its labels were long text pills. Spin comes from
+      tangential impulse at each contact, which is what makes them tumble and roll instead
+      of sliding. The loop sleeps after 40 idle frames and wakes on interaction or resize.
+      <br><br>
+      Each sticker is painted twice: once in a thick white stroke for the die-cut edge, then
+      in colour on top. The white edge is invisible against this page's white ground by
+      design — it exists so the artwork survives being placed on any other surface.
+    </p>
+  </div>
+
   <!-- accent marks -->
   <div class="spec reveal" id="marks" style="margin-top:var(--s-4)">
     <div class="spec-label"><span>accent marks — a to f</span><span>one hue · one mark per viewport</span></div>
@@ -1993,6 +2083,9 @@ figcaption{
           <span>pict-pin</span><span>220ms</span>
           <span class="decision">pictograms scale in at 460/580ms, once the sentence has landed</span></div>
         <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>sticker field</span><span>rAF, sleeps</span>
+          <span class="decision">gravity 2100px/s², restitution 0.34, sleeps after 40 idle frames</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
           <span>cue-bob</span><span>2.2s loop</span>
           <span class="decision">scroll cue arrow — the one looping animation on the page</span></div>
       </div>
@@ -2008,19 +2101,29 @@ figcaption{
       <p class="t-micro ink3" style="margin-bottom:var(--s-3)">absent by decision</p>
       <ul class="listrule">
         <li>custom cursor</li>
-        <li>floating decorative shapes</li>
         <li>parallax</li>
         <li>scroll-jacking</li>
         <li>typewriter effects</li>
         <li>animated gradients — there is no gradient</li>
       </ul>
+      <p class="t-small" style="margin-top:var(--s-3)">
+        <b style="font-weight:600">Amended:</b> "floating decorative shapes" was on this list
+        and the sticker field is exactly that. The rule it breaks — every animation must
+        reveal content or confirm an action — is broken knowingly, once, in one place. What
+        it buys is the only thing on the page a visitor can <em>play</em> with, and a portfolio
+        for a product designer that cannot be touched is making an argument it never
+        demonstrates. It stays confined to the hero, sits behind every piece of content,
+        carries no information, and disappears completely under reduced motion.
+      </p>
       <div class="spec" style="margin-top:var(--s-4)">
         <div class="spec-label"><span>prefers-reduced-motion: reduce</span></div>
         <div class="spec-body">
           <p class="t-small" style="margin:0">
             Every transform is disabled — translate, scale and the stamp rotation. Opacity
             fades are retained, because they still reveal content without moving anything.
-            Smooth scrolling is switched off in the same query.
+            Smooth scrolling is switched off in the same query. The sticker field is not
+            frozen mid-air but removed outright: a physics toy with the physics turned off is
+            just clutter, and it carries nothing a reader would miss.
           </p>
         </div>
       </div>
@@ -2043,6 +2146,8 @@ figcaption{
 
   <!-- hero -->
   <div class="hero-banner" style="text-align:center;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
+    <div class="stickers" id="stickers" aria-hidden="true"></div>
+
     <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-6)">
       <span>Hong Kong</span><span class="sep" aria-hidden="true">·</span>
       <span>AI Product &amp; Design @ CPII</span><span class="sep" aria-hidden="true">·</span>
@@ -2285,6 +2390,254 @@ figcaption{
       document.fonts.ready.then(function(){ moveTo(current()); });
     }
   });
+
+
+  /* ---- sticker field: sprinkle, settle, drag and throw ------------------
+     Circle-body physics. The stickers are die-cut blobs, roughly as wide as
+     they are tall, so a bounding circle is a close enough proxy — the video
+     reference used capsule bodies because its labels were long text pills.
+     Bodies still rotate freely; spin comes from tangential impulse at each
+     contact, which is what makes them tumble and roll rather than slide. */
+  (function stickerField(){
+    var host = document.getElementById('stickers');
+    if (!host) return;
+    // shapes are authored once and painted twice: a thick white copy for the
+    // die-cut edge, then the coloured copy on top.
+    var ART = {
+      mic:'<rect class="f-blue" x="27" y="12" width="26" height="45" rx="13"/>'+
+          '<circle class="f-white" cx="35" cy="27" r="5"/><circle class="f-white" cx="46" cy="27" r="5"/>'+
+          '<circle class="f-ink" cx="36" cy="28" r="2.6"/><circle class="f-ink" cx="47" cy="28" r="2.6"/>'+
+          '<path class="s-ink" d="M18 48a22 22 0 0 0 44 0"/><path class="s-ink" d="M40 70v14"/>'+
+          '<path class="s-ink" d="M29 85h22"/>'+
+          '<rect class="f-lime" x="68" y="24" width="7" height="34" rx="3.5"/>'+
+          '<rect class="f-orange" x="79" y="32" width="7" height="18" rx="3.5"/>',
+      brain:'<circle class="f-blue" cx="38" cy="38" r="19"/><circle class="f-blue" cx="58" cy="34" r="15"/>'+
+          '<circle class="f-blue" cx="56" cy="52" r="16"/><circle class="f-blue" cx="34" cy="55" r="14"/>'+
+          '<circle class="f-white" cx="40" cy="40" r="6"/><circle class="f-white" cx="54" cy="39" r="6"/>'+
+          '<circle class="f-ink" cx="41" cy="41" r="3"/><circle class="f-ink" cx="55" cy="40" r="3"/>'+
+          '<circle class="f-lime" cx="70" cy="68" r="14"/>'+
+          '<path class="s-ink" d="M64 68l4.5 4.5L77 63"/>',
+      ear:'<path class="s-ink" d="M52 18c-16 0-25 12-25 26 0 12 6 16 6 26 0 7 5 12 12 12s10-5 10-11c0-8-8-8-8-15 0-6 5-8 10-8 7 0 11-6 11-13 0-10-8-17-16-17z"/>'+
+          '<circle class="f-ink" cx="45" cy="45" r="5"/>'+
+          '<path class="s-ink" d="M74 32a26 26 0 0 1 0 36" style="stroke:var(--sticker-lime);stroke-width:7"/>'+
+          '<path class="s-ink" d="M86 22a42 42 0 0 1 0 56" style="stroke:var(--accent-vivid);stroke-width:7"/>',
+      faces:'<circle class="f-lime" cx="34" cy="58" r="21"/><circle class="f-lime" cx="30" cy="35" r="9"/>'+
+          '<circle class="f-blue" cx="72" cy="60" r="19"/>'+
+          '<circle class="s-ink-thin" cx="30" cy="55" r="6"/><circle class="s-ink-thin" cx="45" cy="55" r="6"/>'+
+          '<path class="s-ink-thin" d="M36 55h3"/>'+
+          '<circle class="f-white" cx="66" cy="55" r="4"/><circle class="f-white" cx="78" cy="55" r="4"/>'+
+          '<path class="s-ink" d="M28 18a34 34 0 0 1 50 6"/><circle class="f-orange" cx="55" cy="14" r="8"/>',
+      heart:'<path class="f-orange" d="M50 88C22 68 12 50 24 37c10-11 26-4 26 7 0-11 16-18 26-7 12 13 2 31-26 51z"/>'+
+          '<rect class="f-lime" x="30" y="52" width="10" height="26" rx="3"/>'+
+          '<rect class="f-blue" x="45" y="42" width="10" height="36" rx="3"/>'+
+          '<rect class="f-ink" x="60" y="58" width="10" height="20" rx="3"/>',
+      hands:'<path class="f-blue" d="M18 78c-6-12-4-30 2-38 4-6 10-4 11 3l3 14 2-22c1-7 9-7 10 0l2 22 3-16c2-7 10-6 10 1l-2 34c-1 10-9 16-20 16-9 0-17-4-21-14z"/>'+
+          '<path class="f-lime" d="M84 78c6-12 4-30-2-38-4-6-10-4-11 3l-3 14-2-22c-1-7-9-7-10 0l-2 22-3-16c-2-7-10-6-10 1l2 34c1 10 9 16 20 16 9 0 17-4 21-14z" transform="translate(-4)"/>'+
+          '<path class="s-ink" d="M50 14v-8M36 20l-5-7M64 20l5-7"/>',
+      mind:'<path class="f-ink" d="M50 8C28 8 14 24 14 44c0 12 6 18 6 26v14h20v-8h12c20 0 34-14 34-32S72 8 50 8z"/>'+
+          '<path class="f-orange" d="M50 62C36 52 31 43 37 36c5-6 13-2 13 4 0-6 8-10 13-4 6 7 1 16-13 26z"/>'+
+          '<path class="f-blue" d="M74 22c1.5 8 3 9.5 11 11-8 1.5-9.5 3-11 11-1.5-8-3-9.5-11-11 8-1.5 9.5-3 11-11z"/>',
+      pen:'<path class="s-ink" d="M18 66C18 38 40 22 82 24"/>'+
+          '<rect class="f-lime" x="10" y="58" width="16" height="16" rx="3"/>'+
+          '<rect class="f-lime" x="74" y="16" width="16" height="16" rx="3"/>'+
+          '<path class="f-ink" d="M40 46l22 8-9 9-4 22-9-39z"/>',
+      wand:'<rect class="f-ink" x="16" y="60" width="54" height="15" rx="7" transform="rotate(-32 43 67)"/>'+
+          '<path class="f-lime" d="M70 12c2.5 12 4.5 14 16.5 16.5C74.5 31 72.5 33 70 45c-2.5-12-4.5-14-16.5-16.5C65.5 26 67.5 24 70 12z"/>'+
+          '<path class="f-orange" d="M28 20c1.5 7 2.5 8 9.5 9.5-7 1.5-8 2.5-9.5 9.5-1.5-7-2.5-8-9.5-9.5 7-1.5 8-2.5 9.5-9.5z"/>'+
+          '<path class="f-blue" d="M86 62c1.2 6 2 6.8 8 8-6 1.2-6.8 2-8 8-1.2-6-2-6.8-8-8 6-1.2 6.8-2 8-8z"/>'
+    };
+    var ORDER = ['mic','brain','ear','faces','heart','hands','mind','pen','wand'];
+
+    var bodies = [], W = 0, H = 0, size = 74, raf = 0, running = false, started = false;
+    //  static specimen for the component documentation — same artwork, no physics
+    var strip = document.getElementById('stickerStrip');
+    if (strip){
+      strip.innerHTML = ORDER.map(function(k, i){
+        return '<span class="sticker-demo" style="transform:rotate(' + ((i%3)-1)*7 + 'deg)">' +
+               '<svg viewBox="0 0 100 100" aria-hidden="true"><g class="cut">' + ART[k] + '</g>' +
+               ART[k] + '</svg></span>';
+      }).join('');
+    }
+
+    // the field itself is motion; the specimen above is not
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    function build(){
+      host.innerHTML = '';
+      bodies = ORDER.map(function(key, i){
+        var el = document.createElement('div');
+        el.className = 'sticker';
+        el.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+                       '<g class="cut">' + ART[key] + '</g>' + ART[key] + '</svg>';
+        host.appendChild(el);
+        return { el:el, key:key, i:i, x:0, y:0, vx:0, vy:0, a:0, av:0, r:size/2, drag:false };
+      });
+    }
+
+    function measure(){
+      var b = host.getBoundingClientRect();
+      W = b.width; H = b.height;
+      size = Math.max(62, Math.min(98, W * 0.085));
+      // rw clamps against floor and walls so the artwork never clips;
+      // r is smaller so blobs can nestle into each other a little.
+      var collage = host.parentElement.querySelector('.collage');
+      // clear the collage entirely — the tiles are rotated and lifted, so
+      // their visual top sits above the box top; a flush floor buries the pile
+      host.style.setProperty('--st-floor',
+        (collage ? collage.getBoundingClientRect().height + 34 : 0) + 'px');
+      var bb = host.getBoundingClientRect(); W = bb.width; H = bb.height;
+      bodies.forEach(function(p){
+        p.el.style.setProperty('--st-size', size + 'px');
+        p.rw = size / 2;
+        p.r  = size / 2 * 0.84;
+      });
+    }
+
+    function seed(){
+      bodies.forEach(function(p, i){
+        // seeded across the middle band, not the full width, so they land on
+        // each other and pile two deep instead of forming a tidy single row
+        var lane = (i + 0.5) / bodies.length;
+        p.x = W * (0.22 + lane * 0.56) + (Math.random() - 0.5) * W * 0.09;
+        p.y = -size * (1.2 + i * 0.9 + Math.random());   // stagger above the top
+        p.vx = (Math.random() - 0.5) * 40;
+        p.vy = 0;
+        p.a  = (Math.random() - 0.5) * 1.2;
+        p.av = (Math.random() - 0.5) * 2.2;
+      });
+    }
+
+    var G = 2100, REST = 0.34, AIR = 0.995, FLOOR_FRICTION = 0.82, SPIN_DAMP = 0.94;
+
+    function step(dt){
+      var moving = false, i, j, p, q;
+      for (i = 0; i < bodies.length; i++){
+        p = bodies[i];
+        if (p.drag) continue;
+        p.vy += G * dt;
+        p.vx *= AIR; p.vy *= AIR;
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        p.a += p.av * dt; p.av *= SPIN_DAMP;
+
+        if (p.x < p.rw){ p.x = p.rw; p.vx = -p.vx * REST; p.av += p.vy * 0.004; }
+        if (p.x > W - p.rw){ p.x = W - p.rw; p.vx = -p.vx * REST; p.av -= p.vy * 0.004; }
+        if (p.y > H - p.rw){
+          p.y = H - p.rw;
+          p.vy = -p.vy * REST;
+          p.av += (p.vx / p.r) * 0.55;      // rolling contact
+          p.vx *= FLOOR_FRICTION;
+          if (Math.abs(p.vy) < 30) p.vy = 0;
+        }
+        if (Math.abs(p.vx) + Math.abs(p.vy) > 4 || p.y < H - p.rw - 1) moving = true;
+      }
+      // pairwise contacts
+      for (i = 0; i < bodies.length; i++){
+        for (j = i + 1; j < bodies.length; j++){
+          p = bodies[i]; q = bodies[j];
+          var dx = q.x - p.x, dy = q.y - p.y;
+          var d2 = dx*dx + dy*dy, min = p.r + q.r;
+          if (d2 <= 0.0001 || d2 >= min*min) continue;
+          var d = Math.sqrt(d2), nx = dx/d, ny = dy/d, overlap = min - d;
+          var pm = p.drag ? 0 : 1, qm = q.drag ? 0 : 1, tm = pm + qm;
+          if (!tm) continue;
+          p.x -= nx * overlap * (pm/tm); p.y -= ny * overlap * (pm/tm);
+          q.x += nx * overlap * (qm/tm); q.y += ny * overlap * (qm/tm);
+          var rvx = q.vx - p.vx, rvy = q.vy - p.vy, vn = rvx*nx + rvy*ny;
+          if (vn < 0){
+            var imp = -(1 + REST) * vn / tm;
+            if (pm){ p.vx -= imp * nx; p.vy -= imp * ny; }
+            if (qm){ q.vx += imp * nx; q.vy += imp * ny; }
+            var vt = rvx * -ny + rvy * nx;          // tangential -> spin
+            p.av -= vt * 0.004; q.av += vt * 0.004;
+            moving = true;
+          }
+        }
+      }
+      return moving;
+    }
+
+    function paint(){
+      for (var i = 0; i < bodies.length; i++){
+        var p = bodies[i];
+        p.el.style.transform = 'translate(' + (p.x - size/2) + 'px,' + (p.y - size/2) +
+                               'px) rotate(' + p.a + 'rad)';
+      }
+    }
+
+    var last = 0, idle = 0;
+    function loop(t){
+      if (!running) return;
+      var dt = Math.min(0.032, (t - last) / 1000 || 0.016); last = t;
+      var moving = step(dt);
+      paint();
+      idle = moving ? 0 : idle + 1;
+      if (idle > 40 && !bodies.some(function(p){ return p.drag; })){ running = false; raf = 0; return; }
+      raf = requestAnimationFrame(loop);
+    }
+    function wake(){ if (!running){ running = true; idle = 0; last = performance.now(); raf = requestAnimationFrame(loop); } }
+
+    // ---- drag and throw ----
+    bodies_bind();
+    function bodies_bind(){
+      host.addEventListener('pointerdown', function(e){
+        var el = e.target.closest('.sticker'); if (!el) return;
+        var p = bodies.find(function(b){ return b.el === el; }); if (!p) return;
+        e.preventDefault();
+        el.setPointerCapture(e.pointerId);
+        var r = host.getBoundingClientRect();
+        p.drag = true; p.grabId = e.pointerId;
+        p.px = e.clientX - r.left; p.py = e.clientY - r.top;
+        p.ox = p.x - p.px; p.oy = p.y - p.py;
+        p.vx = p.vy = 0;
+        wake();
+      });
+      host.addEventListener('pointermove', function(e){
+        var p = bodies.find(function(b){ return b.drag && b.grabId === e.pointerId; }); if (!p) return;
+        var r = host.getBoundingClientRect();
+        var cx = e.clientX - r.left, cy = e.clientY - r.top;
+        var nx = cx + p.ox, ny = cy + p.oy;
+        p.vx = (nx - p.x) / 0.016 * 0.35 + p.vx * 0.65;   // smoothed throw velocity
+        p.vy = (ny - p.y) / 0.016 * 0.35 + p.vy * 0.65;
+        p.x = nx; p.y = ny;
+        wake();
+      });
+      function release(e){
+        var p = bodies.find(function(b){ return b.drag && b.grabId === e.pointerId; }); if (!p) return;
+        p.drag = false;
+        var cap = 2600;
+        p.vx = Math.max(-cap, Math.min(cap, p.vx));
+        p.vy = Math.max(-cap, Math.min(cap, p.vy));
+        p.av += p.vx * 0.0016;
+        wake();
+      }
+      host.addEventListener('pointerup', release);
+      host.addEventListener('pointercancel', release);
+    }
+
+    function start(){
+      if (started) return; started = true;
+      measure(); seed(); paint(); wake();
+    }
+
+    build(); measure(); seed(); paint();
+
+
+    // sprinkle in when the hero is first reached
+    if ('IntersectionObserver' in window){
+      var io2 = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting){ start(); io2.disconnect(); } });
+      }, { threshold:.25 });
+      io2.observe(host.parentElement);
+    } else { start(); }
+
+    addEventListener('resize', function(){
+      var oldW = W, oldH = H;
+      measure();
+      if (!oldW || !oldH) return;
+      bodies.forEach(function(p){ p.x *= W/oldW; p.y *= H/oldH; });
+      wake();
+    }, { passive:true });
+  })();
 
   /* ---- deletion test ---- */
   var dt = document.getElementById('dt');

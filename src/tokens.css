@@ -33,6 +33,11 @@
   --tint-4: #AEDDC4;   /* mint       */
   --tint-5: #F4C3B4;   /* blush      */
 
+  /* sticker palette — scoped to hero sticker artwork ONLY. Decorative,
+     never information. Two new hues; orange and ink are already ours. */
+  --sticker-blue: #2C5CE8;
+  --sticker-lime: #C8ED3A;
+
   /* radius — 2px everywhere by default. Cards and chips are the documented
      exception, taken from the reference set. */
   --radius-card: 16px;

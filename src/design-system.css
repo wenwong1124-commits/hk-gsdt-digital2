@@ -672,6 +672,52 @@ figcaption{
 .tag{ transition:border-color var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease) }
 .card:hover .tag{ border-color:var(--accent); color:var(--accent) }
 
+/* ==========================================================================
+   COMPONENT 19 — STICKER FIELD
+   Die-cut stickers that sprinkle in from above, settle under gravity, and
+   can be dragged and thrown. Decorative: aria-hidden, behind all hero
+   content, and entirely absent under reduced motion.
+   ========================================================================== */
+.stickers{
+  /* the floor sits above the collage, not at the hero's true bottom —
+     otherwise the pile lands behind the tiles and is never seen. */
+  position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
+  z-index:0; overflow:hidden; pointer-events:none;
+}
+.hero-banner > *:not(.stickers){ position:relative; z-index:1 }
+
+.sticker{
+  position:absolute; top:0; left:0;
+  width:var(--st-size,74px); height:var(--st-size,74px);
+  pointer-events:auto; cursor:grab; touch-action:none;
+  will-change:transform;
+  -webkit-user-select:none; user-select:none;
+}
+.sticker:active{ cursor:grabbing }
+.sticker:focus-visible{ outline:2px solid var(--ink); outline-offset:4px; border-radius:12px }
+.sticker svg{ width:100%; height:100%; display:block; overflow:visible }
+.sticker-demo{ display:inline-block; width:72px; height:72px }
+.sticker-demo svg{ width:100%; height:100%; display:block; overflow:visible }
+.sticker-demo .cut *{ fill:#fff; stroke:#fff; stroke-width:15; stroke-linejoin:round; stroke-linecap:round }
+/* the die-cut edge: the same shapes painted once in thick white underneath */
+.sticker .cut *{
+  fill:#fff; stroke:#fff; stroke-width:15;
+  stroke-linejoin:round; stroke-linecap:round;
+}
+.f-blue{ fill:var(--sticker-blue) }
+.f-lime{ fill:var(--sticker-lime) }
+.f-orange{ fill:var(--accent-vivid) }
+.f-ink{ fill:var(--ink) }
+.f-white{ fill:#fff }
+.s-ink{ fill:none; stroke:var(--ink); stroke-width:5.5; stroke-linecap:round; stroke-linejoin:round }
+.s-ink-thin{ fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round }
+
+@media (prefers-reduced-motion:reduce){
+  /* no sprinkle, no gravity, no throw — the field is purely decorative,
+     so it is removed rather than frozen mid-air. */
+  .stickers{ display:none }
+}
+
 /* hero banner — plain white, unruled. full-bleed backing so the grid
    stops at the banner edge instead of showing through the side margins. */
 .hero-banner{ position:relative; z-index:0 }

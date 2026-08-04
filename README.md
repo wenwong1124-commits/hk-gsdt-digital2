@@ -41,9 +41,10 @@ script already handles (see its docstring).
 | **Bento** | The architecture. Modular blocks for cards, metric groups, credential strip. | ~10% |
 | **Accent** | The signature. One warm hue on vector marks only. | ~5%, one mark per viewport |
 
-Colour arrives in two places and nowhere else: the terracotta accent on marks, and
-the five card tints on the work carousel, hero collage and tool chips. The tints say
-*which case*, never *what state* — state stays in the stamp.
+Colour arrives in three places and nowhere else: the terracotta accent on marks, the five
+card tints on the work carousel, hero collage and tool chips, and the sticker artwork in the
+hero. The tints say *which case*, never *what state* — state stays in the stamp. The two
+sticker hues may appear **only inside sticker artwork** — never in text, a border or a fill.
 
 ## Foundations
 
@@ -92,7 +93,11 @@ contradict itself.
 - **Text on a card tint is always primary ink** (≥9.07:1). `--ink-2` fails AA on four of
   the five tints, so it is never used on one.
 - **`prefers-reduced-motion: reduce`** disables every transform and retains opacity fades
-  only — including the card tilt, chip tilt and collage rotation. Verified in both modes.
+  only — including the card tilt, chip tilt and collage rotation. The hero sticker field is
+  removed outright rather than frozen. Verified in both modes.
+- **The sticker field is decorative and knows it.** `aria-hidden`, behind all hero content,
+  carries no information, and is exempt from the contrast rules precisely because nothing
+  depends on reading it.
 
 ## Known gaps
 

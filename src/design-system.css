@@ -313,7 +313,10 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   display:flex; gap:var(--s-4);
   overflow-x:auto; overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory; scroll-padding-left:var(--margin);
-  padding:4px 0 var(--s-4);
+  /* overflow-x:auto clips vertically too, which was cutting the spark off
+     the top of every card. The row carries its own headroom instead. */
+  padding:116px 0 var(--s-4);
+  margin-top:-84px;
   /* bleed to the viewport edge so the row reads as continuing off-screen */
   margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50% );
 }
@@ -339,6 +342,19 @@ a.wcard:hover{ border-color:var(--ink-3); transform:rotate(-.5deg) }
   transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
 }
 a.wcard:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
+.wcard-sticker{
+  position:absolute; top:-84px; right:2px;
+  width:76px; height:76px; pointer-events:none;
+  opacity:0; transform:translateY(14px) scale(.72) rotate(-12deg);
+  filter:drop-shadow(0 3px 3px rgba(23,24,26,.22));
+  transition:opacity var(--dur-confirm) var(--ease),
+             transform var(--dur-enter) var(--ease);
+}
+.wcard-sticker img{ width:100%; height:100%; display:block; object-fit:contain }
+a.wcard:hover .wcard-sticker,
+a.wcard:focus-visible .wcard-sticker{
+  opacity:1; transform:translateY(0) scale(1) rotate(0deg);
+}
 .wcard-top{
   display:flex; align-items:flex-start; justify-content:space-between;
   gap:var(--s-3); margin-bottom:var(--s-3);
@@ -692,9 +708,13 @@ figcaption{
    content, and entirely absent under reduced motion.
    ========================================================================== */
 .stickers{
-  /* the floor sits above the collage, not at the hero's true bottom —
-     otherwise the pile lands behind the tiles and is never seen. */
-  position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
+  /* The field owns a band of its own beneath the content. Spanning the whole
+     banner meant the pile climbed into the subline and the buttons, and a
+     sticker resting over a CTA is worse than no sticker at all. `--st-top` is
+     measured from the last content element; overflow:hidden clips the fall
+     above the band, so nothing is ever drawn over the text. */
+  position:absolute; left:0; right:0;
+  top:var(--st-top,0px); bottom:var(--st-floor,0px);
   z-index:2; overflow:hidden; pointer-events:none;
 }
 /* stacking inside the hero: cards (1) < stickers (2) < text (3),

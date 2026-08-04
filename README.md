@@ -98,9 +98,12 @@ contradict itself.
 - **`prefers-reduced-motion: reduce`** disables every transform and retains opacity fades
   only — including the card tilt, chip tilt and collage rotation. The hero sticker field is
   removed outright rather than frozen. Verified in both modes.
-- **The sticker field is decorative and knows it.** `aria-hidden`, behind all hero content,
-  carries no information, and is exempt from the contrast rules precisely because nothing
-  depends on reading it.
+- **The sticker field is decorative and knows it.** `aria-hidden`, occupying a band below all
+  hero content rather than sitting behind it, carries no information, and is exempt from the
+  contrast rules precisely because nothing depends on reading it.
+- **It comes to rest and stops.** The pile settles in 3–6s and the animation frame loop then
+  exits; measured 0 of 10 transforms still changing at 1440 / 1024 / 768 / 390px, and again
+  after a drag-and-throw. Nothing animates indefinitely behind the copy.
 
 ## Known gaps
 
@@ -143,6 +146,25 @@ fuses with its neighbour's into a single blob.
 A drawn SVG fallback remains in the source for any key without a cutout. With all eleven
 present it never renders, and it is the reason the field degrades rather than breaks if a
 sheet changes shape.
+
+**Three things about the physics are counter-intuitive and were each a bug first.**
+
+*Rest is measured, not inferred.* A body resting on another carries a permanent ~34px/s of
+gravity that the contact cancels again every frame, so no velocity threshold ever reads
+zero on a pile. The loop sleeps on how far the artwork actually moved — position plus
+rotation weighted at the sticker's own radius — and once nothing is genuinely impacting
+any more it deliberately bleeds off the residue that friction alone never finishes.
+
+*A jammed row never stops colliding.* Sizing the row off the sticker's box rather than its
+collision diameter packed a 390px banner one sticker tighter than it could hold, and those
+collisions are real, so the pile churned behind the copy forever. The row count now comes
+from the same numbers the physics uses, and a ten-second deadline stops the loop regardless.
+
+*A rotated square reaches past its own box.* The wall and floor clamp is `size * 0.63`, the
+artwork's half-diagonal, not half its side. Clamping on half the side let the band's own
+`overflow:hidden` shave the bottom row flat — the same cut-off edge the cutouts were
+re-sliced to get rid of. Verified by scanning the band's edge pixels at four widths: no ink
+touches any edge.
 
 ## Regenerating the hosted version
 

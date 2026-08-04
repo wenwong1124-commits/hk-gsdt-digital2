@@ -370,7 +370,10 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   display:flex; gap:var(--s-4);
   overflow-x:auto; overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory; scroll-padding-left:var(--margin);
-  padding:4px 0 var(--s-4);
+  /* overflow-x:auto clips vertically too, which was cutting the spark off
+     the top of every card. The row carries its own headroom instead. */
+  padding:116px 0 var(--s-4);
+  margin-top:-84px;
   /* bleed to the viewport edge so the row reads as continuing off-screen */
   margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50% );
 }
@@ -396,6 +399,19 @@ a.wcard:hover{ border-color:var(--ink-3); transform:rotate(-.5deg) }
   transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
 }
 a.wcard:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
+.wcard-sticker{
+  position:absolute; top:-84px; right:2px;
+  width:76px; height:76px; pointer-events:none;
+  opacity:0; transform:translateY(14px) scale(.72) rotate(-12deg);
+  filter:drop-shadow(0 3px 3px rgba(23,24,26,.22));
+  transition:opacity var(--dur-confirm) var(--ease),
+             transform var(--dur-enter) var(--ease);
+}
+.wcard-sticker img{ width:100%; height:100%; display:block; object-fit:contain }
+a.wcard:hover .wcard-sticker,
+a.wcard:focus-visible .wcard-sticker{
+  opacity:1; transform:translateY(0) scale(1) rotate(0deg);
+}
 .wcard-top{
   display:flex; align-items:flex-start; justify-content:space-between;
   gap:var(--s-3); margin-bottom:var(--s-3);
@@ -749,9 +765,13 @@ figcaption{
    content, and entirely absent under reduced motion.
    ========================================================================== */
 .stickers{
-  /* the floor sits above the collage, not at the hero's true bottom —
-     otherwise the pile lands behind the tiles and is never seen. */
-  position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
+  /* The field owns a band of its own beneath the content. Spanning the whole
+     banner meant the pile climbed into the subline and the buttons, and a
+     sticker resting over a CTA is worse than no sticker at all. `--st-top` is
+     measured from the last content element; overflow:hidden clips the fall
+     above the band, so nothing is ever drawn over the text. */
+  position:absolute; left:0; right:0;
+  top:var(--st-top,0px); bottom:var(--st-floor,0px);
   z-index:2; overflow:hidden; pointer-events:none;
 }
 /* stacking inside the hero: cards (1) < stickers (2) < text (3),
@@ -1877,7 +1897,8 @@ figcaption{
     <div class="spec-label"><span>16 — work card, carousel</span><span>16px radius · tinted cover · horizontal row</span></div>
     <div class="spec-body on-paper">
       <div style="display:flex;gap:var(--s-4);overflow-x:auto;padding:4px">
-        <a class="wcard" href="#c16" style="flex:0 0 300px">
+        <a class="wcard" href="#c16" style="flex:0 0 300px" data-sticker="hands">
+          <span class="wcard-sticker" aria-hidden="true"></span>
           <div class="wcard-top">
             <span class="stamp stamp--shipped">shipped · live</span>
             <span class="go" aria-hidden="true">↗</span>
@@ -2191,7 +2212,7 @@ figcaption{
   </div>
 
   <!-- hero -->
-  <div class="hero-banner" style="text-align:center;min-height:82vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s-6) 0 0">
+  <div class="hero-banner" style="text-align:center;min-height:auto;display:flex;flex-direction:column;justify-content:center;padding:var(--s-7) 0 0">
     <div class="stickers" id="stickers" aria-hidden="true"></div>
 
     <div class="metastrip reveal" style="justify-content:center;margin-bottom:var(--s-6)">
@@ -2236,7 +2257,8 @@ figcaption{
 
   <p class="t-micro ink3 reveal" style="text-align:right;margin-bottom:var(--s-2)">drag or scroll sideways →</p>
   <div class="work-row reveal">
-    <a class="wcard" href="#case01" id="case01">
+    <a class="wcard" href="#case01" id="case01" data-sticker="brain">
+      <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
         <span class="stamp stamp--nda">under nda</span>
         <span class="go" aria-hidden="true">↗</span>
@@ -2247,7 +2269,8 @@ figcaption{
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 01 · 2025–present</span>
       <div class="cover-tint tint-1"><span class="t-micro">the test screen an 80-year-old runs alone</span></div>
     </a>
-    <a class="wcard" href="#case02" id="case02">
+    <a class="wcard" href="#case02" id="case02" data-sticker="mic">
+      <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
         <span class="stamp stamp--trial">in trial</span>
         <span class="go" aria-hidden="true">↗</span>
@@ -2258,7 +2281,8 @@ figcaption{
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 02 · 2025–present</span>
       <div class="cover-tint tint-2"><span class="t-micro">admin console, staff view</span></div>
     </a>
-    <a class="wcard" href="#case03" id="case03">
+    <a class="wcard" href="#case03" id="case03" data-sticker="heart">
+      <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
         <span class="stamp stamp--shipped">shipped</span>
         <span class="go" aria-hidden="true">↗</span>
@@ -2269,7 +2293,8 @@ figcaption{
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 03 · MSc HCI, UCL · 2024</span>
       <div class="cover-tint tint-3"><span class="t-micro">risk visualisation, three states</span></div>
     </a>
-    <a class="wcard" href="#case04" id="case04">
+    <a class="wcard" href="#case04" id="case04" data-sticker="hands">
+      <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
         <span class="stamp stamp--shipped">shipped · live</span>
         <span class="go" aria-hidden="true">↗</span>
@@ -2280,7 +2305,8 @@ figcaption{
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 04 · 2026</span>
       <div class="cover-tint tint-4"><span class="t-micro">hand tracking, bilateral comparison</span></div>
     </a>
-    <a class="wcard" href="#case05" id="case05">
+    <a class="wcard" href="#case05" id="case05" data-sticker="mind">
+      <span class="wcard-sticker" aria-hidden="true"></span>
       <div class="wcard-top">
         <span class="stamp stamp--trial">live · ongoing</span>
         <span class="go" aria-hidden="true">↗</span>
@@ -2527,6 +2553,16 @@ figcaption{
         }).join('');
     }
 
+    // one sticker per work card, rising above the spark on hover. Populated
+    // from the same inlined artwork, and before the motion gate: a hover
+    // reveal is intent, not ambient motion, so it survives reduced-motion.
+    document.querySelectorAll('.wcard[data-sticker]').forEach(function(card){
+      var key = card.getAttribute('data-sticker');
+      var slot = card.querySelector('.wcard-sticker');
+      if (!slot || !IMAGES[key]) return;
+      slot.innerHTML = '<img src="' + IMAGES[key] + '" alt="" draggable="false">';
+    });
+
     // the field itself is motion; the specimen above is not
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -2534,7 +2570,7 @@ figcaption{
       host.innerHTML = '';
       bodies = ORDER.filter(function(key){
         return IMAGES[key] || ART[key];      // name it now, render it when it exists
-      }).map(function(key, i){
+      }).slice(0, maxBodies).map(function(key, i){
         var el = document.createElement('div');
         el.className = 'sticker';
         el.innerHTML = IMAGES[key]
@@ -2546,17 +2582,50 @@ figcaption{
       });
     }
 
+    var maxBodies = 99, perRow = 99;
     function measure(){
+      var hero = host.parentElement;
+      W = hero.clientWidth;
+
+      // Size from width, then reserve exactly the band the pile needs. Doing
+      // it this way round means the banner never carries dead space: the
+      // white gap under the buttons used to be whatever was left over.
+      size = Math.max(97, Math.min(152, W * 0.133));
+      // How many actually fit in a row, measured the way the physics measures
+      // it: the walls clamp centres to a span of W - size, and two bodies
+      // touch at their collision diameter, not their box width. Sizing the
+      // row off the box packed a 390px banner one sticker tighter than it
+      // could hold, and a row that cannot fit never stops colliding.
+      var span = Math.max(1, W - size * 1.26), reach = size * 0.84;
+      perRow = Math.max(1, Math.floor(span / reach) + 1);
+      var available = ORDER.filter(function(k){ return IMAGES[k] || ART[k]; }).length;
+      maxBodies = Math.min(available, Math.max(4, perRow * 2 - 1));
+      var rows = Math.ceil(maxBodies / perRow);
+      var bandH = Math.round(rows * size * 0.92 + 26 + size * 0.13);
+      hero.style.paddingBottom = (bandH + 24) + 'px';
+
+      // top of the band = below the lowest content, measured after the
+      // padding change has moved the centred content
+      var lowest = 0;
+      Array.prototype.forEach.call(hero.children, function(el){
+        if (el === host) return;
+        lowest = Math.max(lowest, el.offsetTop + el.offsetHeight);
+      });
+      host.style.setProperty('--st-top', (lowest + 16) + 'px');
+      host.style.setProperty('--st-floor', '0px');
+
       var b = host.getBoundingClientRect();
       W = b.width; H = b.height;
-      size = Math.max(97, Math.min(152, W * 0.133));   // +30%, then +20%
-      // rw clamps against floor and walls so the artwork never clips;
-      // r is smaller so blobs can nestle into each other a little.
-      host.style.setProperty('--st-floor', '0px');   // floor is the banner bottom
+      // rw clamps against floor and walls so the artwork never clips; r is
+      // smaller so blobs can nestle into each other a little. rw is bigger
+      // than half the box on purpose: a rotated sticker reaches out to its
+      // half-diagonal, ~0.63 of the box, and clamping on half the side let
+      // the band's own overflow shave the bottom row flat — the same cut-off
+      // edge the cutouts were re-sliced to get rid of.
       var bb = host.getBoundingClientRect(); W = bb.width; H = bb.height;
       bodies.forEach(function(p){
         p.el.style.setProperty('--st-size', size + 'px');
-        p.rw = size / 2;
+        p.rw = size * 0.63;
         p.r  = size / 2 * 0.84;
       });
     }
@@ -2575,10 +2644,10 @@ figcaption{
       });
     }
 
-    var G = 2100, REST = 0.34, AIR = 0.995, FLOOR_FRICTION = 0.82, SPIN_DAMP = 0.94;
+    var G = 2100, REST = 0.34, AIR = 0.995, FLOOR_FRICTION = 0.82, SPIN_DAMP = 0.90;
 
     function step(dt){
-      var moving = false, i, j, p, q;
+      var hot = false, i, j, p, q;
       for (i = 0; i < bodies.length; i++){
         p = bodies[i];
         if (p.drag) continue;
@@ -2587,16 +2656,25 @@ figcaption{
         p.x += p.vx * dt; p.y += p.vy * dt;
         p.a += p.av * dt; p.av *= SPIN_DAMP;
 
-        if (p.x < p.rw){ p.x = p.rw; p.vx = -p.vx * REST; p.av += p.vy * 0.004; }
-        if (p.x > W - p.rw){ p.x = W - p.rw; p.vx = -p.vx * REST; p.av -= p.vy * 0.004; }
+        // Wall spin comes from hitting the wall, so it is gated on the speed
+        // going in. Gating it on p.vy instead — as this did — meant a sticker
+        // jammed against the wall by the pile got a spin nudge from gravity
+        // every single frame and turned there forever.
+        var wx = p.vx;
+        if (p.x < p.rw){ p.x = p.rw; p.vx = -p.vx * REST; if (wx < -60) p.av += p.vy * 0.004; }
+        if (p.x > W - p.rw){ p.x = W - p.rw; p.vx = -p.vx * REST; if (wx > 60) p.av -= p.vy * 0.004; }
         if (p.y > H - p.rw){
           p.y = H - p.rw;
-          p.vy = -p.vy * REST;
-          p.av += (p.vx / p.r) * 0.55;      // rolling contact
+          p.vy = Math.abs(p.vy) < 60 ? 0 : -p.vy * REST;
+          if (calm < 46 && Math.abs(p.vx) > 8) p.av += (p.vx / p.r) * 0.55;  // rolling contact
           p.vx *= FLOOR_FRICTION;
-          if (Math.abs(p.vy) < 30) p.vy = 0;
         }
-        if (Math.abs(p.vx) + Math.abs(p.vy) > 4 || p.y < H - p.rw - 1) moving = true;
+        if (Math.abs(p.vx) < 3) p.vx = 0;
+        if (Math.abs(p.av) < 0.02) p.av = 0;
+        // "hot" means something is genuinely happening, not merely non-zero:
+        // a body resting on another carries a permanent ~34px/s of gravity
+        // that the contact cancels again every frame.
+        if (Math.abs(p.vx) + Math.abs(p.vy) > 120) hot = true;
       }
       // pairwise contacts
       for (i = 0; i < bodies.length; i++){
@@ -2605,23 +2683,33 @@ figcaption{
           var dx = q.x - p.x, dy = q.y - p.y;
           var d2 = dx*dx + dy*dy, min = p.r + q.r;
           if (d2 <= 0.0001 || d2 >= min*min) continue;
-          var d = Math.sqrt(d2), nx = dx/d, ny = dy/d, overlap = min - d;
+          var d = Math.sqrt(d2), nx = dx/d, ny = dy/d;
+          var overlap = Math.max(0, min - d - 0.4);      // slop
           var pm = p.drag ? 0 : 1, qm = q.drag ? 0 : 1, tm = pm + qm;
           if (!tm) continue;
-          p.x -= nx * overlap * (pm/tm); p.y -= ny * overlap * (pm/tm);
-          q.x += nx * overlap * (qm/tm); q.y += ny * overlap * (qm/tm);
+          var corr = overlap * 0.8;
+          p.x -= nx * corr * (pm/tm); p.y -= ny * corr * (pm/tm);
+          q.x += nx * corr * (qm/tm); q.y += ny * corr * (qm/tm);
           var rvx = q.vx - p.vx, rvy = q.vy - p.vy, vn = rvx*nx + rvy*ny;
           if (vn < 0){
-            var imp = -(1 + REST) * vn / tm;
+            // a resting contact must not bounce, or the stack never sleeps
+            var e = Math.abs(vn) < 60 ? 0 : REST;
+            var imp = -(1 + e) * vn / tm;
             if (pm){ p.vx -= imp * nx; p.vy -= imp * ny; }
             if (qm){ q.vx += imp * nx; q.vy += imp * ny; }
-            var vt = rvx * -ny + rvy * nx;          // tangential -> spin
-            p.av -= vt * 0.004; q.av += vt * 0.004;
-            moving = true;
+            // Spin only from a real collision. Gravity injects a sliver of
+            // closing velocity into every resting contact each frame; feeding
+            // that into spin kept the whole pile turning forever and the loop
+            // never slept.
+            if (Math.abs(vn) > 60){
+              var vt = rvx * -ny + rvy * nx;        // tangential -> spin
+              p.av -= vt * 0.004; q.av += vt * 0.004;
+              hot = true;
+            }
           }
         }
       }
-      return moving;
+      return hot;
     }
 
     function paint(){
@@ -2632,17 +2720,55 @@ figcaption{
       }
     }
 
-    var last = 0, idle = 0;
+    var last = 0, idle = 0, calm = 0, age = 0;
     function loop(t){
       if (!running) return;
       var dt = Math.min(0.032, (t - last) / 1000 || 0.016); last = t;
-      var moving = step(dt);
+      var hot = step(dt);
+      var dragging = bodies.some(function(b){ return b.drag; });
+
+      // A pile that has stopped colliding is not yet a pile at rest. The
+      // positional correction that keeps overlapping bodies apart feeds a
+      // sliver of velocity back in every frame, friction never quite reaches
+      // zero, and a body creeping at 16px/s along the floor keeps its rolling
+      // contact alive — which is what left stickers turning after they had
+      // visibly landed. Once nothing is genuinely impacting any more, bleed
+      // the residue out on purpose.
+      calm = (hot || dragging) ? 0 : calm + 1;
+      if (calm > 45) bodies.forEach(function(b){
+        if (b.drag) return;
+        b.vx *= 0.86; b.vy *= 0.86; b.av *= 0.7;
+        if (Math.abs(b.vx) < 4) b.vx = 0;
+        if (Math.abs(b.vy) < 45) b.vy = 0;   // gravity re-adds it next frame
+        if (Math.abs(b.av) < 0.01) b.av = 0;
+      });
+
+      // Rest is measured, not inferred: how far the artwork actually moved
+      // this frame, rotation included, weighted at the sticker's own radius.
+      var moved = 0;
+      for (var i = 0; i < bodies.length; i++){
+        var b = bodies[i];
+        moved = Math.max(moved, Math.abs(b.x - b.lx) + Math.abs(b.y - b.ly) +
+                                Math.abs(b.a - b.la) * b.r);
+        b.lx = b.x; b.ly = b.y; b.la = b.a;
+      }
       paint();
-      idle = moving ? 0 : idle + 1;
-      if (idle > 40 && !bodies.some(function(p){ return p.drag; })){ running = false; raf = 0; return; }
+
+      // Stop on rest, or on the deadline — a pile packed tighter than its
+      // banner can hold keeps colliding for real, and no velocity threshold
+      // will ever call that quiet. Ten seconds in it is where it is going to
+      // be, so stop rather than churn behind the copy for ever.
+      idle = (dragging || !(moved <= 0.15)) ? 0 : idle + 1;
+      age++;
+      if (!dragging && (idle > 24 || age > 600)){
+        // settle exactly, so nothing creeps or spins on after the loop stops
+        bodies.forEach(function(b){ b.vx = b.vy = b.av = 0; });
+        paint();
+        running = false; raf = 0; return;
+      }
       raf = requestAnimationFrame(loop);
     }
-    function wake(){ if (!running){ running = true; idle = 0; last = performance.now(); raf = requestAnimationFrame(loop); } }
+    function wake(){ if (!running){ running = true; idle = 0; calm = 0; age = 0; last = performance.now(); raf = requestAnimationFrame(loop); } }
 
     // ---- drag and throw ----
     bodies_bind();
@@ -2687,7 +2813,7 @@ figcaption{
       measure(); seed(); paint(); wake();
     }
 
-    build(); measure(); seed(); paint();
+    measure(); build(); measure(); seed(); paint();
 
 
     // sprinkle in when the hero is first reached

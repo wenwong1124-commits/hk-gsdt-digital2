@@ -79,8 +79,8 @@ which is much wider than Figtree's average lowercase glyph.
 
 ## Accessibility
 
-The portfolio's central claim is inclusive design for older adults, so the page cannot
-contradict itself.
+The portfolio's central claim is inclusive design — across ages, abilities and contexts — so
+the page cannot contradict itself.
 
 - **Zero WCAG AA failures.** Lowest measured ratio on the page is 4.88:1; body text is
   17.77:1 (AAA). Audited programmatically across every rendered text node, not by eye.
@@ -100,7 +100,10 @@ contradict itself.
   removed outright rather than frozen. Verified in both modes.
 - **The sticker field is decorative and knows it.** `aria-hidden`, occupying a band below all
   hero content rather than sitting behind it, carries no information, and is exempt from the
-  contrast rules precisely because nothing depends on reading it.
+  contrast rules precisely because nothing depends on reading it. The band clips the field
+  while the pile is falling or at rest, and stops clipping the moment a pointer grabs a
+  sticker — so one can be carried up over the headline and put back down, without anything
+  ever *settling* on top of a button.
 - **It comes to rest and stops.** The pile settles in 3–6s and the animation frame loop then
   exits; measured 0 of 10 transforms still changing at 1440 / 1024 / 768 / 390px, and again
   after a drag-and-throw. Nothing animates indefinitely behind the copy.

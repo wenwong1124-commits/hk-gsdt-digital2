@@ -467,6 +467,7 @@ a.wcard:hover .go{ color:var(--accent) }
 }
 .chips{ margin-top:var(--s-5); display:flex; flex-wrap:wrap; gap:10px }
 .chip{
+  position:relative;
   display:inline-flex; align-items:center; gap:8px;
   font-family:var(--sans); font-size:.875rem; font-weight:500; letter-spacing:-.005em;
   color:var(--ink); background:var(--paper);
@@ -475,7 +476,17 @@ a.wcard:hover .go{ color:var(--accent) }
   transition:transform var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease);
 }
 .chip .dot{ width:14px; height:14px; border-radius:var(--radius-pill); flex:0 0 auto }
+/* the same spark the buttons and cards use, so hover reads identically
+   wherever it appears. right stays at 0 — a negative horizontal offset here
+   pushed the page past the viewport on a 390px screen. */
+.chip::after{
+  content:""; position:absolute; top:-22px; right:0;
+  width:22px; height:22px; background:var(--spark) center/contain no-repeat;
+  opacity:0; transform:scale(.5) rotate(-25deg); pointer-events:none;
+  transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
+}
 .chip:hover{ transform:rotate(-2deg); border-color:var(--ink-3) }
+.chip:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 @media (min-width:900px){
   .stack{ min-height:440px }
   .chips{ margin-top:0 }
@@ -488,6 +499,7 @@ a.wcard:hover .go{ color:var(--accent) }
   .chip:nth-of-type(6){ top:88%; left:64% }
   .chip:nth-of-type(7){ top:70%; left:27% }
   .chip:nth-of-type(8){ top:90%; left:6%  }
+  .chip:nth-of-type(9){ top:46%; left:28% }
 }
 
 /* --------------------------------------------------------------------------
@@ -717,6 +729,13 @@ figcaption{
   top:var(--st-top,0px); bottom:var(--st-floor,0px);
   z-index:2; overflow:hidden; pointer-events:none;
 }
+/* ...until you pick one up. A sticker dragged upward was being sliced off at
+   the band's top edge and passing behind the headline, which made the whole
+   field feel like it was under glass. The moment a pointer grabs one the
+   field stops clipping and rises above the hero copy, and it goes back to
+   clipping when the pile next comes to rest — so the entrance still falls in
+   from behind, and nothing ever settles on top of a button. */
+.stickers.is-free{ overflow:visible; z-index:5 }
 /* stacking inside the hero: cards (1) < stickers (2) < text (3),
    and a hovered card (6) rises above everything but the header. */
 .hero-banner > *:not(.stickers):not(.collage){ position:relative; z-index:3 }

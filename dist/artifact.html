@@ -524,6 +524,7 @@ a.wcard:hover .go{ color:var(--accent) }
 }
 .chips{ margin-top:var(--s-5); display:flex; flex-wrap:wrap; gap:10px }
 .chip{
+  position:relative;
   display:inline-flex; align-items:center; gap:8px;
   font-family:var(--sans); font-size:.875rem; font-weight:500; letter-spacing:-.005em;
   color:var(--ink); background:var(--paper);
@@ -532,7 +533,17 @@ a.wcard:hover .go{ color:var(--accent) }
   transition:transform var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease);
 }
 .chip .dot{ width:14px; height:14px; border-radius:var(--radius-pill); flex:0 0 auto }
+/* the same spark the buttons and cards use, so hover reads identically
+   wherever it appears. right stays at 0 — a negative horizontal offset here
+   pushed the page past the viewport on a 390px screen. */
+.chip::after{
+  content:""; position:absolute; top:-22px; right:0;
+  width:22px; height:22px; background:var(--spark) center/contain no-repeat;
+  opacity:0; transform:scale(.5) rotate(-25deg); pointer-events:none;
+  transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
+}
 .chip:hover{ transform:rotate(-2deg); border-color:var(--ink-3) }
+.chip:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 @media (min-width:900px){
   .stack{ min-height:440px }
   .chips{ margin-top:0 }
@@ -545,6 +556,7 @@ a.wcard:hover .go{ color:var(--accent) }
   .chip:nth-of-type(6){ top:88%; left:64% }
   .chip:nth-of-type(7){ top:70%; left:27% }
   .chip:nth-of-type(8){ top:90%; left:6%  }
+  .chip:nth-of-type(9){ top:46%; left:28% }
 }
 
 /* --------------------------------------------------------------------------
@@ -774,6 +786,13 @@ figcaption{
   top:var(--st-top,0px); bottom:var(--st-floor,0px);
   z-index:2; overflow:hidden; pointer-events:none;
 }
+/* ...until you pick one up. A sticker dragged upward was being sliced off at
+   the band's top edge and passing behind the headline, which made the whole
+   field feel like it was under glass. The moment a pointer grabs one the
+   field stops clipping and rises above the hero copy, and it goes back to
+   clipping when the pile next comes to rest — so the entrance still falls in
+   from behind, and nothing ever settles on top of a button. */
+.stickers.is-free{ overflow:visible; z-index:5 }
 /* stacking inside the hero: cards (1) < stickers (2) < text (3),
    and a hovered card (6) rises above everything but the header. */
 .hero-banner > *:not(.stickers):not(.collage){ position:relative; z-index:3 }
@@ -1029,8 +1048,8 @@ figcaption{
         Ink is neutral and near-black at <span class="mono">#17181A</span> — 17.8:1 on white,
         comfortably AAA. Secondary and tertiary land at 6.62:1 and 5.28:1, so
         <em>every</em> ink weight clears AA for normal text, including the quietest marks on
-        the notebook plate. A portfolio whose central claim is inclusive design for older
-        adults cannot ship a caption that fails contrast.
+        the notebook plate. A portfolio whose central claim is inclusive design — across ages,
+        abilities and contexts — cannot ship a caption that fails contrast.
       </p>
       <p class="t-body" style="margin-top:var(--s-3)">
         The green → blue → violet gradient is retired. It was real accumulated equity, but a
@@ -1481,19 +1500,21 @@ figcaption{
     <div class="spec-body on-paper">
       <h3 class="t-display" style="max-width:22ch">
         I design AI
-        <span class="pict slot" role="img" aria-label="health">health</span><span class="pict-word">health</span>
-        products older
-        <span class="pict slot" role="img" aria-label="people">people</span><span class="pict-word">people</span>
-        <span class="mk-under">actually use</span>.
+        <span class="pict slot" role="img" aria-label="products">products</span><span class="pict-word">products</span>
+        and
+        <span class="pict slot" role="img" aria-label="journeys">journeys</span><span class="pict-word">journeys</span>
+        people <span class="mk-under">actually use</span>.
       </h3>
     </div>
     <p class="spec-note">
-      Nouns replaced: <b style="font-weight:600">health</b> (pill blister pack cutout) and
-      <b style="font-weight:600">people</b> (older adult's hand cutout) — the object stands for
-      the word, and <span class="mono">alt</span> stays the exact word. Deletion test —
-      "I design AI health products older people actually use." Reads. Two pictograms, under
-      the maximum of three. Nine words: at 112px a hero line has to be short enough to land
-      in one fixation, and every word past about ten is spent on nothing.
+      Nouns replaced: <b style="font-weight:600">products</b> (phone in one hand cutout) and
+      <b style="font-weight:600">journeys</b> (sticky-note journey map cutout) — the object
+      stands for the word, and <span class="mono">alt</span> stays the exact word. Deletion
+      test — "I design AI products and journeys people actually use." Reads. Two pictograms,
+      under the maximum of three. Nine words: at 112px a hero line has to be short enough to
+      land in one fixation, and every word past about ten is spent on nothing. The line names
+      the craft, not one user group — the domains belong in the subline, where they can widen
+      without rewriting the headline.
     </p>
   </div>
 
@@ -1531,14 +1552,14 @@ figcaption{
         <a href="#rebus"><span class="n">02</span> audio waveform strip</a>
         <a href="#rebus"><span class="n">03</span> spectrogram slice</a>
         <a href="#rebus"><span class="n">04</span> stopwatch</a>
-        <a href="#rebus"><span class="n">05</span> older adult's hand</a>
+        <a href="#rebus"><span class="n">05</span> pair of hands, mid-gesture</a>
         <a href="#rebus"><span class="n">06</span> clipboard</a>
         <a href="#rebus"><span class="n">07</span> pill blister pack</a>
         <a href="#rebus"><span class="n">08</span> brain scan slice</a>
-        <a href="#rebus"><span class="n">09</span> tape recorder</a>
-        <a href="#rebus"><span class="n">10</span> hearing aid</a>
+        <a href="#rebus"><span class="n">09</span> wearable on a wrist</a>
+        <a href="#rebus"><span class="n">10</span> sticky-note journey map</a>
         <a href="#rebus"><span class="n">11</span> phone in one hand</a>
-        <a href="#rebus"><span class="n">12</span> signed clinical form</a>
+        <a href="#rebus"><span class="n">12</span> signed consent form</a>
       </div>
       <p class="t-small" style="margin-top:var(--s-4)">
         Shoot all twelve in one session, one light setup, one white sweep. A library shot
@@ -1928,8 +1949,8 @@ figcaption{
         <a class="tile tint-1" href="#case01"><span class="obj t-micro">microphone</span><span class="tile-cap">case no. 01 — CogniSpeak</span></a>
         <a class="tile tint-2" href="#case02"><span class="obj t-micro">clipboard</span><span class="tile-cap">case no. 02 — Community</span></a>
         <a class="tile tint-3" href="#case03"><span class="obj t-micro">brain scan</span><span class="tile-cap">case no. 03 — Risk visualisation</span></a>
-        <a class="tile tint-4" href="#case04"><span class="obj t-micro">older adult&rsquo;s hand</span><span class="tile-cap">case no. 04 — HandSync</span></a>
-        <a class="tile tint-5" href="#case05"><span class="obj t-micro">tape recorder</span><span class="tile-cap">case no. 05 — Working with AI</span></a>
+        <a class="tile tint-4" href="#case04"><span class="obj t-micro">pair of hands</span><span class="tile-cap">case no. 04 — HandSync</span></a>
+        <a class="tile tint-5" href="#case05"><span class="obj t-micro">wearable on a wrist</span><span class="tile-cap">case no. 05 — Working with AI</span></a>
       </nav>
     </div>
     <p class="spec-note">
@@ -1960,6 +1981,7 @@ figcaption{
         <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Claude Design</span>
         <span class="chip"><span class="dot tint-4" aria-hidden="true"></span>ChatGPT</span>
         <span class="chip"><span class="dot tint-5" aria-hidden="true"></span>ElevenLabs</span>
+        <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Hugging Face</span>
       </div>
     </div>
     <p class="spec-note">
@@ -2223,14 +2245,14 @@ figcaption{
 
     <h2 class="t-hero reveal" style="max-width:15ch;margin:0 auto">
       I design AI
-      <span class="pict slot" role="img" aria-label="health">health</span><span class="pict-word">health</span>
-      products older
-      <span class="pict slot" role="img" aria-label="people">people</span><span class="pict-word">people</span>
-      <span class="mk-under">actually use</span>.
+      <span class="pict slot" role="img" aria-label="products">products</span><span class="pict-word">products</span>
+      and
+      <span class="pict slot" role="img" aria-label="journeys">journeys</span><span class="pict-word">journeys</span>
+      people <span class="mk-under">actually use</span>.
     </h2>
 
     <p class="t-body reveal" style="margin:var(--s-5) auto 0;color:var(--ink-2)">
-      Speech-based neurocognitive screening that works without a clinician in the room.
+      From research to shipped — AI-powered experiences across health, wellbeing and everyday digital products.
     </p>
 
     <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-6);flex-wrap:wrap">
@@ -2353,6 +2375,7 @@ figcaption{
       <span class="chip"><span class="dot tint-1" aria-hidden="true"></span>W&amp;B Weave</span>
       <span class="chip"><span class="dot tint-3" aria-hidden="true"></span>Figma</span>
       <span class="chip"><span class="dot tint-4" aria-hidden="true"></span>Miro</span>
+      <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Hugging Face</span>
     </div>
   </div>
   <p class="t-small reveal" style="margin-top:var(--s-6)">
@@ -2764,6 +2787,7 @@ figcaption{
         // settle exactly, so nothing creeps or spins on after the loop stops
         bodies.forEach(function(b){ b.vx = b.vy = b.av = 0; });
         paint();
+        host.classList.remove('is-free');   // back inside the band
         running = false; raf = 0; return;
       }
       raf = requestAnimationFrame(loop);
@@ -2783,6 +2807,7 @@ figcaption{
         p.px = e.clientX - r.left; p.py = e.clientY - r.top;
         p.ox = p.x - p.px; p.oy = p.y - p.py;
         p.vx = p.vy = 0;
+        host.classList.add('is-free');   // let it be carried over the copy
         wake();
       });
       host.addEventListener('pointermove', function(e){

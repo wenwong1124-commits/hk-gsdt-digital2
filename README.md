@@ -47,10 +47,15 @@ the five card tints on the work carousel, hero collage and tool chips. The tints
 
 ## Foundations
 
-**Two typefaces, no third.** Figtree (geometric-humanist sans) carries prose, headlines,
-buttons and all Rebus display lines. Caveat (handwriting) carries labels, metrics, tags,
-stamps, captions and log entries. Caveat's digits are natively equal-width, which is why
-the monospace it replaced was not needed to keep metric and log columns aligned.
+**Two typefaces, no third — but they are not equal partners.** Figtree does all the work:
+prose, headlines, buttons, Rebus display lines, and the whole label layer (micro-labels,
+captions, tags, stamps, metrics, log entries) set small and uppercase with wide tracking.
+Its digits are equal-width, so metric and log columns align without a monospace.
+
+Caveat appears in exactly three places — the notebook plate, the scroll cue, and the footer
+wordmark — and nowhere else. That is **3.4% of characters and 3.97% of ink** on the portfolio
+page, measured in-browser. It is a signature, not a voice. Handwriting carrying the label
+layer turned the page into a notebook pastiche and did not hold up at 11px.
 
 **Display runs light.** Hero and display sit at weight 400, headings at 500, body at 400 —
 weight only ever rises as size falls. Past ~64px the scale supplies the presence.

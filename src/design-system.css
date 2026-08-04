@@ -90,21 +90,21 @@ section.band{ padding:var(--s-8) 0 }
 .t-small{ font-size:.9375rem; line-height:1.55; max-width:var(--prose); color:var(--ink-2) }
 
 .t-metric{
-  font-family:var(--hand); font-weight:600;
-  font-size:2.75rem; line-height:1; letter-spacing:0;
+  font-family:var(--sans); font-weight:500;
+  font-size:2.75rem; line-height:1; letter-spacing:-.025em;
   font-variant-numeric:tabular-nums;
 }
 .t-micro{
-  font-family:var(--hand); font-weight:500; font-size:1.0625rem;
-  line-height:1.45; letter-spacing:.015em;
+  font-family:var(--sans); font-weight:500; font-size:.6875rem;
+  line-height:1.45; letter-spacing:.1em; text-transform:uppercase;
 }
 .t-caption{
-  font-family:var(--hand); font-weight:400; font-size:1.125rem;
-  line-height:1.4; letter-spacing:.01em; color:var(--ink-2);
+  font-family:var(--sans); font-weight:400; font-size:.8125rem;
+  line-height:1.5; letter-spacing:.005em; color:var(--ink-2);
 }
 .t-tag{
-  font-family:var(--hand); font-weight:500; font-size:1rem;
-  line-height:1; letter-spacing:.02em;
+  font-family:var(--sans); font-weight:500; font-size:.6875rem;
+  line-height:1; letter-spacing:.08em; text-transform:uppercase;
 }
 /* token / code spans — the sans, chipped, since there is no monospace */
 .mono{
@@ -120,9 +120,9 @@ section.band{ padding:var(--s-8) 0 }
    -------------------------------------------------------------------------- */
 .sec-head{ margin-bottom:var(--s-6) }
 .sec-head .kicker{
-  font-family:var(--hand); font-size:1.25rem; letter-spacing:.01em;
+  font-family:var(--sans); font-size:.8125rem; letter-spacing:.04em;
   text-transform:lowercase; color:var(--ink-3);
-  display:block; margin-bottom:var(--s-3);
+  display:block; margin-bottom:var(--s-3); font-weight:500;
 }
 .sec-head .kicker::before{ content:"— "; color:var(--rule-strong) }
 .sec-head p{ margin-top:var(--s-3) }
@@ -145,7 +145,7 @@ section.band{ padding:var(--s-8) 0 }
 .nav{ position:relative }
 .nav ul{ display:flex; gap:var(--s-4); flex-wrap:wrap }
 .nav a{
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.01em;
+  font-family:var(--sans); font-size:.8125rem; letter-spacing:.01em;
   display:inline-flex; gap:6px; align-items:baseline;
   padding-bottom:6px; color:var(--ink-2);
   transition:color var(--dur-confirm) var(--ease);
@@ -176,9 +176,9 @@ section.band{ padding:var(--s-8) 0 }
    8. COMPONENT 03 — METADATA STRIP (single mono row, · separators)
    -------------------------------------------------------------------------- */
 .metastrip{
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.015em;
+  font-family:var(--sans); font-size:.75rem; letter-spacing:.1em;
   color:var(--ink-2);
-  display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:baseline;
+  display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:baseline; text-transform:uppercase; font-weight:500;
 }
 .metastrip .sep{ color:var(--ink-3) }   /* 5.28:1 — visible separators, not hairline ghosts */
 
@@ -199,8 +199,8 @@ section.band{ padding:var(--s-8) 0 }
 .pict.slot{
   border:1px solid var(--rule-strong); border-radius:var(--radius);
   background:var(--paper-sunk);
-  font-family:var(--hand); font-size:.68em; font-weight:400; font-style:normal;
-  letter-spacing:.01em; text-transform:lowercase; color:var(--ink-3);
+  font-family:var(--sans); font-size:.52em; font-weight:400; font-style:normal;
+  letter-spacing:.04em; text-transform:lowercase; color:var(--ink-3);
   line-height:calc(var(--pict-h) / .68); padding:0 .45em;
   text-indent:0; white-space:nowrap;
 }
@@ -246,8 +246,8 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
    -------------------------------------------------------------------------- */
 .stamp{
   display:inline-block;
-  font-family:var(--hand); font-size:1rem; font-weight:700;
-  letter-spacing:.06em; text-transform:uppercase; line-height:1.15;
+  font-family:var(--sans); font-size:.625rem; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase; line-height:1.4;
   padding:3px 10px; border-radius:var(--radius);
   border:1px solid currentColor;
   transform:rotate(-1.8deg);
@@ -289,7 +289,7 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   gap:var(--s-4); margin-bottom:var(--s-2); flex-wrap:wrap;
 }
 .caseno{
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.01em;
+  font-family:var(--sans); font-size:.75rem; letter-spacing:.02em;
   color:var(--ink-2);
 }
 @media (min-width:641px){ .caseno{ white-space:nowrap } }
@@ -351,9 +351,9 @@ a.wcard:hover .go{ color:var(--accent) }
 }
 .wcard p{ font-size:.9375rem; line-height:1.5; color:var(--ink-2); margin-bottom:var(--s-3) }
 .wcard .proof-min{
-  font-family:var(--hand); font-size:1.0625rem; color:var(--accent);
+  font-family:var(--sans); font-size:.8125rem; color:var(--accent);
   border-bottom:1px solid var(--accent); align-self:flex-start;
-  margin-bottom:var(--s-4); padding-bottom:1px;
+  margin-bottom:var(--s-4); padding-bottom:1px; font-weight:500;
 }
 /* tinted cover panel — where the cutout artwork lands */
 .wcard .cover-tint{
@@ -475,12 +475,12 @@ a.wcard:hover .go{ color:var(--accent) }
 .metric{ background:var(--paper); padding:var(--s-4); border-top:3px solid var(--ink) }
 .metric .t-metric{ display:block; margin-bottom:var(--s-2) }
 .metric .cap{
-  font-family:var(--hand); font-size:1.0625rem; letter-spacing:.01em;
-  color:var(--ink-2); display:block; max-width:26ch; line-height:1.35;
+  font-family:var(--sans); font-size:.75rem; letter-spacing:.02em;
+  color:var(--ink-2); display:block; max-width:26ch; line-height:1.45;
 }
 .metric .fam{
-  font-family:var(--hand); font-size:.9375rem; letter-spacing:.02em;
-  color:var(--ink-3); display:block; margin-bottom:var(--s-3);
+  font-family:var(--sans); font-size:.625rem; letter-spacing:.1em;
+  color:var(--ink-3); display:block; margin-bottom:var(--s-3); text-transform:uppercase; font-weight:500;
 }
 .m1{ border-top-style:solid;  border-top-color:var(--fam-1) }
 .m2{ border-top-style:dashed; border-top-color:var(--fam-2) }
@@ -499,10 +499,10 @@ a.wcard:hover .go{ color:var(--accent) }
    -------------------------------------------------------------------------- */
 .tags{ display:flex; gap:6px; flex-wrap:wrap; margin-top:var(--s-3) }
 .tag{
-  font-family:var(--hand); font-size:1rem; letter-spacing:.02em;
+  font-family:var(--sans); font-size:.6875rem; letter-spacing:.08em;
   color:var(--ink-2);
   border:1px solid var(--rule-strong); border-radius:var(--radius);
-  padding:5px 8px; background:transparent;
+  padding:5px 8px; background:transparent; text-transform:uppercase; font-weight:500;
 }
 
 /* --------------------------------------------------------------------------
@@ -510,7 +510,7 @@ a.wcard:hover .go{ color:var(--accent) }
    -------------------------------------------------------------------------- */
 figure{ margin:0 }
 figcaption{
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.01em;
+  font-family:var(--sans); font-size:.8125rem; letter-spacing:.005em;
   color:var(--ink-2); margin-top:var(--s-2);
 }
 
@@ -542,7 +542,7 @@ figcaption{
   display:grid; grid-template-columns:104px 132px 1fr 1fr;
   gap:var(--s-4); align-items:baseline;
   padding:var(--s-3) 0; border-bottom:1px solid var(--rule);
-  font-family:var(--hand); font-size:1.0625rem; line-height:1.4;
+  font-family:var(--sans); font-size:.8125rem; line-height:1.5;
   color:var(--ink-2);
   transition:color var(--dur-confirm) var(--ease);
 }
@@ -567,26 +567,26 @@ figcaption{
 .wordmark{ font-family:var(--hand); font-size:1.5rem; letter-spacing:.02em; text-transform:lowercase }
 .socials{ display:flex; gap:var(--s-3) }
 .socials a{
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.01em;
+  font-family:var(--sans); font-size:.75rem; letter-spacing:.08em;
   color:var(--ink-2); border-bottom:1px solid var(--rule-strong); padding-bottom:2px;
-  transition:color var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease);
+  transition:color var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease); text-transform:uppercase; font-weight:500;
 }
 .socials a:hover{ color:var(--ink); border-color:var(--ink) }
-.lastship{ font-family:var(--hand); font-size:1.0625rem; letter-spacing:.01em; color:var(--ink-3) }
+.lastship{ font-family:var(--sans); font-size:.75rem; letter-spacing:.02em; color:var(--ink-3) }
 
 /* --------------------------------------------------------------------------
    20. DOC CHROME — used only by this specification page
    -------------------------------------------------------------------------- */
 .spec{ border:1px solid var(--rule); border-radius:var(--radius); background:var(--paper-sunk) }
 .spec-label{
-  font-family:var(--hand); font-size:1rem; font-weight:500; letter-spacing:.04em; text-transform:uppercase;
+  font-family:var(--sans); font-size:.6875rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink-3); padding:10px var(--s-4); border-bottom:1px solid var(--rule);
   display:flex; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap;
 }
 .spec-body{ padding:var(--s-5) var(--s-4) }
 .spec-body.on-paper{ background:var(--paper) }
 .spec-note{
-  font-family:var(--hand); font-size:1.0625rem; line-height:1.45; color:var(--ink-2);
+  font-family:var(--sans); font-size:.8125rem; line-height:1.55; color:var(--ink-2);
   border-top:1px solid var(--rule); padding:12px var(--s-4);
 }
 
@@ -594,21 +594,22 @@ figcaption{
 .swatches{ display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule) }
 .sw{ background:var(--paper) }
 .sw .chip{ height:76px; border-bottom:1px solid var(--rule) }
-.sw .meta{ padding:10px 12px 14px; font-family:var(--hand); font-size:1rem; line-height:1.4; letter-spacing:.01em; color:var(--ink-2) }
+.sw .meta{ padding:10px 12px 14px; font-family:var(--sans); font-size:.75rem; line-height:1.55; letter-spacing:.005em; color:var(--ink-2) }
 .sw .meta b{ display:block; font-weight:600; color:var(--ink); letter-spacing:.03em; text-transform:uppercase; font-size:1rem }
 .sw .meta .val{ color:var(--ink-3) }
 
 /* type specimen rows */
 .tsrow{ display:grid; grid-template-columns:190px 1fr; gap:var(--s-4); padding:var(--s-4) 0; border-top:1px solid var(--rule); align-items:baseline }
 .tsrow:last-child{ border-bottom:1px solid var(--rule) }
-.tsrow .tsmeta{ font-family:var(--hand); font-size:1rem; letter-spacing:.02em; line-height:1.5; color:var(--ink-3) }
+.tsrow .tsmeta{ font-family:var(--sans); font-size:.6875rem; letter-spacing:.08em; line-height:1.7; color:var(--ink-3); text-transform:uppercase;
+}
 .tsrow .tsmeta b{ display:block; color:var(--ink-2); font-weight:400 }
 @media (max-width:640px){ .tsrow{ grid-template-columns:1fr; gap:var(--s-2) } }
 
 /* spacing scale bars */
 .spacerow{ display:flex; align-items:center; gap:var(--s-3); padding:6px 0 }
 .spacebar{ height:12px; background:var(--rule-strong); border-radius:1px }
-.spaceval{ font-family:var(--hand); font-size:1.0625rem; color:var(--ink-2); letter-spacing:.01em; min-width:132px }
+.spaceval{ font-family:var(--sans); font-size:.75rem; color:var(--ink-2); letter-spacing:.02em; min-width:132px }
 
 /* grid diagram */
 .griddemo{ display:grid; grid-template-columns:repeat(12,1fr); gap:var(--gutter); height:88px }
@@ -732,7 +733,7 @@ figcaption{
 }
 .rules li::before{
   content:counter(r,decimal-leading-zero); position:absolute; left:0; top:calc(var(--s-4) + 1px);
-  font-family:var(--hand); font-size:1.125rem; letter-spacing:.02em; color:var(--ink-3);
+  font-family:var(--sans); font-size:.75rem; letter-spacing:.04em; color:var(--ink-3); font-weight:500;
 }
 .rules b{ font-weight:600 }
 .rules .why{ display:block; color:var(--ink-2); font-size:.9375rem; margin-top:4px }
@@ -740,7 +741,7 @@ figcaption{
 /* forbidden / allowed */
 .pair{ display:grid; grid-template-columns:1fr 1fr; gap:var(--gutter) }
 @media (max-width:640px){ .pair{ grid-template-columns:1fr } }
-.listrule li{ padding:8px 0; border-bottom:1px solid var(--rule); font-family:var(--hand); font-size:1.0625rem; color:var(--ink-2); letter-spacing:.01em }
+.listrule li{ padding:8px 0; border-bottom:1px solid var(--rule); font-family:var(--sans); font-size:.8125rem; color:var(--ink-2); letter-spacing:.005em}
 .listrule li::before{ content:"× "; color:var(--ink-3) }
 .listrule.ok li::before{ content:"✓ "; color:var(--ink) }
 
@@ -754,7 +755,7 @@ figcaption{
 
 /* index grid */
 .cindex{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule) }
-.cindex a{ background:var(--paper); padding:12px var(--s-3); font-family:var(--hand); font-size:1.0625rem; letter-spacing:.01em; color:var(--ink-2); display:flex; gap:10px;
+.cindex a{ background:var(--paper); padding:12px var(--s-3); font-family:var(--sans); font-size:.8125rem; letter-spacing:.005em; color:var(--ink-2); display:flex; gap:10px;
   transition:background var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease) }
 .cindex a:hover{ background:var(--paper-sunk); color:var(--ink) }
 .cindex a .n{ color:var(--ink-3) }
@@ -764,11 +765,11 @@ figcaption{
 /* deletion-test toggle */
 #dt{
   position:fixed; right:16px; bottom:16px; z-index:99;
-  font-family:var(--hand); font-size:1rem; letter-spacing:.02em;
+  font-family:var(--sans); font-size:.6875rem; letter-spacing:.1em;
   background:var(--paper); color:var(--ink-2);
   border:1px solid var(--rule-strong); border-radius:var(--radius);
   padding:7px 12px; cursor:pointer;
-  transition:background var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease);
+  transition:background var(--dur-confirm) var(--ease), color var(--dur-confirm) var(--ease), border-color var(--dur-confirm) var(--ease); text-transform:uppercase; font-weight:500;
 }
 #dt:hover{ color:var(--ink); border-color:var(--ink) }
 #dt[aria-pressed="true"]{ background:var(--ink); color:var(--paper); border-color:var(--ink) }

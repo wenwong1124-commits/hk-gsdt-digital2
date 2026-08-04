@@ -100,9 +100,37 @@ def cells(path):
             yield sheet.crop((c * w, r * h, (c + 1) * w, (r + 1) * h))
 
 
-def main(sheets):
+def collect(args):
+    """Accept files, or a directory to scan. Sorted, so sheet A comes first."""
+    found = []
+    for a in args:
+        p = pathlib.Path(a)
+        if p.is_dir():
+            found += sorted(
+                q for q in p.iterdir()
+                if q.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")
+                and q.parent.name != "cut"
+            )
+        elif p.is_file():
+            found.append(p)
+        else:
+            sys.exit(f"not found: {a}")
+    return found
+
+
+def main(args):
+    if not args:
+        sys.exit("usage: slice_stickers.py <sheet.png ...|assets/stickers>")
+    sheets = collect(args)
     if not sheets:
-        sys.exit("usage: slice_stickers.py <sheet-a.png> [sheet-b.png ...]")
+        sys.exit("no images found — put the sheets in assets/stickers/ first")
+    print(f"found {len(sheets)} sheet(s):")
+    for p in sheets:
+        im = Image.open(p)
+        print(f"  {p.name}  {im.width}x{im.height}")
+        if abs(im.width / COLS - im.height / ROWS) > max(im.size) * 0.06:
+            print(f"    ! cells are not square — expected a {COLS}x{ROWS} grid")
+    print()
     OUT.mkdir(parents=True, exist_ok=True)
 
     cut, idx = {}, 0

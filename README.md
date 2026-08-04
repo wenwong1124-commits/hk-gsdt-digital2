@@ -67,8 +67,10 @@ terracotta accent spent only on marks.
 
 **Grid.** 8px base unit, 12 columns, 1120px container, 24px gutter, responsive margins at
 80 / 48 / 24px. 2px radius by default — squared, not rounded — with a documented exception:
-16px on work cards, collage tiles and cover panels, pill on chips. **No drop shadows
-anywhere:** separation comes from hairline rules and whitespace only.
+16px on work cards, collage tiles and cover panels, pill on chips. **No drop shadows on any
+layout surface** — separation comes from hairline rules and whitespace only. Two exceptions,
+both objects rather than panels: a sticker, and a collage card lifted by hover. A shadow is
+allowed only where something genuinely claims to sit above the page.
 
 **Measure.** Prose is locked to 65–72 characters via `--prose: 46ch`. The value was set by
 measuring rendered lines in the browser, not by arithmetic — `1ch` is the advance of `0`,

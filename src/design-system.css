@@ -372,14 +372,22 @@ a.wcard:hover .go{ color:var(--accent) }
         cutout photography lands.
    -------------------------------------------------------------------------- */
 .collage{
+  --tile-w: clamp(96px,12vw,168px);
+  --tile-h: calc(var(--tile-w) * 4 / 3);
   display:flex; justify-content:center; align-items:flex-end;
-  /* clearance for the pop: the tile lifts 26px and its caption sits above
-     that, so anything less than ~66px collides with the CTA row. */
-  margin-top:var(--s-8); padding-bottom:var(--s-4);
+  margin-top:var(--s-5);      /* padding-top below already supplies the clearance */
+  /* a window, not a row: cards are pushed down so their lower half sits
+     below the banner edge, and rise back into view on hover. padding-top
+     leaves room for the popped card and its caption. */
+  height:calc(var(--tile-h) + 66px);
+  padding-top:66px;
+  overflow:hidden;
+  position:relative; z-index:auto;   /* no stacking context — a hovered card
+                                        must be able to rise above the stickers */
 }
 .collage .tile{
-  position:relative;
-  width:clamp(96px,12vw,168px); aspect-ratio:3/4;
+  position:relative; z-index:1;
+  width:var(--tile-w); aspect-ratio:3/4;
   border-radius:var(--radius-card); flex:0 0 auto;
   display:grid; place-items:center; padding:var(--s-2);
   text-align:center; color:var(--ink); cursor:pointer;
@@ -414,14 +422,19 @@ a.wcard:hover .go{ color:var(--accent) }
   .collage .tile-cap{ display:none }
 }
 .collage .tile:not(:first-child){ margin-left:clamp(-56px,-4vw,-28px) }
-.collage .tile:nth-child(1){ transform:rotate(-9deg)  translateY(10px) }
-.collage .tile:nth-child(2){ transform:rotate(-4deg)  translateY(-4px) }
-.collage .tile:nth-child(3){ transform:rotate(1deg)   translateY(-14px); z-index:2 }
-.collage .tile:nth-child(4){ transform:rotate(5deg)   translateY(-4px) }
-.collage .tile:nth-child(5){ transform:rotate(10deg)  translateY(10px) }
-/* straighten and lift, whichever tile it is */
+.collage .tile:nth-child(1){ transform:rotate(-9deg) translateY(60%) }
+.collage .tile:nth-child(2){ transform:rotate(-4deg) translateY(54%) }
+.collage .tile:nth-child(3){ transform:rotate(1deg)  translateY(50%); z-index:2 }
+.collage .tile:nth-child(4){ transform:rotate(5deg)  translateY(54%) }
+.collage .tile:nth-child(5){ transform:rotate(10deg) translateY(60%) }
+/* pop: the whole card rises into the window, straightens and comes forward
+   past the stickers resting on top of it */
 .collage .tile:hover,
-.collage .tile:focus-visible{ transform:rotate(0deg) translateY(-26px) scale(1.1) }
+.collage .tile:focus-visible{
+  transform:rotate(0deg) translateY(-2%) scale(1.04);
+  z-index:6;
+  box-shadow:0 10px 26px rgba(23,24,26,.16);
+}
 @media (max-width:640px){ .collage .tile:nth-child(n+5){ display:none } }
 
 /* --------------------------------------------------------------------------
@@ -682,15 +695,21 @@ figcaption{
   /* the floor sits above the collage, not at the hero's true bottom —
      otherwise the pile lands behind the tiles and is never seen. */
   position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
-  z-index:0; overflow:hidden; pointer-events:none;
+  z-index:2; overflow:hidden; pointer-events:none;
 }
-.hero-banner > *:not(.stickers){ position:relative; z-index:1 }
+/* stacking inside the hero: cards (1) < stickers (2) < text (3),
+   and a hovered card (6) rises above everything but the header. */
+.hero-banner > *:not(.stickers):not(.collage){ position:relative; z-index:3 }
+.hero-banner > .collage{ z-index:auto }
 
 .sticker{
   position:absolute; top:0; left:0;
   width:var(--st-size,74px); height:var(--st-size,74px);
   pointer-events:auto; cursor:grab; touch-action:none;
   will-change:transform;
+  /* drop-shadow follows the die-cut alpha, so the shadow traces the
+     sticker's silhouette rather than a bounding box. */
+  filter:drop-shadow(0 3px 3px rgba(23,24,26,.22));
   -webkit-user-select:none; user-select:none;
 }
 .sticker:active{ cursor:grabbing }
@@ -848,12 +867,11 @@ figcaption{
   .hero-banner .t-hero[data-in="1"] .pict{ animation:none }
   a.wcard:hover, .chip:hover{ transform:none }
   a.wcard::after, a.wcard:hover::after{ transform:none }
-  .collage .tile{ transform:none }
-  .collage .tile:hover, .collage .tile:focus-visible{ transform:none }
+  /* the collage keeps its transforms: they position the half-buried cards
+     and answer a hover, which is layout and intent, not ambient motion. */
   .collage .tile-cap{ transform:translateX(-50%) }
   .collage .tile:hover .tile-cap,
   .collage .tile:focus-visible .tile-cap{ transform:translateX(-50%) }
-  .collage .tile:not(:first-child){ margin-left:var(--s-2) }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
   *,*::before,*::after{ animation:none !important }
 }

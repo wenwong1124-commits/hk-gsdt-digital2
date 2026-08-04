@@ -429,14 +429,22 @@ a.wcard:hover .go{ color:var(--accent) }
         cutout photography lands.
    -------------------------------------------------------------------------- */
 .collage{
+  --tile-w: clamp(96px,12vw,168px);
+  --tile-h: calc(var(--tile-w) * 4 / 3);
   display:flex; justify-content:center; align-items:flex-end;
-  /* clearance for the pop: the tile lifts 26px and its caption sits above
-     that, so anything less than ~66px collides with the CTA row. */
-  margin-top:var(--s-8); padding-bottom:var(--s-4);
+  margin-top:var(--s-5);      /* padding-top below already supplies the clearance */
+  /* a window, not a row: cards are pushed down so their lower half sits
+     below the banner edge, and rise back into view on hover. padding-top
+     leaves room for the popped card and its caption. */
+  height:calc(var(--tile-h) + 66px);
+  padding-top:66px;
+  overflow:hidden;
+  position:relative; z-index:auto;   /* no stacking context — a hovered card
+                                        must be able to rise above the stickers */
 }
 .collage .tile{
-  position:relative;
-  width:clamp(96px,12vw,168px); aspect-ratio:3/4;
+  position:relative; z-index:1;
+  width:var(--tile-w); aspect-ratio:3/4;
   border-radius:var(--radius-card); flex:0 0 auto;
   display:grid; place-items:center; padding:var(--s-2);
   text-align:center; color:var(--ink); cursor:pointer;
@@ -471,14 +479,19 @@ a.wcard:hover .go{ color:var(--accent) }
   .collage .tile-cap{ display:none }
 }
 .collage .tile:not(:first-child){ margin-left:clamp(-56px,-4vw,-28px) }
-.collage .tile:nth-child(1){ transform:rotate(-9deg)  translateY(10px) }
-.collage .tile:nth-child(2){ transform:rotate(-4deg)  translateY(-4px) }
-.collage .tile:nth-child(3){ transform:rotate(1deg)   translateY(-14px); z-index:2 }
-.collage .tile:nth-child(4){ transform:rotate(5deg)   translateY(-4px) }
-.collage .tile:nth-child(5){ transform:rotate(10deg)  translateY(10px) }
-/* straighten and lift, whichever tile it is */
+.collage .tile:nth-child(1){ transform:rotate(-9deg) translateY(60%) }
+.collage .tile:nth-child(2){ transform:rotate(-4deg) translateY(54%) }
+.collage .tile:nth-child(3){ transform:rotate(1deg)  translateY(50%); z-index:2 }
+.collage .tile:nth-child(4){ transform:rotate(5deg)  translateY(54%) }
+.collage .tile:nth-child(5){ transform:rotate(10deg) translateY(60%) }
+/* pop: the whole card rises into the window, straightens and comes forward
+   past the stickers resting on top of it */
 .collage .tile:hover,
-.collage .tile:focus-visible{ transform:rotate(0deg) translateY(-26px) scale(1.1) }
+.collage .tile:focus-visible{
+  transform:rotate(0deg) translateY(-2%) scale(1.04);
+  z-index:6;
+  box-shadow:0 10px 26px rgba(23,24,26,.16);
+}
 @media (max-width:640px){ .collage .tile:nth-child(n+5){ display:none } }
 
 /* --------------------------------------------------------------------------
@@ -739,15 +752,21 @@ figcaption{
   /* the floor sits above the collage, not at the hero's true bottom —
      otherwise the pile lands behind the tiles and is never seen. */
   position:absolute; left:0; right:0; top:0; bottom:var(--st-floor,0px);
-  z-index:0; overflow:hidden; pointer-events:none;
+  z-index:2; overflow:hidden; pointer-events:none;
 }
-.hero-banner > *:not(.stickers){ position:relative; z-index:1 }
+/* stacking inside the hero: cards (1) < stickers (2) < text (3),
+   and a hovered card (6) rises above everything but the header. */
+.hero-banner > *:not(.stickers):not(.collage){ position:relative; z-index:3 }
+.hero-banner > .collage{ z-index:auto }
 
 .sticker{
   position:absolute; top:0; left:0;
   width:var(--st-size,74px); height:var(--st-size,74px);
   pointer-events:auto; cursor:grab; touch-action:none;
   will-change:transform;
+  /* drop-shadow follows the die-cut alpha, so the shadow traces the
+     sticker's silhouette rather than a bounding box. */
+  filter:drop-shadow(0 3px 3px rgba(23,24,26,.22));
   -webkit-user-select:none; user-select:none;
 }
 .sticker:active{ cursor:grabbing }
@@ -905,12 +924,11 @@ figcaption{
   .hero-banner .t-hero[data-in="1"] .pict{ animation:none }
   a.wcard:hover, .chip:hover{ transform:none }
   a.wcard::after, a.wcard:hover::after{ transform:none }
-  .collage .tile{ transform:none }
-  .collage .tile:hover, .collage .tile:focus-visible{ transform:none }
+  /* the collage keeps its transforms: they position the half-buried cards
+     and answer a hover, which is layout and intent, not ambient motion. */
   .collage .tile-cap{ transform:translateX(-50%) }
   .collage .tile:hover .tile-cap,
   .collage .tile:focus-visible .tile-cap{ transform:translateX(-50%) }
-  .collage .tile:not(:first-child){ margin-left:var(--s-2) }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
   *,*::before,*::after{ animation:none !important }
 }
@@ -1372,7 +1390,9 @@ figcaption{
         <div class="logrow" style="grid-template-columns:1fr 1fr">
           <span>radius exception</span><span class="decision">16px on work cards, collage tiles and cover panels; pill on chips</span></div>
         <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>elevation</span><span class="decision">none. hairlines and whitespace only</span></div>
+          <span>elevation</span><span class="decision">none for layout. hairlines and whitespace only</span></div>
+        <div class="logrow" style="grid-template-columns:1fr 1fr">
+          <span>shadow exception</span><span class="decision">stickers and a popped card only — physical objects, not panels</span></div>
         <div class="logrow" style="grid-template-columns:1fr 1fr">
           <span>section rhythm</span><span class="decision">96px band, 64px under 640</span></div>
       </div>
@@ -1511,9 +1531,11 @@ figcaption{
     <div>
       <p class="t-micro ink3" style="margin-bottom:var(--s-3)">forbidden — not even as accents</p>
       <p class="t-small" style="margin:0 0 var(--s-3)">
-        Amended twice: the ban on hand-drawn marks is lifted for the handwritten secondary
-        and the hover spark, and the page now spends one accent hue on vector marks. Both are
-        systematised and budgeted, neither is illustrative. Sketch texture stays out.
+        Amended three times: the ban on hand-drawn marks is lifted for the handwritten
+        secondary and the hover spark; the page spends one accent hue on vector marks; and
+        shadows are permitted on exactly two things — a sticker and a card lifted by hover.
+        Both are objects pretending to sit above the page, which is the one case a shadow
+        states something true. No panel, no card at rest, and no layout surface gets one.
       </p>
       <ul class="listrule">
         <li>glassmorphism · blur · frosted panels</li>
@@ -1521,7 +1543,7 @@ figcaption{
         <li>ethereal or coquette softness</li>
         <li>Y2K · vaporwave · synthwave</li>
         <li>neo-brutalist loud colour · type maximalism</li>
-        <li>drop shadows, anywhere</li>
+        <li>drop shadows on panels, cards at rest, or any layout surface</li>
         <li>dark mode, or a toggle for it</li>
         <li>a second accent hue</li>
         <li>colour used decoratively rather than to mark</li>
@@ -1890,10 +1912,13 @@ figcaption{
       </nav>
     </div>
     <p class="spec-note">
-      Five tiles, rotations between −9° and +10°, overlapping, one per case and tinted to
-      match. Hovering or focusing one straightens it, lifts it 26px, scales it 1.1 and drops
-      the other four to 55% — the pop needs somewhere to pop <em>from</em>, so the recede
-      matters as much as the lift. A caption names the case.
+      Five tiles, rotations between −9° and +10°, one per case and tinted to match. The
+      collage is a window: at rest each card is pushed down so roughly its lower half sits
+      below the banner edge and is clipped, leaving a row of card tops. Hovering or focusing
+      one straightens it and slides the whole card up into view, raises it above the sticker
+      field, and gives it a shadow — the only card in the system that gets one, because it is
+      the only one claiming to be off the page. The other four drop to 55%; the pop needs
+      somewhere to pop <em>from</em>. A caption names the case.
       <b style="font-weight:600">Every tile is a real link</b>, not a hover trick: the pop is
       driven by <span class="mono">:hover</span> and <span class="mono">:focus-visible</span>
       together, so a keyboard reaches every case in the collage. Rotation, lift and scale are
@@ -2503,10 +2528,9 @@ figcaption{
       // rw clamps against floor and walls so the artwork never clips;
       // r is smaller so blobs can nestle into each other a little.
       var collage = host.parentElement.querySelector('.collage');
-      // clear the collage entirely — the tiles are rotated and lifted, so
-      // their visual top sits above the box top; a flush floor buries the pile
-      host.style.setProperty('--st-floor',
-        (collage ? collage.getBoundingClientRect().height + 34 : 0) + 'px');
+      // the floor is the banner's own bottom: stickers land on and beside the
+      // half-buried cards rather than in a band above them
+      host.style.setProperty('--st-floor', '0px');
       var bb = host.getBoundingClientRect(); W = bb.width; H = bb.height;
       bodies.forEach(function(p){
         p.el.style.setProperty('--st-size', size + 'px');

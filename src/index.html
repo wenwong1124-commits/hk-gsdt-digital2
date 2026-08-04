@@ -463,7 +463,9 @@
         <div class="logrow" style="grid-template-columns:1fr 1fr">
           <span>radius exception</span><span class="decision">16px on work cards, collage tiles and cover panels; pill on chips</span></div>
         <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>elevation</span><span class="decision">none. hairlines and whitespace only</span></div>
+          <span>elevation</span><span class="decision">none for layout. hairlines and whitespace only</span></div>
+        <div class="logrow" style="grid-template-columns:1fr 1fr">
+          <span>shadow exception</span><span class="decision">stickers and a popped card only — physical objects, not panels</span></div>
         <div class="logrow" style="grid-template-columns:1fr 1fr">
           <span>section rhythm</span><span class="decision">96px band, 64px under 640</span></div>
       </div>
@@ -602,9 +604,11 @@
     <div>
       <p class="t-micro ink3" style="margin-bottom:var(--s-3)">forbidden — not even as accents</p>
       <p class="t-small" style="margin:0 0 var(--s-3)">
-        Amended twice: the ban on hand-drawn marks is lifted for the handwritten secondary
-        and the hover spark, and the page now spends one accent hue on vector marks. Both are
-        systematised and budgeted, neither is illustrative. Sketch texture stays out.
+        Amended three times: the ban on hand-drawn marks is lifted for the handwritten
+        secondary and the hover spark; the page spends one accent hue on vector marks; and
+        shadows are permitted on exactly two things — a sticker and a card lifted by hover.
+        Both are objects pretending to sit above the page, which is the one case a shadow
+        states something true. No panel, no card at rest, and no layout surface gets one.
       </p>
       <ul class="listrule">
         <li>glassmorphism · blur · frosted panels</li>
@@ -612,7 +616,7 @@
         <li>ethereal or coquette softness</li>
         <li>Y2K · vaporwave · synthwave</li>
         <li>neo-brutalist loud colour · type maximalism</li>
-        <li>drop shadows, anywhere</li>
+        <li>drop shadows on panels, cards at rest, or any layout surface</li>
         <li>dark mode, or a toggle for it</li>
         <li>a second accent hue</li>
         <li>colour used decoratively rather than to mark</li>
@@ -981,10 +985,13 @@
       </nav>
     </div>
     <p class="spec-note">
-      Five tiles, rotations between −9° and +10°, overlapping, one per case and tinted to
-      match. Hovering or focusing one straightens it, lifts it 26px, scales it 1.1 and drops
-      the other four to 55% — the pop needs somewhere to pop <em>from</em>, so the recede
-      matters as much as the lift. A caption names the case.
+      Five tiles, rotations between −9° and +10°, one per case and tinted to match. The
+      collage is a window: at rest each card is pushed down so roughly its lower half sits
+      below the banner edge and is clipped, leaving a row of card tops. Hovering or focusing
+      one straightens it and slides the whole card up into view, raises it above the sticker
+      field, and gives it a shadow — the only card in the system that gets one, because it is
+      the only one claiming to be off the page. The other four drop to 55%; the pop needs
+      somewhere to pop <em>from</em>. A caption names the case.
       <b style="font-weight:600">Every tile is a real link</b>, not a hover trick: the pop is
       driven by <span class="mono">:hover</span> and <span class="mono">:focus-visible</span>
       together, so a keyboard reaches every case in the collage. Rotation, lift and scale are
@@ -1594,10 +1601,9 @@
       // rw clamps against floor and walls so the artwork never clips;
       // r is smaller so blobs can nestle into each other a little.
       var collage = host.parentElement.querySelector('.collage');
-      // clear the collage entirely — the tiles are rotated and lifted, so
-      // their visual top sits above the box top; a flush floor buries the pile
-      host.style.setProperty('--st-floor',
-        (collage ? collage.getBoundingClientRect().height + 34 : 0) + 'px');
+      // the floor is the banner's own bottom: stickers land on and beside the
+      // half-buried cards rather than in a band above them
+      host.style.setProperty('--st-floor', '0px');
       var bb = host.getBoundingClientRect(); W = bb.width; H = bb.height;
       bodies.forEach(function(p){
         p.el.style.setProperty('--st-size', size + 'px');

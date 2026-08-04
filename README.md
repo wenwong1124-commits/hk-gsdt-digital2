@@ -14,6 +14,7 @@ health products.
 |---|---|
 | `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **The only source of truth.** |
 | `build.py` | Regenerates everything below from it. Run after any edit. |
+| `slice_stickers.py` | Cuts the sticker sheets into transparent cutouts and inlines them. |
 | `src/index.html` | Same page, markup only. Start here when reading the system. |
 | `src/design-system.css` | The stylesheet, ~35 KB and readable — no base64 blobs. |
 | `src/tokens.css` | The custom properties on their own, for importing elsewhere. |
@@ -112,6 +113,23 @@ will not cohere.
 
 **Metrics are `[XX]` placeholders** awaiting real figures. Inventing them would undercut the
 evidence the page exists to present.
+
+**The hero stickers are drawn stand-ins.** The real artwork exists but has not reached this
+repo yet. To swap it in — no redrawing, no code changes:
+
+```
+python3 slice_stickers.py assets/stickers/sheet-a.png assets/stickers/sheet-b.png
+python3 build.py
+```
+
+That slices each 3x4 sheet into cells, floods the magenta ground away from the edges inward
+(so magenta *inside* a sticker survives), trims and squares each cutout, and writes them
+straight into the `IMAGES` map in `design-system.html`. Any key present there is used instead
+of the drawn SVG; sizing, collision, drag and throw are untouched. Edit `NAMES` in the script
+to change which cell becomes which sticker, or set a cell to `None` to skip it.
+
+The pipeline is tested end to end against a synthetic sheet: background knocked to alpha 0,
+256x256 RGBA squares, images rendering in the physics field with no errors.
 
 ## Regenerating the hosted version
 

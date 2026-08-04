@@ -30,19 +30,24 @@ COLS, ROWS = 3, 4
 TOL = 60          # colour distance that still counts as background
 PAD = 0.06        # padding as a fraction of the square, so edges can breathe
 SIZE = 256        # final square px
+OVERLAP = 0.045   # crop past the cell edge so spill is recovered. Kept small
+                  # on purpose: at 0.14 a sticker's white ring merges with its
+                  # neighbour's into one blob whose centroid lands between the
+                  # two cells, and the whole ring is discarded as a neighbour.
+                  # Measured across all cells, 0.045 only ever adds area.
 
 # Reading order, sheet A then sheet B. None = skip this cell.
 NAMES = [
     # ---- sheet A ----
-    "mic",      "brain",    "ear",        # speech capture · cognition · hearing
-    "pipeline", "faces",    None,         # research->product · two generations · (shield)
-    "heart",    None,       None,         # health data · (squares) · (magnet)
-    "hands",    "cluster",  "mind",       # care · feature cluster · human-centred AI
+    "mic",   "brain", None,      # speech capture · cognition · (ear, cut)
+    None,    "faces", None,      # (pipeline, cut) · two generations · (shield)
+    "heart", None,    None,      # health data · (squares) · (magnet)
+    "hands", None,    "mind",    # care · (cluster, cut) · human-centred AI
     # ---- sheet B ----
-    None,       None,       None,         # (eye) · (globe) · (marquee)
-    None,       None,       None,         # (flame) · (peace) · (id cards)
-    None,       None,       None,         # (asterisk) · (link) · (blend)
-    "pen",      None,       "wand",       # design craft · (window) · AI
+    "eye",   "globe", None,      # observation · reach · (marquee)
+    None,    None,    None,      # (flame) · (peace) · (id cards)
+    None,    None,    None,      # (asterisk) · (link) · (blend)
+    "pen",   None,    "wand",    # design craft · (window) · AI
 ]
 
 
@@ -81,52 +86,58 @@ def bg_alpha(im, tol=TOL):
     return im
 
 
-def drop_edge_bleed(im, max_frac=0.06):
-    """Erase only SMALL opaque blobs that touch the cell border.
+def keep_largest_blob(im, warn_at=0.35):
+    """Keep the biggest connected blob and erase everything else.
 
-    Stickers are wide and routinely run to the edge of their own cell, so
-    "touches the border" alone is not evidence of bleed — erasing on that
-    basis wipes most of the set. What distinguishes a neighbour bleeding in
-    is that its sliver is tiny. Flood each border-touching component, measure
-    it, and drop it only if it is under `max_frac` of the cell. Detached
-    sticker parts that sit inside the cell (waveform bars, sparkles) are
-    never visited at all.
+    Simpler than it looks, and provably right for this artwork: the white
+    die-cut edge fuses every part of a sticker into one blob, so a cell holds
+    exactly one large component plus whatever slivers the neighbouring rows
+    spill across the boundary. Measured on these sheets the largest component
+    is 49k-74k px and every stray is under 13% of it.
+
+    Earlier attempts keyed on position — centroid inside the cell, or not
+    running off the padded crop — and both failed, because neighbours spill
+    far enough in to move their centre inside our cell, and our own wide
+    stickers spill far enough out to run off the crop. Size is the signal
+    that actually separates them.
+
+    A second component above `warn_at` would mean a sticker genuinely built
+    from detached pieces, which this rule would damage, so it says so.
     """
     px = im.load()
     w, h = im.size
-    limit = w * h * max_frac
     seen = bytearray(w * h)
+    blobs = []
+
+    for sy in range(h):
+        for sx in range(w):
+            if seen[sy * w + sx] or px[sx, sy][3] <= 8:
+                continue
+            pts, q = [], deque([(sx, sy)])
+            while q:
+                x, y = q.popleft()
+                i = y * w + x
+                if seen[i] or px[x, y][3] <= 8:
+                    continue
+                seen[i] = 1
+                pts.append((x, y))
+                if x > 0:     q.append((x - 1, y))
+                if x < w - 1: q.append((x + 1, y))
+                if y > 0:     q.append((x, y - 1))
+                if y < h - 1: q.append((x, y + 1))
+            blobs.append(pts)
+
+    if not blobs:
+        return im, 0, False
+    blobs.sort(key=len, reverse=True)
+    suspect = len(blobs) > 1 and len(blobs[1]) > len(blobs[0]) * warn_at
     dropped = 0
-
-    def component(sx, sy):
-        pts, q = [], deque([(sx, sy)])
-        while q:
-            x, y = q.popleft()
-            i = y * w + x
-            if seen[i]:
-                continue
-            if px[x, y][3] <= 8:
-                continue
-            seen[i] = 1
-            pts.append((x, y))
-            if x > 0:     q.append((x - 1, y))
-            if x < w - 1: q.append((x + 1, y))
-            if y > 0:     q.append((x, y - 1))
-            if y < h - 1: q.append((x, y + 1))
-        return pts
-
-    border = [(x, y) for x in range(w) for y in (0, h - 1)]
-    border += [(x, y) for y in range(h) for x in (0, w - 1)]
-    for x, y in border:
-        if seen[y * w + x] or px[x, y][3] <= 8:
-            continue
-        pts = component(x, y)
-        if len(pts) < limit:
-            for bx, by in pts:
-                r, g, b, _ = px[bx, by]
-                px[bx, by] = (r, g, b, 0)
-            dropped += len(pts)
-    return im, dropped
+    for pts in blobs[1:]:
+        for x, y in pts:
+            r, g, b, _ = px[x, y]
+            px[x, y] = (r, g, b, 0)
+        dropped += len(pts)
+    return im, dropped, suspect
 
 
 def square(im, size=SIZE, pad=PAD):
@@ -140,12 +151,22 @@ def square(im, size=SIZE, pad=PAD):
     return canvas.resize((size, size), Image.LANCZOS)
 
 
-def cells(path):
+def cells(path, overlap=OVERLAP):
+    """Yield (crop, cell_box) where crop is padded past the cell edges."""
     sheet = Image.open(path).convert("RGBA")
-    w, h = sheet.width // COLS, sheet.height // ROWS
+    W, H = sheet.size
+    w, h = W // COLS, H // ROWS
+    mx, my = int(w * overlap), int(h * overlap)
     for r in range(ROWS):
         for c in range(COLS):
-            yield sheet.crop((c * w, r * h, (c + 1) * w, (r + 1) * h))
+            l, t = c * w, r * h
+            L, T = max(0, l - mx), max(0, t - my)
+            R, B = min(W, l + w + mx), min(H, t + h + my)
+            # report which sides actually got padding: on the sheet's outer
+            # rows and columns the crop is clamped, so a sticker touching that
+            # edge is touching the sheet, not running off into a neighbour.
+            pads = (l - L, t - T, R - (l + w), B - (t + h))
+            yield sheet.crop((L, T, R, B)), (l - L, t - T, l - L + w, t - T + h), pads
 
 
 def collect(args):
@@ -184,17 +205,19 @@ def main(args):
 
     cut, idx = {}, 0
     for sheet in sheets:
-        for cell in cells(sheet):
+        for cell, box, pads in cells(sheet):
             name = NAMES[idx] if idx < len(NAMES) else None
             idx += 1
             if not name:
                 continue
-            cleaned, dropped = drop_edge_bleed(bg_alpha(cell))
+            cleaned, dropped, suspect = keep_largest_blob(bg_alpha(cell))
             art = square(cleaned)
             art.save(OUT / f"{name}.png")
             buf = io.BytesIO(); art.save(buf, "PNG", optimize=True)
             cut[name] = base64.b64encode(buf.getvalue()).decode()
-            note = f"  (trimmed {dropped:,}px of bleed)" if dropped else ""
+            note = f"  (dropped {dropped:,}px of neighbour)" if dropped else ""
+            if suspect:
+                note += "  ! second blob is large — check this one by eye"
             print(f"  {name:9} {len(buf.getvalue())//1024:>4} KB{note}")
 
     if not cut:

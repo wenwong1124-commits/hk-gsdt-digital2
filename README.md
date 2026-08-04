@@ -128,11 +128,17 @@ neighbouring row, trims and squares each cutout to 256x256 RGBA, and writes them
 `IMAGES` map in `design-system.html`. Individual cutouts also land in `assets/stickers/cut/`.
 `NAMES` controls which cell becomes which sticker; `None` skips a cell.
 
-**The hero set is 11 of the 24**: microphone, brain, ear, research-to-product pipeline, two
-generations, health data, hands, feature cluster, mind, pen, wand. Thirteen were rejected —
-shield, component squares, magnet, globe, selection marquee, flame, peace hand, ID cards,
-asterisk, link, blend, browser window, eye — as generic or corporate. The object vocabulary
-is the one place in the system required to be specific to this work.
+**The hero set is 10 of the 24**: microphone, brain, two generations, health data, hands,
+mind, eye, globe, pen, wand. The object vocabulary is the one place in the system required to
+be specific to this work.
+
+The slicer keeps **the largest connected blob per cell** and erases the rest. That works
+because each sticker's white die-cut edge fuses all its parts into one component — measured
+at 49k–74k px, with every stray under 13% of it. Two position-based rules were tried first
+and both failed: neighbours spill far enough in to move their centroid inside the cell, and
+wide stickers spill far enough out to run off the padded crop. Size is the signal that
+separates them. `OVERLAP` stays at 0.045 for the same reason — at 0.14 a sticker's white ring
+fuses with its neighbour's into a single blob.
 
 A drawn SVG fallback remains in the source for any key without a cutout. With all eleven
 present it never renders, and it is the reason the field degrades rather than breaks if a

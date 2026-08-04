@@ -1033,6 +1033,12 @@
       Each sticker is painted twice: once in a thick white stroke for the die-cut edge, then
       in colour on top. The white edge is invisible against this page's white ground by
       design — it exists so the artwork survives being placed on any other surface.
+      <br><br>
+      <b style="font-weight:600">These are stand-ins.</b> The physics reads an
+      <span class="mono">IMAGES</span> map keyed by sticker name; any key present there is
+      used instead of the drawn SVG, with no other change. Supply the real cutouts —
+      transparent background, trimmed square, one file per sticker — and the drawn set
+      becomes dead weight.
     </p>
   </div>
 
@@ -1544,6 +1550,15 @@
     };
     var ORDER = ['mic','brain','ear','faces','heart','hands','mind','pen','wand'];
 
+    /* Real artwork goes here. Any key present in IMAGES is used instead of the
+       drawn SVG above — same key, same physics, no other change needed. Values
+       are base64 data URIs of the individual cutouts, transparent background,
+       trimmed square. Populate this and the drawn set becomes dead weight. */
+    var IMAGES = {
+      // mic:   'data:image/png;base64,...',
+      // brain: 'data:image/png;base64,...',
+    };
+
     var bodies = [], W = 0, H = 0, size = 74, raf = 0, running = false, started = false;
     //  static specimen for the component documentation — same artwork, no physics
     var strip = document.getElementById('stickerStrip');
@@ -1563,8 +1578,10 @@
       bodies = ORDER.map(function(key, i){
         var el = document.createElement('div');
         el.className = 'sticker';
-        el.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-                       '<g class="cut">' + ART[key] + '</g>' + ART[key] + '</svg>';
+        el.innerHTML = IMAGES[key]
+          ? '<img class="st-img" src="' + IMAGES[key] + '" alt="" draggable="false">'
+          : '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+            '<g class="cut">' + ART[key] + '</g>' + ART[key] + '</svg>';
         host.appendChild(el);
         return { el:el, key:key, i:i, x:0, y:0, vx:0, vy:0, a:0, av:0, r:size/2, drag:false };
       });
@@ -1573,7 +1590,7 @@
     function measure(){
       var b = host.getBoundingClientRect();
       W = b.width; H = b.height;
-      size = Math.max(62, Math.min(98, W * 0.085));
+      size = Math.max(81, Math.min(127, W * 0.111));   // +30%
       // rw clamps against floor and walls so the artwork never clips;
       // r is smaller so blobs can nestle into each other a little.
       var collage = host.parentElement.querySelector('.collage');

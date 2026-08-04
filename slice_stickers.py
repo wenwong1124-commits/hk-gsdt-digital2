@@ -81,6 +81,54 @@ def bg_alpha(im, tol=TOL):
     return im
 
 
+def drop_edge_bleed(im, max_frac=0.06):
+    """Erase only SMALL opaque blobs that touch the cell border.
+
+    Stickers are wide and routinely run to the edge of their own cell, so
+    "touches the border" alone is not evidence of bleed — erasing on that
+    basis wipes most of the set. What distinguishes a neighbour bleeding in
+    is that its sliver is tiny. Flood each border-touching component, measure
+    it, and drop it only if it is under `max_frac` of the cell. Detached
+    sticker parts that sit inside the cell (waveform bars, sparkles) are
+    never visited at all.
+    """
+    px = im.load()
+    w, h = im.size
+    limit = w * h * max_frac
+    seen = bytearray(w * h)
+    dropped = 0
+
+    def component(sx, sy):
+        pts, q = [], deque([(sx, sy)])
+        while q:
+            x, y = q.popleft()
+            i = y * w + x
+            if seen[i]:
+                continue
+            if px[x, y][3] <= 8:
+                continue
+            seen[i] = 1
+            pts.append((x, y))
+            if x > 0:     q.append((x - 1, y))
+            if x < w - 1: q.append((x + 1, y))
+            if y > 0:     q.append((x, y - 1))
+            if y < h - 1: q.append((x, y + 1))
+        return pts
+
+    border = [(x, y) for x in range(w) for y in (0, h - 1)]
+    border += [(x, y) for y in range(h) for x in (0, w - 1)]
+    for x, y in border:
+        if seen[y * w + x] or px[x, y][3] <= 8:
+            continue
+        pts = component(x, y)
+        if len(pts) < limit:
+            for bx, by in pts:
+                r, g, b, _ = px[bx, by]
+                px[bx, by] = (r, g, b, 0)
+            dropped += len(pts)
+    return im, dropped
+
+
 def square(im, size=SIZE, pad=PAD):
     """Trim to artwork, then pad back out to a centred square."""
     bbox = im.getbbox()
@@ -128,8 +176,9 @@ def main(args):
     for p in sheets:
         im = Image.open(p)
         print(f"  {p.name}  {im.width}x{im.height}")
-        if abs(im.width / COLS - im.height / ROWS) > max(im.size) * 0.06:
-            print(f"    ! cells are not square — expected a {COLS}x{ROWS} grid")
+        if im.width % COLS or im.height % ROWS:
+            print(f"    note: {im.width}x{im.height} does not divide evenly "
+                  f"into {COLS}x{ROWS}; edges may be a pixel off")
     print()
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -140,11 +189,13 @@ def main(args):
             idx += 1
             if not name:
                 continue
-            art = square(bg_alpha(cell))
+            cleaned, dropped = drop_edge_bleed(bg_alpha(cell))
+            art = square(cleaned)
             art.save(OUT / f"{name}.png")
             buf = io.BytesIO(); art.save(buf, "PNG", optimize=True)
             cut[name] = base64.b64encode(buf.getvalue()).decode()
-            print(f"  {name:9} {len(buf.getvalue())//1024:>4} KB")
+            note = f"  (trimmed {dropped:,}px of bleed)" if dropped else ""
+            print(f"  {name:9} {len(buf.getvalue())//1024:>4} KB{note}")
 
     if not cut:
         sys.exit("no cells matched NAMES — nothing written")

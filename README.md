@@ -114,31 +114,29 @@ will not cohere.
 **Metrics are `[XX]` placeholders** awaiting real figures. Inventing them would undercut the
 evidence the page exists to present.
 
-**The hero stickers are drawn stand-ins.** The real artwork exists but has not reached this
-repo yet. To swap it in — no redrawing, no code changes:
+**The hero stickers are Wendy's own artwork**, cut from the two sheets in
+`assets/stickers/` and inlined as base64 PNGs. To re-cut them after changing a sheet:
 
 ```
-python3 slice_stickers.py assets/stickers/sheet-a.png assets/stickers/sheet-b.png
+python3 slice_stickers.py assets/stickers
 python3 build.py
 ```
 
-That slices each 3x4 sheet into cells, floods the magenta ground away from the edges inward
-(so magenta *inside* a sticker survives), trims and squares each cutout, and writes them
-straight into the `IMAGES` map in `design-system.html`. Any key present there is used instead
-of the drawn SVG; sizing, collision, drag and throw are untouched. Edit `NAMES` in the script
-to change which cell becomes which sticker, or set a cell to `None` to skip it.
+The slicer splits each 3x4 sheet, floods the magenta ground away from each cell's edges
+inward (so magenta *inside* a sticker survives), drops any small blob bleeding in from the
+neighbouring row, trims and squares each cutout to 256x256 RGBA, and writes them into the
+`IMAGES` map in `design-system.html`. Individual cutouts also land in `assets/stickers/cut/`.
+`NAMES` controls which cell becomes which sticker; `None` skips a cell.
 
-The pipeline is tested end to end against a synthetic sheet: background knocked to alpha 0,
-256x256 RGBA squares, images rendering in the physics field with no errors.
+**The hero set is 11 of the 24**: microphone, brain, ear, research-to-product pipeline, two
+generations, health data, hands, feature cluster, mind, pen, wand. Thirteen were rejected —
+shield, component squares, magnet, globe, selection marquee, flame, peace hand, ID cards,
+asterisk, link, blend, browser window, eye — as generic or corporate. The object vocabulary
+is the one place in the system required to be specific to this work.
 
-**The hero set is 11 of the 24**, already encoded in both `NAMES` and `ORDER`: microphone,
-brain, ear, research-to-product pipeline, two generations, health data, hands, feature
-cluster, mind, pen, wand. The other thirteen are rejected — shield, component squares,
-magnet, globe, selection marquee, flame, peace hand, ID cards, asterisk, link, blend, browser
-window, eye — because they are generic or they say software company. The object vocabulary is
-the one place in the system that has to be specific to this work, so a shallower pile of
-objects that all mean something beats a deeper one padded with an ID card. `ORDER` skips any
-key whose artwork has not arrived, so it names the final set now and renders nine until then.
+A drawn SVG fallback remains in the source for any key without a cutout. With all eleven
+present it never renders, and it is the reason the field degrades rather than breaks if a
+sheet changes shape.
 
 ## Regenerating the hosted version
 

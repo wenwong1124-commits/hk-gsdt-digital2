@@ -1491,7 +1491,8 @@
       if (!el) return;
       var n = nav.getBoundingClientRect(), r = el.getBoundingClientRect();
       line.style.width = r.width + 'px';
-      line.style.transform = 'translateX(' + (r.left - n.left) + 'px)';
+      line.style.transform = 'translate(' + (r.left - n.left) + 'px,' +
+                                            (r.bottom - n.top - 1) + 'px)';
     }
     function current(){ return nav.querySelector('a[aria-current="page"]') || links[0]; }
 
@@ -1892,9 +1893,9 @@
     }, { passive:true });
   })();
 
-  /* ---- deletion test ---- */
+  /* ---- deletion test — review tool, absent from the site build ---- */
   var dt = document.getElementById('dt');
-  dt.addEventListener('click', function(){
+  if (dt) dt.addEventListener('click', function(){
     var on = document.body.dataset.deletionTest !== '1';
     document.body.dataset.deletionTest = on ? '1' : '0';
     dt.setAttribute('aria-pressed', on ? 'true' : 'false');

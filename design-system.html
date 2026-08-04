@@ -190,6 +190,13 @@ button{ font:inherit; color:inherit }
    3. LAYOUT — 12 columns, fixed max container, three responsive margins
    -------------------------------------------------------------------------- */
 .wrap{ max-width:var(--container); margin:0 auto; padding:0 var(--margin) }
+/* headings the outline needs but the layout does not. The home page runs
+   hero → cards with no visible section title, which is a deliberate speed
+   decision; it must not cost a screen reader the document structure. */
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}
 @media (max-width:1024px){ :root{ --margin:48px } }
 @media (max-width:640px){  :root{ --margin:24px; --gutter:16px } }
 
@@ -294,9 +301,30 @@ section.band{ padding:var(--s-8) 0 }
 .nav a .n{ color:var(--ink-3); transition:color var(--dur-confirm) var(--ease) }
 .nav a:hover, .nav a[aria-current="page"]{ color:var(--ink) }
 .nav a:hover .n, .nav a[aria-current="page"] .n{ color:var(--ink) }
+/* a section of the site that has not been built yet. It stays in the list
+   because the list is the site's shape, but it does not pretend to be a
+   link — no href, no pointer, no hover. Nothing is worse on a portfolio
+   than a nav item that goes nowhere.
+
+   It sits one ink weight below a live item and no further. Greying it to
+   the hairline read as "disabled" and measured 1.47:1, which this page of
+   all pages cannot ship; --ink-3 is 5.28:1 and still visibly quieter. The
+   state that colour can no longer carry is carried by behaviour instead —
+   no hover, no pointer — and spelled out for screen readers. */
+.nav span[aria-disabled="true"]{
+  font-family:var(--sans); font-size:.8125rem; letter-spacing:.01em;
+  display:inline-flex; gap:6px; align-items:baseline;
+  padding-bottom:6px; color:var(--ink-3); cursor:default;
+}
+.nav span[aria-disabled="true"] .n{ color:var(--ink-3) }
+@media (max-width:680px){ .nav span[aria-disabled="true"]{ font-size:.6875rem } }
+/* Anchored to the top and moved on both axes. Anchoring it to the bottom
+   and translating only in X looked identical until the list wrapped on a
+   phone, where every item on the first row drew its underscore beneath the
+   second. */
 .nav-underscore{
-  position:absolute; bottom:0; left:0; height:1px; background:var(--ink);
-  width:0; transform:translateX(0);
+  position:absolute; top:0; left:0; height:1px; background:var(--ink);
+  width:0; transform:translate(0,0);
   transition:transform var(--dur-reveal) var(--ease), width var(--dur-reveal) var(--ease);
   pointer-events:none;
 }
@@ -2549,7 +2577,8 @@ figcaption{
       if (!el) return;
       var n = nav.getBoundingClientRect(), r = el.getBoundingClientRect();
       line.style.width = r.width + 'px';
-      line.style.transform = 'translateX(' + (r.left - n.left) + 'px)';
+      line.style.transform = 'translate(' + (r.left - n.left) + 'px,' +
+                                            (r.bottom - n.top - 1) + 'px)';
     }
     function current(){ return nav.querySelector('a[aria-current="page"]') || links[0]; }
 
@@ -2950,9 +2979,9 @@ figcaption{
     }, { passive:true });
   })();
 
-  /* ---- deletion test ---- */
+  /* ---- deletion test — review tool, absent from the site build ---- */
   var dt = document.getElementById('dt');
-  dt.addEventListener('click', function(){
+  if (dt) dt.addEventListener('click', function(){
     var on = document.body.dataset.deletionTest !== '1';
     document.body.dataset.deletionTest = on ? '1' : '0';
     dt.setAttribute('aria-pressed', on ? 'true' : 'false');

@@ -4,7 +4,8 @@
 to a hiring manager with sixty seconds, that complex AI research becomes scalable digital
 health products.
 
-**Live page:** https://claude.ai/code/artifact/f83221d0-a6bd-45be-9d7a-1670724b147f
+**The site:** https://claude.ai/code/artifact/ceff6783-aa9e-4fce-b1e9-0f725ed40bdf
+**The design system:** https://claude.ai/code/artifact/f83221d0-a6bd-45be-9d7a-1670724b147f
 
 ---
 
@@ -13,12 +14,14 @@ health products.
 | File | What it is |
 |---|---|
 | `design-system.html` | The self-contained build — one file, no build step, no network. Fonts inlined as base64 `woff2`. **The only source of truth.** |
-| `build.py` | Regenerates everything below from it. Run after any edit. |
+| `build.py` | Regenerates the `src/` and `dist/` copies from it. Run after any edit. |
+| `build_site.py` | Regenerates the site's shared assets from it. Run after any edit. |
 | `slice_stickers.py` | Cuts the sticker sheets into transparent cutouts and inlines them. |
 | `src/index.html` | Same page, markup only. Start here when reading the system. |
-| `src/design-system.css` | The stylesheet, ~35 KB and readable — no base64 blobs. |
+| `src/design-system.css` | The stylesheet, ~44 KB and readable — no base64 blobs. |
 | `src/tokens.css` | The custom properties on their own, for importing elsewhere. |
 | `dist/artifact.html` | Publish copy, document skeleton stripped. |
+| `site/` | **The portfolio itself.** See below. |
 
 Read `src/`. Ship or share `design-system.html`. Everything except
 `design-system.html` is generated — edit the source, then `python3 build.py`.
@@ -32,6 +35,38 @@ across 39 selectors once the webfonts load.
 Edit `design-system.html`, then run `python3 build.py`. Don't hand-edit anything
 under `src/` or `dist/` — it will be overwritten, and the split has two traps the
 script already handles (see its docstring).
+
+## The site
+
+```
+site/
+  index.html            /01 work — the landing page
+  assets/fonts.css      generated · @font-face, base64 woff2
+  assets/site.css       generated · the stylesheet
+  assets/site.js        generated · reveal, nav, sticker field
+  dist/index.html       generated · self-contained copy, opens from disk
+  dist/artifact/        generated · same page for hosts that supply a <head>
+```
+
+Open `site/index.html` — it needs its `assets/` siblings. `site/dist/index.html` is the
+same page with everything inlined, for sending as one file or hosting anywhere.
+
+**Pages are authored, assets are generated.** `build_site.py` lifts the stylesheet, the
+fonts and the runtime out of `design-system.html` so the site can never drift from the
+system; the markup under `site/` is written by hand, because a real page is not a specimen
+and the two should be allowed to differ. Edit `design-system.html` for anything about how
+the site looks or behaves, then run `python3 build_site.py`. Never hand-edit `site/assets/`
+or `site/dist/`.
+
+**What is built:** `/01 work`. `/02 about`, `/03 virtual gallery` and `/04 resume` sit in
+the nav as inert items — they are the site's shape, so they stay visible, but they carry no
+`href` and no hover, because a nav item that goes nowhere is worse than one that waits.
+They read one ink weight below a live item (5.28:1, still AA) rather than being greyed out;
+the earlier hairline grey measured 1.47:1. `/05 contact` is an anchor on this page.
+
+**Still to wire:** the five work cards and the two "more work" rows link to their own
+anchors, so nothing is broken, but nothing navigates either. They get real `href`s when the
+case pages exist.
 
 ## The four styles, in strict hierarchy
 

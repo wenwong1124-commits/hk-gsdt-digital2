@@ -1,6 +1,6 @@
 <style>
-/* Light-mode only by requirement (see §00). Pin the ground so the
-   viewer's dark theme cannot show through behind the page. */
+/* Light-mode only by design. Pin the ground so a dark viewer
+   theme cannot show through behind the page. */
 html, :root[data-theme="dark"], :root[data-theme="light"]{
   background:#FFFFFF; color-scheme:light;
 }
@@ -76,6 +76,91 @@ html, :root[data-theme="dark"], :root[data-theme="light"]{
 /* --------------------------------------------------------------------------
    1. TOKENS
    -------------------------------------------------------------------------- */
+:root{
+  /* ground — pure white, ruled with a faint notebook grid.
+     the header and the hero banner both sit on plain white. */
+  --paper:      #FFFFFF;
+  --paper-sunk: #F6F6F5;   /* L* 96.9 — spec panels, cover slots */
+  --grid-line:  rgba(23,24,26,.038);
+  --grid-size:  72px;      /* 9 × base unit */
+
+  /* ink — three weights, all AA on both grounds */
+  --ink:   #17181A;        /* 17.77:1 on white — AAA */
+  --ink-2: #5A5D61;        /*  6.62:1 on white — AA  */
+  --ink-3: #696C70;        /*  5.28:1 on white — AA  */
+  --ink-hover: #2C2E31;    /* 13.62:1 — filled button hover */
+  --select:    #EBEBEA;    /* text selection ground */
+
+  /* accent — one warm hue, used for vector marks and emphasis only.
+     never for body prose, never as a mood wash. */
+  --accent:       #B84A1B;   /* 5.21:1 on white — AA for text        */
+  --accent-vivid: #C2531F;   /* 4.61:1 — vector marks, fills, sparks */
+  --accent-wash:  rgba(184,74,27,.14);
+
+  /* card tints — identity, not state. One per case, carried by the cover
+     panel and reused by the hero collage and tool chips. Text on a tint is
+     ALWAYS --ink (>=9.07:1); --ink-2 fails AA on four of the five. */
+  --tint-1: #C7CBF2;   /* periwinkle */
+  --tint-2: #EFEA85;   /* citron     */
+  --tint-3: #CDAEE0;   /* lilac      */
+  --tint-4: #AEDDC4;   /* mint       */
+  --tint-5: #F4C3B4;   /* blush      */
+
+  /* sticker palette — scoped to hero sticker artwork ONLY. Decorative,
+     never information. Two new hues; orange and ink are already ours. */
+  --sticker-blue: #2C5CE8;
+  --sticker-lime: #C8ED3A;
+
+  /* radius — 2px everywhere by default. Cards and chips are the documented
+     exception, taken from the reference set. */
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* metric families — pattern is the primary channel, colour is redundant.
+     worst simulated CVD separation across the trio is dE 38. */
+  --fam-1: #B84A1B;   /* terracotta · solid  · 5.21:1 */
+  --fam-2: #1F4E7A;   /* blue       · dashed · 8.65:1 */
+  --fam-3: #17181A;   /* ink        · dotted · 17.8:1 */
+
+  /* hairlines — warmer and lighter than any ink weight, so they never
+     read as text. 1px rules do all the structural work. */
+  --rule:        #E9E9E7;
+  --rule-strong: #D6D5D2;
+
+  /* NO gradient token. NO metric hues. NO status hues.
+     The brand gradient is retired from the system — see §01.
+     Reinstating it is one line:
+     --aurora: linear-gradient(262deg,#3C7A5E 0%,#335E96 50%,#6A4E93 100%);  */
+
+  /* type */
+  --sans: 'Figtree', 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  --hand: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+
+  /* grid + space — base unit 8px, half-step 4px */
+  --u: 8px;
+  --s-1: 4px;   --s-2: 8px;   --s-3: 16px;  --s-4: 24px;
+  --s-5: 32px;  --s-6: 48px;  --s-7: 64px;  --s-8: 96px;
+  --s-9: 128px; --s-10: 192px;
+
+  --container: 1120px;
+  --gutter: 24px;
+  --margin: 80px;
+  /* prose measure: 53ch ≈ 68 rendered characters, measured in-browser.
+     1ch is the advance of '0', ~30% wider than Figtree's average lowercase
+     glyph, so the token is set from measurement, not arithmetic. */
+  --prose: 46ch;
+  --radius: 2px;
+
+  /* motion */
+  --dur-confirm: 120ms;   /* state change, acknowledges an action */
+  --dur-reveal:  200ms;   /* small reveal */
+  --dur-enter:   320ms;   /* section reveal */
+  --ease: cubic-bezier(.2,0,0,1);
+
+  /* rebus pictogram: cap-height × 1.6. Figtree cap-height ≈ .70em */
+  --pict-h: 1.12em;
+  --pict-bearing: .12em;
+}
 
 /* --------------------------------------------------------------------------
    2. RESET + BASE
@@ -300,7 +385,9 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
    10. COMPONENTS 05 + 06 — BUTTONS, filled and outline
    -------------------------------------------------------------------------- */
 /* spark burst — shared by buttons and cards. accentuates on hover only. */
-
+:root{
+  --spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23C2531F' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='16' y1='1' x2='16' y2='8'/%3E%3Cline x1='27.6' y1='4.4' x2='22.6' y2='9.4'/%3E%3Cline x1='31' y1='16' x2='24' y2='16'/%3E%3Cline x1='27.6' y1='27.6' x2='22.6' y2='22.6'/%3E%3Cline x1='16' y1='31' x2='16' y2='24'/%3E%3Cline x1='4.4' y1='27.6' x2='9.4' y2='22.6'/%3E%3Cline x1='1' y1='16' x2='8' y2='16'/%3E%3Cline x1='4.4' y1='4.4' x2='9.4' y2='9.4'/%3E%3C/g%3E%3C/svg%3E");
+}
 .btn{
   position:relative;
   display:inline-flex; align-items:center; gap:8px;
@@ -746,7 +833,12 @@ figcaption{
    for its own sake: each one marks something the reader should not miss.
    Budget: one mark per viewport, same as any other loud element.
    ========================================================================== */
-
+:root{
+  --mk-under:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3 11 Q40 2.5 88 7.5 T150 6 T197 10' fill='none' stroke='%23C2531F' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --mk-ring:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80' preserveAspectRatio='none'%3E%3Cellipse cx='100' cy='40' rx='96' ry='35' fill='none' stroke='%23C2531F' stroke-width='3'/%3E%3C/svg%3E");
+  --mk-arrow:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23C2531F' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 4 C10 14 14 18.5 20 20.5'/%3E%3Cpath d='M20.5 13 L20.5 20.5 L13 20.5'/%3E%3C/g%3E%3C/svg%3E");
+  --mk-star:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg stroke='%23C2531F' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='12' y1='3' x2='12' y2='21'/%3E%3Cline x1='4' y1='7.5' x2='20' y2='16.5'/%3E%3Cline x1='20' y1='7.5' x2='4' y2='16.5'/%3E%3C/g%3E%3C/svg%3E");
+}
 /* a — highlighter wash behind a word */
 .mk-wash{
   background-image:linear-gradient(var(--accent-wash),var(--accent-wash));
@@ -1002,10 +1094,11 @@ figcaption{
 </style>
 
 
-<!-- ═══════════════ COMPONENT 01 — NAV BAR (in situ, sticky) ═══════════════ -->
+<a class="sr-only" href="#work">Skip to the work</a>
+
+<!-- ─────────────────────────────── nav ─────────────────────────────── -->
 <header class="topbar" id="topbar" data-stuck="0">
   <div class="topbar-inner">
-    <!-- COMPONENT 02 — NOTEBOOK PLATE -->
     <div class="plate">
       field notebook — vol. 01<br>
       <b>hong kong · 2026</b><br>
@@ -1013,10 +1106,10 @@ figcaption{
     </div>
     <nav class="nav" aria-label="Primary">
       <ul>
-        <li><a href="#work" aria-current="page"><span class="n">/01</span> work</a></li>
-        <li><a href="#about"><span class="n">/02</span> about</a></li>
-        <li><a href="#gallery"><span class="n">/03</span> virtual gallery</a></li>
-        <li><a href="#resume"><span class="n">/04</span> resume</a></li>
+        <li><a href="./index.html" aria-current="page"><span class="n">/01</span> work</a></li>
+        <li><span aria-disabled="true" title="Not built yet"><span class="n">/02</span> about<span class="sr-only"> — not published yet</span></span></li>
+        <li><span aria-disabled="true" title="Not built yet"><span class="n">/03</span> virtual gallery<span class="sr-only"> — not published yet</span></span></li>
+        <li><span aria-disabled="true" title="Not built yet"><span class="n">/04</span> resume<span class="sr-only"> — not published yet</span></span></li>
         <li><a href="#contact"><span class="n">/05</span> contact</a></li>
       </ul>
       <span class="nav-underscore" id="navline" aria-hidden="true"></span>
@@ -1026,1242 +1119,8 @@ figcaption{
 
 <main>
 
-<!-- ═══════════════════════════ MASTHEAD ═══════════════════════════ -->
-<section class="wrap band" style="padding-top:var(--s-7)">
-  <div class="metastrip" style="margin-bottom:var(--s-6)">
-    <span>design system</span><span class="sep" aria-hidden="true">·</span>
-    <span>v1.0</span><span class="sep" aria-hidden="true">·</span>
-    <span>light mode only</span><span class="sep" aria-hidden="true">·</span>
-    <span>monochrome ui</span><span class="sep" aria-hidden="true">·</span>
-    <span>2026·07·30</span>
-  </div>
-
-  <h1 class="t-display" style="max-width:19ch">Clinical field notebook.</h1>
-
-  <p class="t-sub" style="margin-top:var(--s-4);max-width:46ch">
-    Pure white, faint ruling, plain ink, handwritten margins. One warm accent,
-    spent only on marks — everything else waits for the photography.
-  </p>
-
-  <p class="t-body" style="margin-top:var(--s-5)">
-    The system for Wendy Wong — designer in Hong Kong moving into AI product management.
-    The page has one job: prove in sixty seconds that complex AI research becomes
-    scalable digital health products. Four styles, strict hierarchy —
-    <b style="font-weight:600">Rebus</b> is the voice and now also the entire chroma budget,
-    <b style="font-weight:600">Utilitarian</b> is the default and 85% of the surface,
-    <b style="font-weight:600">Bento</b> is the architecture.
-  </p>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §00 REASONING ═══════════════════════════ -->
-<section class="wrap band" id="reasoning">
-  <div class="sec-head">
-    <span class="kicker">00 / before the tokens</span>
-    <h2 class="t-h1">Why this palette and these two typefaces</h2>
-  </div>
-
-  <div class="grid">
-    <div class="col-6">
-      <h3 class="t-h3" style="margin-bottom:var(--s-3)">Colour</h3>
-      <p class="t-body">
-        The interface has no colour. Ground is pure white — <span class="mono">#FFFFFF</span> —
-        ruled with a 72px grid at 3.8% ink, faint enough to read as paper stock rather than
-        as a drawn line. Everything above it is one of three ink weights or one of two
-        hairline values. That is the whole palette. Two zones stay unruled: the header, and
-        the hero banner — the one line that has to land without anything behind it.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        Ink is neutral and near-black at <span class="mono">#17181A</span> — 17.8:1 on white,
-        comfortably AAA. Secondary and tertiary land at 6.62:1 and 5.28:1, so
-        <em>every</em> ink weight clears AA for normal text, including the quietest marks on
-        the notebook plate. A portfolio whose central claim is inclusive design — across ages,
-        abilities and contexts — cannot ship a caption that fails contrast.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        The green → blue → violet gradient is retired. It was real accumulated equity, but a
-        signature gradient competes with the cutouts for the eye, and in a page where
-        photography is the only chroma it would read as a second, unrelated accent system.
-        The token is left commented in the stylesheet — reinstating it is one line.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        One hue is then spent deliberately: a warm terracotta, on vector marks only. It is
-        the same temperature as the wood, skin and paper tones the cutouts will carry, so the
-        marks and the photography read as a single palette instead of competing.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        Colour still never carries a distinction alone. Metric families are separated by a
-        solid, dashed or dotted rule and only then tinted — terracotta, blue, plain ink,
-        a trio whose worst simulated separation is ΔE 38 under both deuteranopia and
-        protanopia, against ΔE 5 for the olive-and-terracotta pairing I tested first and
-        discarded. Status works the same way: shipped is filled ink, in trial is an accent
-        hairline, under NDA is a dashed grey hairline with no fill — three fill treatments and
-        three words, so greyscale loses nothing.
-      </p>
-    </div>
-
-    <div class="col-6">
-      <h3 class="t-h3" style="margin-bottom:var(--s-3)">Typefaces</h3>
-      <p class="t-body">
-        <b style="font-weight:600">Figtree</b> replaces Inter as the primary. Inter is a UI
-        face — tuned for 14px interface text, it goes soft and bureaucratic at display size —
-        and the harder grotesks that fix that (Archivo, Space Grotesk) turn squarish and
-        robotic in running prose. Figtree sits between: a geometric-humanist sans with open,
-        even counters that reads effortless at body size, and even, consistent stroke
-        modulation that stays composed when the hero is set light at 112px.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        Display sizes run at 400, not 600. Past roughly 64px the scale already supplies the
-        presence a line needs, and adding stroke weight on top reads as shouting rather than
-        confidence — the slim setting is what keeps a 112px sentence minimal instead of merely
-        large. Headings step to 500 and body stays 400, so weight only ever rises as size falls.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        It also satisfies the constraint that matters most for Rebus: cap-height and baseline
-        are metrically stable across the whole 300–700 range. Pictograms are baseline-locked
-        and optically sized against cap-height, so a face whose caps drift between weights
-        makes every hero line sit wrong. Figtree ships a true italic — drawn, not slanted —
-        down to 300, which the italic subtitle needs.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        <b style="font-weight:600">Caveat</b> is the secondary, and it is deliberately
-        starved. Handwriting carrying the whole label layer turned the page into a notebook
-        pastiche — every caption, tag and stamp in a hand that was never going to hold up at
-        11px with wide tracking. It now appears in exactly three places: the notebook plate,
-        the scroll cue, and the footer wordmark. Measured on the portfolio page itself that
-        is 3.4% of characters and 3.97% of ink — an accent, a signature at the bottom of the
-        page, not a voice that talks over everything.
-      </p>
-      <p class="t-body" style="margin-top:var(--s-3)">
-        Which puts the label layer back on Figtree: micro-labels, captions, tags, stamps,
-        metrics, case numbers and log entries, set small and uppercase with wide tracking.
-        Tabular figures survive the move — Figtree's digits are equal-width too, so metric
-        blocks and log dates still align down a column without a monospace. One family does
-        all the work; the other signs it.
-      </p>
-    </div>
-  </div>
-
-  <div class="spec" style="margin-top:var(--s-6)">
-    <div class="spec-label"><span>note — one item not delivered literally</span><span>asset dependency</span></div>
-    <div class="spec-body">
-      <p class="t-body">
-        Rule 1 of the Rebus system requires photographic cutouts, and photography cannot be
-        authored in code. Every pictogram on this page is therefore an
-        <b style="font-weight:600">asset slot</b> — correctly sized at cap-height × 1.6,
-        baseline-locked, carrying the right <span class="mono">alt</span> text, and visibly a
-        placeholder rather than a vector stand-in. Flat vector or emoji here would violate the
-        rule the system exists to protect, so the slot stays honest and empty until the shot
-        list in §04 is shot. Swapping
-        <span class="mono">&lt;span class="pict slot"&gt;</span> for
-        <span class="mono">&lt;img class="pict" src alt&gt;</span> changes no layout.
-      </p>
-      <p class="t-small" style="margin-top:var(--s-3)">
-        This now carries more weight than it did. With the gradient gone, the cutouts are not
-        an accent among several — they are the only chroma the page has, which makes rule 2
-        (one consistent key light across the whole library) the difference between a system
-        and a collage.
-      </p>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §01 PALETTE ═══════════════════════════ -->
-<section class="wrap band" id="palette">
-  <div class="sec-head">
-    <span class="kicker">01 / colour carries information, and there is none</span>
-    <h2 class="t-h1">Palette</h2>
-    <p class="t-small">Ten values, all achromatic. Ratios measured against pure white.
-      WCAG 2.1 relative luminance.</p>
-  </div>
-
-  <p class="t-micro ink3" style="margin-bottom:var(--s-3)">ground</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="background:#FFFFFF"></div>
-      <div class="meta"><b>paper</b><span class="val">#FFFFFF · pure white</span>whole page; unruled in header and hero</div></div>
-    <div class="sw"><div class="chip" style="background:#F6F6F5"></div>
-      <div class="meta"><b>paper-sunk</b><span class="val">#F6F6F5 · L* 96.9</span>cover slots, spec panels</div></div>
-    <div class="sw"><div class="chip" style="background:#E9E9E7"></div>
-      <div class="meta"><b>rule</b><span class="val">#E9E9E7 · 1.22:1</span>default hairline</div></div>
-    <div class="sw"><div class="chip" style="background:#D6D5D2"></div>
-      <div class="meta"><b>rule-strong</b><span class="val">#D6D5D2 · 1.47:1</span>emphasis hairline, outlines</div></div>
-    <div class="sw"><div class="chip" style="background-image:linear-gradient(rgba(23,24,26,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(23,24,26,.038) 1px,transparent 1px);background-size:36px 36px"></div>
-      <div class="meta"><b>grid-line</b><span class="val">3.8% ink · 72px cell</span>page ruling; off in header + hero</div></div>
-  </div>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">ink — three weights</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="background:#17181A"></div>
-      <div class="meta"><b>ink</b><span class="val">#17181A · 17.77:1 AAA</span>prose, headlines, display</div></div>
-    <div class="sw"><div class="chip" style="background:#5A5D61"></div>
-      <div class="meta"><b>ink-2</b><span class="val">#5A5D61 · 6.62:1 AA</span>captions, metadata, subtitle</div></div>
-    <div class="sw"><div class="chip" style="background:#696C70"></div>
-      <div class="meta"><b>ink-3</b><span class="val">#696C70 · 5.28:1 AA</span>quietest marks, plate, kickers</div></div>
-    <div class="sw"><div class="chip" style="background:#2C2E31"></div>
-      <div class="meta"><b>ink-hover</b><span class="val">#2C2E31 · 13.62:1</span>filled button and stamp hover</div></div>
-    <div class="sw"><div class="chip" style="background:#EBEBEA"></div>
-      <div class="meta"><b>select</b><span class="val">#EBEBEA · 1.19:1</span>text selection ground</div></div>
-  </div>
-
-  <div class="spec" style="margin-top:var(--s-6)">
-    <div class="spec-label"><span>the chroma budget</span><span>one hue · photography · nothing else</span></div>
-    <div class="spec-body on-paper">
-      <div class="grid">
-        <div class="col-6">
-          <p class="t-body">
-            Exactly one hue enters the stylesheet: a warm terracotta, chosen because it sits
-            in the same family as the wood, skin and card tones the cutouts will bring, so
-            the marks and the photography read as one palette rather than two.
-          </p>
-          <p class="t-body" style="margin-top:var(--s-3)">
-            It is spent on vector marks only — a swoosh, a ring, an arrow, a wash — never on
-            prose, never on a panel fill, never as mood. A mark means "do not miss this".
-            Spend it more than once per viewport and it stops meaning anything, which is the
-            same budget the Rebus lines and the filled stamp already answer to.
-          </p>
-        </div>
-        <div class="col-6">
-          <ul class="listrule">
-            <li>no gradient, retired from the system</li>
-            <li>no second accent hue</li>
-            <li>no coloured prose or panel fills</li>
-            <li>no colour used decoratively</li>
-          </ul>
-          <ul class="listrule ok" style="margin-top:var(--s-4)">
-            <li>accent — marks and emphasis only</li>
-            <li>weight — 400 / 500 / 600</li>
-            <li>fill treatment — solid / hairline / dashed</li>
-            <li>rule pattern — solid / dashed / dotted</li>
-            <li>scale, position, whitespace</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <p class="spec-note">
-      Colour never carries a distinction on its own. The metric families are told apart by a
-      solid, dashed or dotted rule first and tinted second; strip the colour out and nothing
-      is lost. Verified against both dichromacies — worst-case simulated separation across
-      the trio is ΔE 38.
-    </p>
-  </div>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">accent — one hue, marks only</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="background:#B84A1B"></div>
-      <div class="meta"><b>accent</b><span class="val">#B84A1B · 5.21:1 AA</span>accent text, kickers, case numbers</div></div>
-    <div class="sw"><div class="chip" style="background:#C2531F"></div>
-      <div class="meta"><b>accent-vivid</b><span class="val">#C2531F · 4.61:1</span>vector marks, sparks, underscore</div></div>
-    <div class="sw"><div class="chip" style="background:#F5E3DB"></div>
-      <div class="meta"><b>accent-wash</b><span class="val">14% accent</span>highlighter; ink on it holds 14.3:1</div></div>
-  </div>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">metric families — pattern first, colour redundant</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="background:#B84A1B"></div>
-      <div class="meta"><b>fam-1 · solid</b><span class="val">#B84A1B · 5.21:1</span>terracotta</div></div>
-    <div class="sw"><div class="chip" style="background:#1F4E7A"></div>
-      <div class="meta"><b>fam-2 · dashed</b><span class="val">#1F4E7A · 8.65:1</span>blue</div></div>
-    <div class="sw"><div class="chip" style="background:#17181A"></div>
-      <div class="meta"><b>fam-3 · dotted</b><span class="val">#17181A · 17.8:1</span>plain ink</div></div>
-  </div>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">card tints — identity, not state</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip-demo" style="height:76px;background:#C7CBF2;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>tint-1</b><span class="val">#C7CBF2 · ink 11.21:1</span>periwinkle — case no. 01</div></div>
-    <div class="sw"><div class="chip-demo" style="height:76px;background:#EFEA85;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>tint-2</b><span class="val">#EFEA85 · ink 14.19:1</span>citron — case no. 02</div></div>
-    <div class="sw"><div class="chip-demo" style="height:76px;background:#CDAEE0;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>tint-3</b><span class="val">#CDAEE0 · ink 9.07:1</span>lilac — case no. 03</div></div>
-    <div class="sw"><div class="chip-demo" style="height:76px;background:#AEDDC4;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>tint-4</b><span class="val">#AEDDC4 · ink 11.79:1</span>mint — case no. 04</div></div>
-    <div class="sw"><div class="chip-demo" style="height:76px;background:#F4C3B4;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>tint-5</b><span class="val">#F4C3B4 · ink 11.26:1</span>blush — case no. 05</div></div>
-  </div>
-  <p class="t-small" style="margin-top:var(--s-4)">
-    The one place colour is identity rather than information. A tint says <em>which case</em>,
-    never <em>what state</em> — state stays in the stamp, which is why the tints can be
-    decorative without costing the system anything. <b style="font-weight:600">Text on a tint is
-    always primary ink</b>: <span class="mono">--ink-2</span> fails AA on four of the five,
-    <span class="mono">--ink</span> clears 9:1 on all of them.
-  </p>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">sticker palette — artwork only</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="height:76px;background:#2C5CE8;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>sticker-blue</b><span class="val">#2C5CE8</span>sticker artwork only</div></div>
-    <div class="sw"><div class="chip" style="height:76px;background:#C8ED3A;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>sticker-lime</b><span class="val">#C8ED3A</span>sticker artwork only</div></div>
-    <div class="sw"><div class="chip" style="height:76px;background:#C2531F;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>accent-vivid</b><span class="val">#C2531F</span>reused, not a new hue</div></div>
-    <div class="sw"><div class="chip" style="height:76px;background:#17181A;border-bottom:1px solid var(--rule)"></div>
-      <div class="meta"><b>ink</b><span class="val">#17181A</span>reused, not a new hue</div></div>
-  </div>
-  <p class="t-small" style="margin-top:var(--s-4)">
-    Two new hues, and they may appear nowhere except inside sticker artwork — not in text,
-    not in a border, not in a fill. The stickers carry no information, so these values are
-    exempt from the contrast and colour-blind rules that govern every other colour in the
-    system; that exemption is the reason they are fenced this tightly.
-  </p>
-
-  <p class="t-micro ink3" style="margin:var(--s-6) 0 var(--s-3)">status — three fill treatments</p>
-  <div class="swatches">
-    <div class="sw"><div class="chip" style="display:grid;place-items:center;background:var(--paper)">
-        <span class="stamp stamp--shipped">shipped</span></div>
-      <div class="meta"><b>shipped</b><span class="val">filled ink · paper label</span>strongest state, it is live</div></div>
-    <div class="sw"><div class="chip" style="display:grid;place-items:center;background:var(--paper)">
-        <span class="stamp stamp--trial">in trial</span></div>
-      <div class="meta"><b>in trial</b><span class="val">solid hairline · ink label</span>real but not yet public</div></div>
-    <div class="sw"><div class="chip" style="display:grid;place-items:center;background:var(--paper)">
-        <span class="stamp stamp--nda">under nda</span></div>
-      <div class="meta"><b>under nda</b><span class="val">dashed hairline · no fill</span>the absence is the information</div></div>
-  </div>
-  <p class="t-small" style="margin-top:var(--s-4)">
-    Each stamp also states its condition in words, so the treatment is reinforcement, never
-    the only cue. Print the page in greyscale and nothing is lost — there was nothing to lose.
-  </p>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §02 TYPOGRAPHY ═══════════════════════════ -->
-<section class="wrap band" id="type">
-  <div class="sec-head">
-    <span class="kicker">02 / two families, no third</span>
-    <h2 class="t-h1">Type scale</h2>
-    <p class="t-small">
-      Figtree (geometric-humanist sans) carries everything: prose, headlines, buttons, Rebus
-      display lines, and the whole label layer — micro-labels, captions, tags, stamps, metrics
-      and log entries. Caveat (handwriting) appears three times on the page and nowhere else.
-      Ratio ≈1.26 through the text band, with a deliberate two-step jump to display for scale contrast.
-    </p>
-  </div>
-
-  <div class="tsrow">
-    <div class="tsmeta"><b>hero</b>figtree 400<br>clamp 44 → 112px<br>lh 1.06 · ls −0.032em</div>
-    <div><p class="t-hero">Speech, on record.</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>display</b>figtree 400<br>clamp 40 → 72px<br>lh 1.05 · ls −0.028em</div>
-    <div><p class="t-display">Speech becomes a record.</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>h1</b>figtree 500<br>clamp 32 → 44px<br>lh 1.12 · ls −0.028em</div>
-    <div><p class="t-h1">Turning a clinician-led test into an instrument</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>h2</b>figtree 500<br>clamp 24 → 32px<br>lh 1.18 · ls −0.022em</div>
-    <div><p class="t-h2">Three user types, one system</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>h3</b>figtree 500<br>24px<br>lh 1.25 · ls −0.016em</div>
-    <div><p class="t-h3">Motor timing as a cognitive signal</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>italic subtitle</b>figtree 300 italic<br>20px<br>lh 1.4 · ls −0.01em</div>
-    <div><p class="t-sub">A screening tool is only as scalable as the workflow around it.</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>body</b>figtree 400<br>17px<br>lh 1.65 · measure 60ch</div>
-    <div><p class="t-body">
-      The standard screening test needs a trained administrator in the room, which caps how
-      many people ever get assessed. I redesigned it as a self-administered speech task, then
-      built the pipeline that extracts usable acoustic and linguistic features from messy
-      real-world recordings.
-    </p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>small body</b>figtree 400<br>15px<br>lh 1.55 · ink-2</div>
-    <div><p class="t-small">
-      Used for supporting prose, specification notes and anything the sixty-second reader
-      may skip without losing the argument.
-    </p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>metric numeral</b>figtree 500<br>44px · tabular<br>ls −0.025em</div>
-    <div>
-      <p class="t-metric">0123456789</p>
-      <p class="t-caption" style="margin-top:var(--s-2)">tabular figures — Figtree's digits share one advance, so columns align without a monospace</p>
-    </div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>micro-label</b>figtree 500<br>11px uppercase<br>ls +0.1em</div>
-    <div><p class="t-micro">speech × cognition × care</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>caption</b>figtree 400<br>13px<br>ls +0.005em · ink-2</div>
-    <div><p class="t-caption">fig. 01 — self-administered screening, no clinician present</p></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>tag</b>figtree 500<br>11px uppercase<br>ls +0.08em</div>
-    <div><span class="tag">clinical AI</span></div>
-  </div>
-  <div class="tsrow">
-    <div class="tsmeta"><b>the hand</b>caveat 500<br>17–24px<br>three uses, page-wide</div>
-    <div>
-      <p style="font-family:var(--hand);font-size:1.5rem;line-height:1.4">field notebook — vol. 01</p>
-      <p class="t-caption" style="margin-top:var(--s-2)">
-        notebook plate · scroll cue · footer wordmark. Nothing else. 3.4% of characters on
-        the portfolio page, measured — if it grows past that it stops being a signature.
-      </p>
-    </div>
-  </div>
-
-  <div class="spec" style="margin-top:var(--s-6)">
-    <div class="spec-label"><span>measure — not negotiable</span><span>65–72 characters</span></div>
-    <div class="spec-body on-paper">
-      <p class="t-body" style="border-left:1px solid var(--rule-strong);padding-left:var(--s-3)">
-        This paragraph sits at the enforced measure. The token is
-        <span class="mono">--prose: 46ch</span>, not 68ch, because <span class="mono">1ch</span>
-        is the advance of the digit zero, which runs far wider than Figtree's average
-        lowercase glyph — so the value was set by measuring rendered lines in the browser,
-        not by arithmetic. Forty-six <span class="mono">ch</span> renders at 66–72 actual
-        characters per line, inside the 65–72 band that protects the sixty-second read.
-      </p>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §03 GRID + SPACE ═══════════════════════════ -->
-<section class="wrap band" id="grid">
-  <div class="sec-head">
-    <span class="kicker">03 / every value a multiple of eight</span>
-    <h2 class="t-h1">Grid and spacing</h2>
-  </div>
-
-  <div class="grid">
-    <div class="col-7">
-      <p class="t-micro ink3" style="margin-bottom:var(--s-3)">12 columns · 1120px max · 24px gutter</p>
-      <div class="griddemo">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div class="log" style="margin-top:var(--s-5)">
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>container</span><span class="decision">1120px, fixed</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>columns</span><span class="decision">12, equal, gutter 24px → 16px under 640</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>margin ≥ 1025px</span><span class="decision">80px</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>margin 641–1024px</span><span class="decision">48px</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>margin ≤ 640px</span><span class="decision">24px</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>border radius</span><span class="decision">2px default — squared, not rounded</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>radius exception</span><span class="decision">16px on work cards, collage tiles and cover panels; pill on chips</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>elevation</span><span class="decision">none for layout. hairlines and whitespace only</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>shadow exception</span><span class="decision">stickers and a popped card only — physical objects, not panels</span></div>
-        <div class="logrow" style="grid-template-columns:1fr 1fr">
-          <span>section rhythm</span><span class="decision">96px band, 64px under 640</span></div>
-      </div>
-    </div>
-
-    <div class="col-5">
-      <p class="t-micro ink3" style="margin-bottom:var(--s-3)">base unit 8px · half-step 4px</p>
-      <div class="spacerow"><span class="spaceval">--s-1 · 4px</span><span class="spacebar" style="width:4px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-2 · 8px</span><span class="spacebar" style="width:8px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-3 · 16px</span><span class="spacebar" style="width:16px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-4 · 24px</span><span class="spacebar" style="width:24px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-5 · 32px</span><span class="spacebar" style="width:32px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-6 · 48px</span><span class="spacebar" style="width:48px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-7 · 64px</span><span class="spacebar" style="width:64px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-8 · 96px</span><span class="spacebar" style="width:96px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-9 · 128px</span><span class="spacebar" style="width:128px"></span></div>
-      <div class="spacerow"><span class="spaceval">--s-10 · 192px</span><span class="spacebar" style="width:192px"></span></div>
-
-      <div class="spec" style="margin-top:var(--s-5)">
-        <div class="spec-label"><span>ratio discipline</span></div>
-        <div class="spec-body">
-          <p class="t-small" style="margin:0">
-            85% quiet Utilitarian · 10% Bento structure · 5% loud.
-            One loud element per viewport in the reading column — one Rebus line, or one
-            filled stamp, or one accent mark. The work carousel and the collage are the
-            deliberate exception: colour arrives all at once, in a band, then stops. That
-            concentration is what keeps the rest of the page quiet.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §04 REBUS ═══════════════════════════ -->
-<section class="wrap band" id="rebus">
-  <div class="sec-head">
-    <span class="kicker">04 / the system fails fastest here</span>
-    <h2 class="t-h1">Rebus rules</h2>
-    <p class="t-small">
-      Inconsistent cutouts read as clip art, and clip art destroys clinical credibility.
-      Rebus appears in exactly three places: the hero line, section headlines, and one line
-      per project card. Nowhere else — and now it carries all of the page's colour.
-    </p>
-  </div>
-
-  <ol class="rules">
-    <li><b>Photographic cutouts only.</b>
-      <span class="why">Real objects knocked out of white, hard-edged. Never flat vector, never emoji, never line icons.</span></li>
-    <li><b>Consistent key light, top-left, roughly 35°.</b>
-      <span class="why">Every object in the library lit identically or the set will not cohere. This is a shoot specification, not a post-production note — and with no palette behind it, an inconsistent library has nothing to hide behind.</span></li>
-    <li><b>No shadow on the cutout.</b>
-      <span class="why">A shadow breaks the baseline, and Utilitarian forbids decoration.</span></li>
-    <li><b>Height = cap-height × 1.6, baseline-aligned, small optical side bearing.</b>
-      <span class="why">Figtree cap-height ≈ 0.70em, so <span class="mono">--pict-h: 1.12em</span> with <span class="mono">--pict-bearing: .12em</span> either side. <span class="mono">vertical-align: baseline</span> puts the box bottom on the baseline; no transform nudge.</span></li>
-    <li><b>Maximum three pictograms per sentence. Two is better.</b>
-      <span class="why">Past three the sentence stops being a sentence.</span></li>
-    <li><b>The deletion test.</b>
-      <span class="why">The sentence must still read correctly with every image removed. Pictograms replace nouns only — never verbs, never grammar. Use the toggle at the bottom right of this page to check any line.</span></li>
-  </ol>
-
-  <div class="spec" style="margin-top:var(--s-6)">
-    <div class="spec-label"><span>worked example — hero line, two pictograms</span><span>passes deletion test</span></div>
-    <div class="spec-body on-paper">
-      <h3 class="t-display" style="max-width:22ch">
-        I design AI
-        <span class="pict slot" role="img" aria-label="products">products</span><span class="pict-word">products</span>
-        and
-        <span class="pict slot" role="img" aria-label="journeys">journeys</span><span class="pict-word">journeys</span>
-        people <span class="mk-under">actually use</span>.
-      </h3>
-    </div>
-    <p class="spec-note">
-      Nouns replaced: <b style="font-weight:600">products</b> (phone in one hand cutout) and
-      <b style="font-weight:600">journeys</b> (sticky-note journey map cutout) — the object
-      stands for the word, and <span class="mono">alt</span> stays the exact word. Deletion
-      test — "I design AI products and journeys people actually use." Reads. Two pictograms,
-      under the maximum of three. Nine words: at 112px a hero line has to be short enough to
-      land in one fixation, and every word past about ten is spent on nothing. The line names
-      the craft, not one user group — the domains belong in the subline, where they can widen
-      without rewriting the headline.
-    </p>
-  </div>
-
-  <div class="grid" style="margin-top:var(--s-6)">
-    <div class="col-6">
-      <h3 class="t-h3" style="margin-bottom:var(--s-3)">Accessibility contract</h3>
-      <p class="t-body">
-        Every pictogram carries <span class="mono">alt</span> equal to the exact word it
-        replaces — <span class="mono">alt="microphone"</span>, not
-        <span class="mono">alt="a microphone on a desk"</span>. A sentence built from images is
-        hostile to screen readers, so this is mandatory, not advisory. Slots use
-        <span class="mono">role="img"</span> with <span class="mono">aria-label</span> to
-        behave identically before the photography lands.
-      </p>
-      <div class="spec" style="margin-top:var(--s-4)">
-        <div class="spec-label"><span>production markup</span></div>
-        <div class="spec-body">
-          <p class="mono" style="font-size:.75rem;line-height:1.7;margin:0;color:var(--ink-2)">
-            &lt;img class="pict"<br>
-            &nbsp;&nbsp;src="/pict/microphone.png"<br>
-            &nbsp;&nbsp;alt="microphone"&gt;
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-6">
-      <h3 class="t-h3" style="margin-bottom:var(--s-3)">Object vocabulary — the shot list</h3>
-      <p class="t-small" style="margin-bottom:var(--s-3)">
-        Domain-specific, never generic. This is where the personality lives, and it is the
-        only warmth and the only colour the page gets.
-      </p>
-      <div class="cindex">
-        <a href="#rebus"><span class="n">01</span> microphone</a>
-        <a href="#rebus"><span class="n">02</span> audio waveform strip</a>
-        <a href="#rebus"><span class="n">03</span> spectrogram slice</a>
-        <a href="#rebus"><span class="n">04</span> stopwatch</a>
-        <a href="#rebus"><span class="n">05</span> pair of hands, mid-gesture</a>
-        <a href="#rebus"><span class="n">06</span> clipboard</a>
-        <a href="#rebus"><span class="n">07</span> pill blister pack</a>
-        <a href="#rebus"><span class="n">08</span> brain scan slice</a>
-        <a href="#rebus"><span class="n">09</span> wearable on a wrist</a>
-        <a href="#rebus"><span class="n">10</span> sticky-note journey map</a>
-        <a href="#rebus"><span class="n">11</span> phone in one hand</a>
-        <a href="#rebus"><span class="n">12</span> signed consent form</a>
-      </div>
-      <p class="t-small" style="margin-top:var(--s-4)">
-        Shoot all twelve in one session, one light setup, one white sweep. A library shot
-        across three sessions will not cohere, and the cohesion is the whole asset.
-      </p>
-    </div>
-  </div>
-
-  <div class="pair" style="margin-top:var(--s-6)">
-    <div>
-      <p class="t-micro ink3" style="margin-bottom:var(--s-3)">forbidden — not even as accents</p>
-      <p class="t-small" style="margin:0 0 var(--s-3)">
-        Amended three times: the ban on hand-drawn marks is lifted for the handwritten
-        secondary and the hover spark; the page spends one accent hue on vector marks; and
-        shadows are permitted on exactly two things — a sticker and a card lifted by hover.
-        Both are objects pretending to sit above the page, which is the one case a shadow
-        states something true. No panel, no card at rest, and no layout surface gets one.
-      </p>
-      <ul class="listrule">
-        <li>glassmorphism · blur · frosted panels</li>
-        <li>scrapbook texture · washi tape · doodles</li>
-        <li>ethereal or coquette softness</li>
-        <li>Y2K · vaporwave · synthwave</li>
-        <li>neo-brutalist loud colour · type maximalism</li>
-        <li>drop shadows on panels, cards at rest, or any layout surface</li>
-        <li>dark mode, or a toggle for it</li>
-        <li>a second accent hue</li>
-        <li>colour used decoratively rather than to mark</li>
-      </ul>
-    </div>
-    <div>
-      <p class="t-micro ink3" style="margin-bottom:var(--s-3)">borrowed from neo-brutalism — layout only</p>
-      <ul class="listrule ok">
-        <li>stark layout</li>
-        <li>purposeful asymmetry</li>
-        <li>scale contrast — display against 11px mono</li>
-        <li>hairline structure doing all the work</li>
-      </ul>
-      <p class="t-small" style="margin-top:var(--s-4)">
-        Rebus is a punchline style and needs a straight man. Deadpan spec-sheet body copy
-        under a witty headline is sharper than clever-on-clever, and it makes clinical
-        metrics read as evidence rather than marketing.
-      </p>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §05 COMPONENTS ═══════════════════════════ -->
-<section class="wrap band" id="components">
-  <div class="sec-head">
-    <span class="kicker">05 / nineteen components, each in use</span>
-    <h2 class="t-h1">Components</h2>
-    <p class="t-small">Real portfolio content throughout. Figures shown as
-      <span class="mono ph">[XX%]</span> are placeholders awaiting Wendy's actual numbers —
-      inventing them would undercut the evidence the page is built to present. The metric
-      block below is documented as a component but no longer appears inside a work card.</p>
-  </div>
-
-  <div class="cindex" style="margin-bottom:var(--s-6)">
-    <a href="#c01"><span class="n">01</span> nav bar</a>
-    <a href="#c02"><span class="n">02</span> notebook plate</a>
-    <a href="#c03"><span class="n">03</span> metadata strip</a>
-    <a href="#c04"><span class="n">04</span> rebus display line</a>
-    <a href="#c05"><span class="n">05</span> button, filled</a>
-    <a href="#c06"><span class="n">06</span> button, outline</a>
-    <a href="#c07"><span class="n">07</span> status stamp</a>
-    <a href="#c08"><span class="n">08</span> project card</a>
-    <a href="#c09"><span class="n">09</span> metric block</a>
-    <a href="#c10"><span class="n">10</span> tag pill</a>
-    <a href="#c11"><span class="n">11</span> figure + caption</a>
-    <a href="#c12"><span class="n">12</span> proof row</a>
-    <a href="#c13"><span class="n">13</span> full-bleed rule</a>
-    <a href="#c16"><span class="n">16</span> work card, carousel</a>
-    <a href="#c17"><span class="n">17</span> object collage</a>
-    <a href="#c18"><span class="n">18</span> tool chip</a>
-    <a href="#c19"><span class="n">19</span> sticker field</a>
-    <a href="#marks"><span class="n">a–f</span> accent marks</a>
-    <a href="#c14"><span class="n">14</span> log entry row</a>
-    <a href="#c15"><span class="n">15</span> footer</a>
-  </div>
-
-  <!-- 01 nav -->
-  <div class="spec reveal" id="c01">
-    <div class="spec-label"><span>01 — nav bar</span><span>sliding underscore · mono routes</span></div>
-    <div class="spec-body on-paper">
-      <nav class="nav" aria-label="Component demo">
-        <ul>
-          <li><a href="#c01" aria-current="page"><span class="n">/01</span> work</a></li>
-          <li><a href="#c01"><span class="n">/02</span> about</a></li>
-          <li><a href="#c01"><span class="n">/03</span> virtual gallery</a></li>
-          <li><a href="#c01"><span class="n">/04</span> resume</a></li>
-          <li><a href="#c01"><span class="n">/05</span> contact</a></li>
-        </ul>
-        <span class="nav-underscore" aria-hidden="true"></span>
-      </nav>
-    </div>
-    <p class="spec-note">
-      Route numerals are tertiary ink until hover or active. The underscore is a single 1px
-      element that translates between items over 200ms — one moving part, so the eye tracks
-      position rather than five independent underlines appearing. Live instance is fixed at
-      the top of this page.
-    </p>
-  </div>
-
-  <!-- 02 plate + 03 metastrip -->
-  <div class="grid" style="margin-top:var(--s-4)">
-    <div class="col-6">
-      <div class="spec reveal" id="c02" style="height:100%">
-        <div class="spec-label"><span>02 — notebook plate</span><span>3 lines · tertiary ink</span></div>
-        <div class="spec-body on-paper">
-          <div class="plate">
-            field notebook — vol. 01<br>
-            <b>hong kong · 2026</b><br>
-            speech × cognition × care
-          </div>
-        </div>
-        <p class="spec-note">
-          Top-left, always three lines, always lowercase. The metaphor's entire visual budget
-          is spent here. Middle line steps up to ink-2 to give the block an internal
-          hierarchy without adding size.
-        </p>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="spec reveal" id="c03" style="height:100%">
-        <div class="spec-label"><span>03 — metadata strip</span><span>single row · · separators</span></div>
-        <div class="spec-body on-paper">
-          <div class="metastrip">
-            <span>Hong Kong</span><span class="sep" aria-hidden="true">·</span>
-            <span>AI Product &amp; Design @ CPII</span><span class="sep" aria-hidden="true">·</span>
-            <span>Psychology + MSc HCI (UCL)</span>
-          </div>
-        </div>
-        <p class="spec-note">
-          One row, wraps but never becomes two deliberate lines. Separators sit at
-          rule-strong so they read as punctuation, not content.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 04 rebus -->
-  <div class="spec reveal" id="c04" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>04 — rebus display line</span><span>inline image · baseline-locked</span></div>
-    <div class="spec-body on-paper">
-      <h3 class="t-h1" style="max-width:26ch">
-        Cognitive decline shows up in a
-        <span class="pict slot" role="img" aria-label="voice">voice</span><span class="pict-word">voice</span>
-        before it shows up in a
-        <span class="pict slot" role="img" aria-label="clipboard">clipboard</span><span class="pict-word">clipboard</span>.
-      </h3>
-    </div>
-    <p class="spec-note">
-      Section-headline scale, two pictograms. Sized at cap-height × 1.6 so the object reads
-      as a word rather than an image sitting in text.
-    </p>
-  </div>
-
-  <!-- 05 + 06 buttons -->
-  <div class="grid" style="margin-top:var(--s-4)">
-    <div class="col-6">
-      <div class="spec reveal" id="c05" style="height:100%">
-        <div class="spec-label"><span>05 — button, filled</span><span>ink fill · paper label</span></div>
-        <div class="spec-body on-paper">
-          <a class="btn" href="#work">see the work <span aria-hidden="true">→</span></a>
-        </div>
-        <p class="spec-note">One filled button per viewport. It is the only solid ink mass in the system besides the shipped stamp.</p>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="spec reveal" id="c06" style="height:100%">
-        <div class="spec-label"><span>06 — button, outline</span><span>hairline border · no fill</span></div>
-        <div class="spec-body on-paper">
-          <a class="btn btn--outline" href="#work">how I work with AI</a>
-        </div>
-        <p class="spec-note">Border moves rule-strong → ink on hover in 120ms. Confirms the target; reveals nothing.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 07 stamps -->
-  <div class="spec reveal" id="c07" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>07 — status stamp</span><span>rotate(−1.8deg) · three variants</span></div>
-    <div class="spec-body on-paper">
-      <div style="display:flex;gap:var(--s-4);flex-wrap:wrap;align-items:center">
-        <span class="stamp stamp--shipped">shipped</span>
-        <span class="stamp stamp--trial">in trial</span>
-        <span class="stamp stamp--nda">under nda</span>
-      </div>
-    </div>
-    <p class="spec-note">
-      Rotation is 1.8° — enough to read as stamped, not enough to read as decorative.
-      It straightens to 0° on card hover, which confirms the card is interactive.
-      The three states step down in ink density: filled, outlined, dashed. <b style="font-weight:600">UNDER NDA</b>
-      has no fill at all — the absence of ink is the information.
-    </p>
-  </div>
-
-  <!-- 08 project card -->
-  <div class="spec reveal" id="c08" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>08 — project card</span><span>full-width bento cell · shipped variant</span></div>
-    <div class="spec-body on-paper">
-      <a class="card" href="#c08" style="margin-top:11px">
-        <span class="stamp stamp--shipped">shipped · live</span>
-        <div class="cover">
-          <span class="t-micro">cover slot 16:9 — hand tracking, bilateral comparison</span>
-        </div>
-        <figcaption style="margin-bottom:var(--s-4)">fig. 04 — built and shipped in a weekend with Claude Code</figcaption>
-        <div class="card-head">
-          <h3 class="t-h3" style="max-width:24ch">HandSync — motor timing as a cognitive signal</h3>
-          <span class="caseno">case no. 04 · 2026 <span aria-hidden="true">→</span></span>
-        </div>
-        <p class="t-sub" style="max-width:34ch">
-          If speech carries cognitive signal, so does the way two
-          <span class="pict slot" role="img" aria-label="hands">hands</span><span class="pict-word">hands</span>
-          disagree.
-        </p>
-        <p class="t-body">
-          An open-source hand-pose model tracks both hands through a timed task; the app
-          measures reaction time and left-right bilateral difference, then generates a
-          plain-language cognitive report. Built end to end in Claude Code using a Hugging
-          Face detection API. Live, free, and
-          <span class="m ph">[XX]</span> sessions recorded so far.
-        </p>
-        <p class="t-micro ink2" style="margin-top:var(--s-4)">aligned: solo build · 2 clinical reviewers</p>
-        <div class="proof">
-          <span class="btn btn--outline">try it live <span aria-hidden="true">↗</span></span>
-          <span class="btn btn--outline">github <span aria-hidden="true">↗</span></span>
-        </div>
-        <div class="tags">
-          <span class="tag">claude code</span><span class="tag">computer vision</span>
-          <span class="tag">0→1</span><span class="tag">shipped solo</span>
-        </div>
-      </a>
-    </div>
-    <p class="spec-note">
-      Fixed order, every card: stamp → cover → fig. caption → title + case no. → one Rebus
-      line → deadpan body → alignment row → proof row → tags. The Rebus line is the card's
-      single loud element; everything under it is spec sheet. Metric blocks were pulled out
-      of the cards — three numerals plus three captions per card buried the one sentence that
-      actually sells the work.
-      <b style="font-weight:600">This is now the case study page card.</b> The home page runs
-      component 16 instead: the same content, compact, in a horizontal row.
-    </p>
-  </div>
-
-  <!-- 09 metric block -->
-  <div class="spec reveal" id="c09" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>09 — metric block</span><span>bento group · tabular · no hue</span></div>
-    <div class="spec-body on-paper">
-      <div class="metrics" style="margin-top:0">
-        <div class="metric m1">
-          <span class="fam">family 01 — solid</span>
-          <span class="t-metric">[XX]%</span>
-          <span class="cap">completion without assistance</span>
-        </div>
-        <div class="metric m2">
-          <span class="fam">family 02 — dashed</span>
-          <span class="t-metric">[XX]%</span>
-          <span class="cap">administrator time per screening</span>
-        </div>
-        <div class="metric m3">
-          <span class="fam">family 03 — dotted</span>
-          <span class="t-metric">[XX]</span>
-          <span class="cap">participants tested</span>
-        </div>
-      </div>
-      <div class="metrics">
-        <div class="metric m1"><span class="t-metric">20,000</span><span class="cap">users served</span></div>
-        <div class="metric m1"><span class="t-metric">4</span><span class="cap">products in trial</span></div>
-        <div class="metric m1"><span class="t-metric">2,048</span><span class="cap">recordings processed</span></div>
-      </div>
-    </div>
-    <p class="spec-note">
-      One family per project card — never three inside one card. The 3px top rule is the whole
-      distinction: solid, dashed, dotted. Because no hue is involved, the block is identical
-      for every reader, colour-blind or not, and survives greyscale printing. Second row shows
-      real numerals holding a tabular column.
-    </p>
-  </div>
-
-  <!-- 10 tag + 11 figure -->
-  <div class="grid" style="margin-top:var(--s-4)">
-    <div class="col-5">
-      <div class="spec reveal" id="c10" style="height:100%">
-        <div class="spec-label"><span>10 — tag pill</span><span>hairline outline · no fill</span></div>
-        <div class="spec-body on-paper">
-          <div class="tags" style="margin-top:0">
-            <span class="tag">VUI</span><span class="tag">clinical AI</span>
-            <span class="tag">older adults</span><span class="tag">speech features</span>
-            <span class="tag">product strategy</span><span class="tag">explainable AI</span>
-            <span class="tag">ethics</span>
-          </div>
-        </div>
-        <p class="spec-note">Never filled. Tags classify; they do not rank.</p>
-      </div>
-    </div>
-    <div class="col-7">
-      <div class="spec reveal" id="c11" style="height:100%">
-        <div class="spec-label"><span>11 — figure + caption</span><span>fig. 0X — mono caption</span></div>
-        <div class="spec-body on-paper">
-          <figure>
-            <div class="cover" style="aspect-ratio:16/7;max-height:none">
-              <span class="t-micro">cover slot — the test screen an 80-year-old runs alone</span>
-            </div>
-            <figcaption>fig. 01 — self-administered screening, no clinician present</figcaption>
-          </figure>
-        </div>
-        <p class="spec-note">
-          Every image on the site carries one. Numbering runs continuously down the page,
-          never restarting per section — that is what makes it read as one document.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 12 proof row -->
-  <div class="spec reveal" id="c12" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>12 — proof row</span><span>links above a hairline</span></div>
-    <div class="spec-body on-paper">
-      <p class="t-small" style="margin-bottom:0">A screening tool is only as scalable as the workflow around it.</p>
-      <div class="proof">
-        <span class="btn btn--outline">request demo access</span>
-        <span class="btn btn--outline">read the log <span aria-hidden="true">→</span></span>
-      </div>
-    </div>
-    <p class="spec-note">
-      One or two links, never three. The hairline above them is the card's only internal
-      division — it separates the claim from the evidence. If it cannot be clicked, it did
-      not ship; under NDA, "request demo access" is the click.
-    </p>
-  </div>
-
-  <!-- 13 full-bleed rule -->
-  <div class="spec reveal" id="c13" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>13 — full-bleed rule</span><span>replaces the aurora gradient</span></div>
-    <div class="spec-body on-paper" style="padding-left:0;padding-right:0">
-      <div class="mono" style="font-size:.6875rem;color:var(--ink-3);letter-spacing:.06em;padding:0 var(--s-4) var(--s-4)">ink — section break</div>
-      <hr class="bleed-rule">
-      <div class="mono" style="font-size:.6875rem;color:var(--ink-3);letter-spacing:.06em;padding:var(--s-4) var(--s-4) var(--s-4)">rule-strong — quiet variant</div>
-      <hr class="bleed-rule bleed-rule--quiet">
-    </div>
-    <p class="spec-note">
-      The gradient bar this slot originally held is retired. What the page actually needed
-      from it was a single edge-to-edge horizontal that says "the document starts here" —
-      a 1px ink rule does that, and unlike the gradient it can be used more than once
-      without becoming a motif. On the live page the ink variant sits under the hero;
-      the quiet variant separates the case sequence from the closing.
-    </p>
-  </div>
-
-  <!-- 16 / 17 / 18 -->
-  <div class="spec reveal" id="c16" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>16 — work card, carousel</span><span>16px radius · tinted cover · horizontal row</span></div>
-    <div class="spec-body on-paper">
-      <div style="display:flex;gap:var(--s-4);overflow-x:auto;padding:4px">
-        <a class="wcard" href="#c16" style="flex:0 0 300px" data-sticker="hands">
-          <span class="wcard-sticker" aria-hidden="true"></span>
-          <div class="wcard-top">
-            <span class="stamp stamp--shipped">shipped · live</span>
-            <span class="go" aria-hidden="true">↗</span>
-          </div>
-          <h3>HandSync — motor timing as a cognitive signal</h3>
-          <p>A hand-pose model tracks both hands through a timed task and writes a
-             plain-language report.</p>
-          <span class="proof-min">try it live ↗</span>
-          <span class="caseno" style="margin-bottom:var(--s-3)">case no. 04 · 2026</span>
-          <div class="cover-tint tint-4"><span class="t-micro">hand tracking, bilateral comparison</span></div>
-        </a>
-      </div>
-    </div>
-    <p class="spec-note">
-      Fixed order: stamp + arrow → title → two-line description → one proof link → case no.
-      → tinted cover. Everything that made the old stacked card long — metrics, tags,
-      alignment row, figure caption — moves to the case study page the card links to. The row
-      bleeds past the container on both sides so it reads as continuing off-screen, and
-      snaps per card. Component 08 remains the full-width card for that case study page.
-    </p>
-  </div>
-
-  <div class="spec reveal" id="c17" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>17 — object collage</span><span>retired from the hero · case study pages</span></div>
-    <div class="spec-body on-paper">
-      <nav class="collage" style="margin-top:0" aria-label="The five cases, by cover object">
-        <a class="tile tint-1" href="#case01"><span class="obj t-micro">microphone</span><span class="tile-cap">case no. 01 — CogniSpeak</span></a>
-        <a class="tile tint-2" href="#case02"><span class="obj t-micro">clipboard</span><span class="tile-cap">case no. 02 — Community</span></a>
-        <a class="tile tint-3" href="#case03"><span class="obj t-micro">brain scan</span><span class="tile-cap">case no. 03 — Risk visualisation</span></a>
-        <a class="tile tint-4" href="#case04"><span class="obj t-micro">pair of hands</span><span class="tile-cap">case no. 04 — HandSync</span></a>
-        <a class="tile tint-5" href="#case05"><span class="obj t-micro">wearable on a wrist</span><span class="tile-cap">case no. 05 — Working with AI</span></a>
-      </nav>
-    </div>
-    <p class="spec-note">
-      <b style="font-weight:600">No longer used on the home page.</b> The sticker field does
-      the job the collage was doing there, and running both put two competing object piles in
-      one band. It is kept documented and working for case study pages, where a row of case
-      covers still earns its place.
-      <br><br>
-      Five tiles, rotations between −9° and +10°, one per case and tinted to match. The
-      collage is a window: at rest each card is pushed down so roughly its lower half sits
-      below the container edge and is clipped, leaving a row of card tops. Hovering or
-      focusing one straightens it and slides the whole card up into view and gives it a
-      shadow — the only card in the system that gets one, because it is the only one claiming
-      to be off the page. The other four drop to 55%; the pop needs somewhere to pop
-      <em>from</em>. A caption names the case.
-      <b style="font-weight:600">Every tile is a real link</b>, not a hover trick: the pop is
-      driven by <span class="mono">:hover</span> and <span class="mono">:focus-visible</span>
-      together, so a keyboard reaches every case in the collage. Rotation, lift and scale are
-      all dropped under reduced motion; the caption still fades in.
-    </p>
-  </div>
-
-  <div class="spec reveal" id="c18" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>18 — tool chip</span><span>pill · tint dot · floats over the statement</span></div>
-    <div class="spec-body on-paper">
-      <div style="display:flex;flex-wrap:wrap;gap:10px">
-        <span class="chip"><span class="dot tint-1" aria-hidden="true"></span>Claude Code</span>
-        <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Claude Design</span>
-        <span class="chip"><span class="dot tint-4" aria-hidden="true"></span>ChatGPT</span>
-        <span class="chip"><span class="dot tint-5" aria-hidden="true"></span>ElevenLabs</span>
-        <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Hugging Face</span>
-      </div>
-    </div>
-    <p class="spec-note">
-      The one component that uses the sans at small size rather than the hand — a tool name is
-      a proper noun, not an annotation. Above 900px the chips position absolutely over the
-      statement type; below that they stop floating and become an ordinary wrapped list, because
-      overlapping type on a phone is unreadable. Chips may clip a letterform but must never
-      cover a whole word.
-    </p>
-  </div>
-
-  <div class="spec reveal" id="c19" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>19 — sticker field</span><span>hero only · one instance · decorative</span></div>
-    <div class="spec-body on-paper">
-      <div id="stickerStrip" style="display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:center"></div>
-    </div>
-    <p class="spec-note">
-      Ten die-cut stickers, chosen from twenty-four across the two sheets: microphone, brain,
-      two generations, health data, hands, mind, eye, globe, pen, wand. Fourteen were left
-      out — ear, research-to-product pipeline, feature cluster, shield, component squares,
-      magnet, selection marquee, flame, peace hand, ID cards, asterisk, link, blend, browser
-      window. The object vocabulary is the one place in the system that has to be specific to
-      this work, so a shallower pile where every object means something beats a deeper one
-      padded out to fill the band.
-      <br><br>
-      They sprinkle in from above the fold when the hero is first reached, fall under
-      gravity, collide, and pile on the banner floor. Any one can be dragged and thrown; the
-      rest scatter and re-settle. Bodies are circles — the artwork is
-      roughly as wide as it is tall, so a bounding circle is a close proxy, where the
-      reference used capsules because its labels were long text pills. Spin comes from
-      tangential impulse at each contact, which is what makes them tumble and roll instead
-      of sliding. The loop sleeps after 40 idle frames and wakes on interaction or resize.
-      <br><br>
-      <b style="font-weight:600">This is Wendy's own artwork</b>, not a stand-in — cut from
-      two 3&times;4 sheets by <span class="mono">slice_stickers.py</span>, which floods the
-      magenta ground away from each cell's edges inward, drops any small blob bleeding in
-      from the neighbouring row, then trims and squares the result to 256&times;256 RGBA. The
-      die-cut white edge is the artwork's own; it reads as invisible against this page's white
-      ground and exists so a sticker survives being placed on any other surface.
-      <br><br>
-      Each is inlined as a base64 <span class="mono">PNG</span> in an
-      <span class="mono">IMAGES</span> map keyed by sticker name, so the page stays
-      self-contained and offline. A drawn SVG fallback remains in the source for any key
-      whose cutout has not been supplied; with all eleven present, none of it renders.
-    </p>
-  </div>
-
-  <!-- accent marks -->
-  <div class="spec reveal" id="marks" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>accent marks — a to f</span><span>one hue · one mark per viewport</span></div>
-    <div class="spec-body on-paper">
-      <div class="grid">
-        <div class="col-6">
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">a — wash</p>
-          <p class="t-h3" style="margin-bottom:var(--s-5)">Completion without <span class="mk-wash">assistance</span></p>
-
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">b — swoosh</p>
-          <p class="t-h3" style="margin-bottom:var(--s-5)">Screening older adults <span class="mk-under">can finish alone</span></p>
-
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">c — ring</p>
-          <p class="t-h3" style="margin-bottom:var(--s-2)">Shipped in <span class="mk-ring">one weekend</span></p>
-        </div>
-        <div class="col-6">
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">d — arrow</p>
-          <p class="t-h3" style="margin-bottom:var(--s-5)">Try it live <span class="mk-arrow" aria-hidden="true"></span></p>
-
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">e — asterisk</p>
-          <p class="t-h3" style="margin-bottom:var(--s-5)">Under NDA<span class="mk-star" aria-hidden="true"></span></p>
-
-          <p class="t-micro ink3" style="margin-bottom:var(--s-2)">f — brackets</p>
-          <div class="mk-bracket" style="display:inline-block;padding:var(--s-3) var(--s-4);border:1px solid var(--rule)">
-            <span class="t-micro">the one thing to read</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <p class="spec-note">
-      Marks are decoration only in the sense that they carry no text — every one of them
-      points at something the reader must not miss, and a mark with nothing behind it is
-      noise. They are purely presentational, so each is <span class="mono">aria-hidden</span>
-      or a background image: a screen reader hears the sentence, never the swoosh. Colour is
-      the only thing they add, which is why the budget is one per viewport.
-    </p>
-  </div>
-
-  <!-- 14 log -->
-  <div class="spec reveal" id="c14" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>14 — log entry row</span><span>date · project · decision · trade-off</span></div>
-    <div class="spec-body on-paper">
-      <div class="log">
-        <div class="log-head t-micro">
-          <span>date</span><span>project</span><span>decision</span><span>trade-off</span>
-        </div>
-        <div class="logrow">
-          <span class="date">2026·07·24</span>
-          <span>HandSync</span>
-          <span class="decision">Shipped with bilateral difference as the headline metric</span>
-          <span class="tradeoff">Reaction time is easier to explain but less specific</span>
-        </div>
-        <div class="logrow">
-          <span class="date">2026·06·11</span>
-          <span>CogniSpeak</span>
-          <span class="decision">Dropped the clinician-present fallback from the test flow</span>
-          <span class="tradeoff">Loses a safety net; forces the self-serve path to actually work</span>
-        </div>
-        <div class="logrow">
-          <span class="date">2026·05·02</span>
-          <span>Community</span>
-          <span class="decision">Staff dashboard shows progress, not scores</span>
-          <span class="tradeoff">Slower triage for NGO staff; keeps clinical reads with clinicians</span>
-        </div>
-        <div class="logrow">
-          <span class="date">2026·03·19</span>
-          <span>Risk visualisation</span>
-          <span class="decision">Risk shown as a band, never a single number</span>
-          <span class="tradeoff">Harder to skim; stops a probabilistic score reading as a diagnosis</span>
-        </div>
-      </div>
-    </div>
-    <p class="spec-note">
-      Four fields, one line, all mono so the dates form a column. Collapses to stacked lines
-      under 860px. The trade-off field is not optional — a decision without a stated cost is
-      a feature list, and the reasoning is the actual portfolio.
-    </p>
-  </div>
-
-  <!-- 15 footer -->
-  <div class="spec reveal" id="c15" style="margin-top:var(--s-4)">
-    <div class="spec-label"><span>15 — footer</span><span>wordmark · socials · last shipped</span></div>
-    <div class="spec-body on-paper" style="padding-bottom:0">
-      <div class="foot" style="border-top:0;padding-top:0">
-        <div class="foot-inner">
-          <div>
-            <p class="wordmark">wendy · wong</p>
-            <p class="lastship" style="margin-top:var(--s-2)">last shipped: 2026·07·28</p>
-          </div>
-          <div class="socials">
-            <a href="#">linkedin</a><a href="#">github</a><a href="#">email</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <p class="spec-note">
-      <span class="mono">last shipped</span> is a live signal, not a decoration — it dates the
-      work in public and it is the one piece of the footer that should never be stale.
-    </p>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §06 MOTION ═══════════════════════════ -->
-<section class="wrap band" id="motion">
-  <div class="sec-head">
-    <span class="kicker">06 / reveal content, or confirm an action</span>
-    <h2 class="t-h1">Motion</h2>
-    <p class="t-small">If an animation does neither, it is cut. There is no third category.</p>
-  </div>
-
-  <div class="grid">
-    <div class="col-7">
-      <div class="log">
-        <div class="log-head t-micro" style="grid-template-columns:132px 90px 1fr">
-          <span>token</span><span>duration</span><span>applied to</span>
-        </div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>--dur-confirm</span><span>120ms</span>
-          <span class="decision">hover, focus, stamp straighten, border shift</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>--dur-reveal</span><span>200ms</span>
-          <span class="decision">nav underscore translate, sticky hairline</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>--dur-enter</span><span>320ms</span>
-          <span class="decision">section and card reveal on first intersection</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>--ease</span><span>—</span>
-          <span class="decision">cubic-bezier(.2, 0, 0, 1) — fast out, settles late</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>hover tilt</span><span>120ms</span>
-          <span class="decision">button −1.2°, card −0.35° — confirms the target is live</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>spark burst</span><span>120/200ms</span>
-          <span class="decision">opacity then scale, on hover only — confirms the same action</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>hero entrance</span><span>320–420ms</span>
-          <span class="decision">metastrip → line → subline → buttons, staggered 90/210/300ms</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>pict-pin</span><span>220ms</span>
-          <span class="decision">pictograms scale in at 460/580ms, once the sentence has landed</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>sticker field</span><span>rAF, sleeps</span>
-          <span class="decision">gravity 2100px/s², restitution 0.34, sleeps after 40 idle frames</span></div>
-        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
-          <span>cue-bob</span><span>2.2s loop</span>
-          <span class="decision">scroll cue arrow — the one looping animation on the page</span></div>
-      </div>
-      <p class="t-small" style="margin-top:var(--s-4)">
-        Reveals fire once, on first intersection, and unobserve. Nothing re-animates on
-        scroll-back — a page that keeps performing has stopped being a document. The scroll
-        cue is the single deliberate exception: it loops because it has to still be moving
-        whenever the reader's eye arrives, and it reveals that the case sequence continues
-        below the fold. It is the only looping motion permitted.
-      </p>
-    </div>
-    <div class="col-5">
-      <p class="t-micro ink3" style="margin-bottom:var(--s-3)">absent by decision</p>
-      <ul class="listrule">
-        <li>custom cursor</li>
-        <li>parallax</li>
-        <li>scroll-jacking</li>
-        <li>typewriter effects</li>
-        <li>animated gradients — there is no gradient</li>
-      </ul>
-      <p class="t-small" style="margin-top:var(--s-3)">
-        <b style="font-weight:600">Amended:</b> "floating decorative shapes" was on this list
-        and the sticker field is exactly that. The rule it breaks — every animation must
-        reveal content or confirm an action — is broken knowingly, once, in one place. What
-        it buys is the only thing on the page a visitor can <em>play</em> with, and a portfolio
-        for a product designer that cannot be touched is making an argument it never
-        demonstrates. It stays confined to the hero, sits behind every piece of content,
-        carries no information, and disappears completely under reduced motion.
-      </p>
-      <div class="spec" style="margin-top:var(--s-4)">
-        <div class="spec-label"><span>prefers-reduced-motion: reduce</span></div>
-        <div class="spec-body">
-          <p class="t-small" style="margin:0">
-            Every transform is disabled — translate, scale and the stamp rotation. Opacity
-            fades are retained, because they still reveal content without moving anything.
-            Smooth scrolling is switched off in the same query. The sticker field is not
-            frozen mid-air but removed outright: a physics toy with the physics turned off is
-            just clutter, and it carries nothing a reader would miss.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- ═══════════════════════════ §07 SPECIMEN ═══════════════════════════ -->
-<section class="wrap band" id="work">
-  <div class="sec-head">
-    <span class="kicker">07 / the system assembled</span>
-    <h2 class="t-h1">Specimen — home page</h2>
-    <p class="t-small">
-      Real content, every component in place, ratio discipline held. Plain ground, plain ink,
-      and the only thing with a temperature is the photography.
-    </p>
-  </div>
-
-  <!-- hero -->
+<!-- ─────────────────────────────── hero ─────────────────────────────── -->
+<section class="wrap band" style="padding-top:0" aria-labelledby="claim">
   <div class="hero-banner" style="text-align:center;min-height:auto;display:flex;flex-direction:column;justify-content:center;padding:var(--s-7) 0 0">
     <div class="stickers" id="stickers" aria-hidden="true"></div>
 
@@ -2271,34 +1130,37 @@ figcaption{
       <span>Psychology + MSc HCI (UCL)</span>
     </div>
 
-    <h2 class="t-hero reveal" style="max-width:15ch;margin:0 auto">
+    <h1 class="t-hero reveal" id="claim" style="max-width:15ch;margin:0 auto">
       I design AI
       <span class="pict slot" role="img" aria-label="products">products</span><span class="pict-word">products</span>
       and
       <span class="pict slot" role="img" aria-label="journeys">journeys</span><span class="pict-word">journeys</span>
       people <span class="mk-under">actually use</span>.
-    </h2>
+    </h1>
 
     <p class="t-body reveal" style="margin:var(--s-5) auto 0;color:var(--ink-2)">
       From research to shipped — AI-powered experiences across health, wellbeing and everyday digital products.
     </p>
 
     <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-6);flex-wrap:wrap">
-      <a class="btn" href="#case01">see the work <span aria-hidden="true">→</span></a>
+      <a class="btn" href="#work">see the work <span aria-hidden="true">→</span></a>
       <a class="btn btn--outline" href="#case05">how I work with AI</a>
     </div>
-
   </div>
 
   <div style="margin-top:var(--s-7)"><hr class="bleed-rule"></div>
 
-  <!-- credential strip (bento) -->
   <div class="creds t-micro reveal" style="text-align:center;color:var(--ink-2);border-top:0">
     <div>20,000+ users served</div>
     <div>Fortune 500 partnerships</div>
     <div>4 products in trial</div>
     <div>MSc HCI · UCL</div>
   </div>
+</section>
+
+<!-- ─────────────────────────────── work ─────────────────────────────── -->
+<section class="wrap band" id="work" style="padding-top:0" aria-labelledby="work-h">
+  <h2 class="sr-only" id="work-h">Selected work</h2>
 
   <div class="scrollcue reveal">
     <p class="cue-text">flip through my work</p>
@@ -2369,16 +1231,15 @@ figcaption{
     </a>
   </div>
 
-  <!-- more work -->
   <div class="reveal" style="border-top:1px solid var(--rule);margin-top:var(--s-6);padding-top:var(--s-4)">
-    <p class="t-micro ink3" style="margin-bottom:var(--s-3)">more work</p>
+    <h3 class="t-micro ink3" style="margin-bottom:var(--s-3)">more work</h3>
     <div class="log">
-      <a class="logrow" href="#hkfyg" style="grid-template-columns:104px 1fr 24px">
+      <a class="logrow" href="#hkfyg" id="hkfyg" style="grid-template-columns:104px 1fr 24px">
         <span class="date">2023–2024</span>
         <span class="decision">HKFYG — youth health &amp; wellness service ecosystem, Hong Kong</span>
         <span aria-hidden="true">→</span>
       </a>
-      <a class="logrow" href="#onskin" style="grid-template-columns:104px 1fr 24px">
+      <a class="logrow" href="#onskin" id="onskin" style="grid-template-columns:104px 1fr 24px">
         <span class="date">2023</span>
         <span class="decision">OnSkin — consumer skincare app redesign</span>
         <span aria-hidden="true">→</span>
@@ -2387,13 +1248,13 @@ figcaption{
   </div>
 </section>
 
-<!-- the stack — image 2/3 reference: chips over the statement -->
-<section class="wrap band" id="stack">
+<!-- ─────────────────────────────── stack ─────────────────────────────── -->
+<section class="wrap band" id="stack" aria-labelledby="stack-h">
   <div class="sec-head reveal">
     <span class="kicker">the stack, at a glance</span>
   </div>
   <div class="stack reveal">
-    <p class="stack-type">Tools in the daily practice, not the pitch.</p>
+    <h2 class="stack-type" id="stack-h">Tools in the daily practice, not the pitch.</h2>
     <div class="chips">
       <span class="chip"><span class="dot tint-1" aria-hidden="true"></span>Claude Code</span>
       <span class="chip"><span class="dot tint-2" aria-hidden="true"></span>Claude Design</span>
@@ -2414,17 +1275,17 @@ figcaption{
 
 <div><hr class="bleed-rule bleed-rule--quiet"></div>
 
-<!-- closing -->
-<section class="wrap band" id="contact">
+<!-- ────────────────────────────── contact ────────────────────────────── -->
+<section class="wrap band" id="contact" aria-labelledby="contact-h">
   <div class="reveal" style="text-align:center;padding:var(--s-6) 0">
-    <h2 class="t-h1" style="max-width:26ch;margin:0 auto">
+    <h2 class="t-h1" id="contact-h" style="max-width:26ch;margin:0 auto">
       Looking for the team that wants both — the
       <span class="pict slot" role="img" aria-label="research paper">research paper</span><span class="pict-word">research paper</span>
       and the <em style="font-weight:300">shipped thing</em>.
     </h2>
     <div class="metastrip" style="justify-content:center;margin-top:var(--s-5)">
-      <span>wenwong1124@gmail.com</span><span class="sep" aria-hidden="true">·</span>
-      <span>linkedin</span><span class="sep" aria-hidden="true">·</span>
+      <a href="mailto:wenwong1124@gmail.com">wenwong1124@gmail.com</a><span class="sep" aria-hidden="true">·</span>
+      <a href="https://www.linkedin.com/" rel="me noopener">linkedin</a><span class="sep" aria-hidden="true">·</span>
       <span>hong kong</span>
     </div>
   </div>
@@ -2432,7 +1293,7 @@ figcaption{
 
 </main>
 
-<!-- ═══════════════ COMPONENT 15 — FOOTER (in situ) ═══════════════ -->
+<!-- ─────────────────────────────── footer ─────────────────────────────── -->
 <footer class="foot">
   <div class="wrap foot-inner">
     <div>
@@ -2440,16 +1301,13 @@ figcaption{
       <p class="lastship" style="margin-top:var(--s-2)">last shipped: 2026·07·28</p>
     </div>
     <div class="socials">
-      <a href="#">linkedin</a><a href="#">github</a><a href="#">email</a>
+      <a href="https://www.linkedin.com/" rel="me noopener">linkedin</a>
+      <a href="https://github.com/wenwong1124-commits" rel="me noopener">github</a>
+      <a href="mailto:wenwong1124@gmail.com">email</a>
     </div>
     <p class="lastship">design system v1.0 · light mode only · monochrome ui</p>
   </div>
 </footer>
-
-<button id="dt" aria-pressed="false"
-  title="Hides every pictogram so you can check the sentences still read. Review tool — remove before publishing.">
-  deletion test
-</button>
 
 <script>
 (function(){

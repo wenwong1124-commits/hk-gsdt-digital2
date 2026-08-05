@@ -67,6 +67,10 @@ the nav as inert items — they are the site's shape, so they stay visible, but 
 They read one ink weight below a live item (5.28:1, still AA) rather than being greyed out;
 the earlier hairline grey measured 1.47:1. `/05 contact` is an anchor on this page.
 
+**No em-dashes in the page copy.** Each one was rewritten rather than swapped: a colon where
+it introduced, a full stop where it joined two sentences, parentheses for an aside. En-dashes
+stay in date ranges, where they are the correct mark.
+
 **Still to wire:** the five work cards and the two "more work" rows link to their own
 anchors, so nothing is broken, but nothing navigates either. They get real `href`s when the
 case pages exist.
@@ -178,6 +182,13 @@ the page cannot contradict itself.
 - **`prefers-reduced-motion: reduce`** disables every transform and retains opacity fades
   only — including the card tilt, chip tilt and collage rotation. The hero sticker field is
   removed outright rather than frozen. Verified in both modes.
+- **The micro-interaction layer is gated, not softened.** Read position, magnetism, press
+  depth, the sticker lift, the wordmark rule and the count-up all move something, so under
+  reduced motion each is removed outright rather than slowed — a magnetic button with no
+  magnetism is just a button. The two that carry information without moving anything stay:
+  the carousel's edge fade, which is opacity, and the copy receipt, which is a word. Measured
+  in both modes; the credential figures show their final values either way, because the count
+  is derived from what is already in the DOM.
 - **The staggered reveal splits its fade from its rise on purpose.** The block ends with
   `*{animation:none !important}`, so a fade written into the keyframe would be deleted along
   with the movement. The fade lives on an opacity transition instead and survives, which is

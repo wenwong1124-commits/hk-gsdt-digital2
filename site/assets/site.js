@@ -449,6 +449,138 @@
     }, { passive:true });
   })();
 
+  /* ---- micro-interactions ------------------------------------------------
+     Five behaviours, one gate. Everything below moves something, so all of it
+     is skipped outright under prefers-reduced-motion rather than being
+     wrestled into a reduced form: a magnetic button with no magnetism is just
+     a button, and the CSS already resets the variables it would have set. */
+  var CALM = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Read position, for browsers without a scroll timeline. Where
+     `animation-timeline: scroll()` is supported the CSS drives the same line
+     off the main thread and this loop never runs. */
+  (function scrollProgress(){
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+    if (CSS.supports('animation-timeline: scroll()')) return;
+    var queued = false;
+    function paint(){
+      queued = false;
+      var max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.setProperty('--sp', max > 0 ? Math.min(1, scrollY / max) : 0);
+    }
+    addEventListener('scroll', function(){
+      if (!queued){ queued = true; requestAnimationFrame(paint); }
+    }, { passive:true });
+    addEventListener('resize', paint, { passive:true });
+    paint();
+  })();
+
+  /* The row's edges. Fading the side the content runs past is the only honest
+     way to say "there is more" on a track with no visible scrollbar, and the
+     fade has to disappear at each end or it stops meaning anything. */
+  document.querySelectorAll('.work-row').forEach(function(row){
+    function edges(){
+      var over = row.scrollWidth - row.clientWidth;
+      if (over <= 1){ row.style.setProperty('--edge-l', 0); row.style.setProperty('--edge-r', 0); return; }
+      row.style.setProperty('--edge-l', Math.min(1, row.scrollLeft / 90));
+      row.style.setProperty('--edge-r', Math.min(1, (over - row.scrollLeft) / 90));
+    }
+    row.addEventListener('scroll', edges, { passive:true });
+    addEventListener('resize', edges, { passive:true });
+    edges();
+  });
+
+  /* Copy the address. A mailto: is the wrong affordance on a desktop with no
+     mail client configured, and "copied" is a better receipt than a new tab
+     you did not want. The link still works — this only intercepts a plain
+     left click, so cmd-click and right-click behave normally. */
+  document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){
+    if (!navigator.clipboard) return;
+    var address = a.getAttribute('href').slice(7);
+    a.classList.add('copy-line');
+    var said = document.createElement('span');
+    said.className = 'copy-said'; said.textContent = 'copied';
+    said.setAttribute('aria-hidden', 'true');
+    a.appendChild(said);
+    a.addEventListener('click', function(e){
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      navigator.clipboard.writeText(address).then(function(){
+        a.dataset.copied = '1';
+        setTimeout(function(){ delete a.dataset.copied; }, 1400);
+      }, function(){ location.href = a.getAttribute('href'); });
+    });
+  });
+
+  if (!CALM.matches){
+    /* Magnetism. A control that leans a few pixels toward the cursor confirms
+       it is live before the click, which is the same job the hover tilt does
+       and the same budget: the pull is capped at 4px so it never becomes a
+       thing that moves away from you. */
+    document.querySelectorAll('.btn').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', ((e.clientX - r.left - r.width / 2) / r.width * 8).toFixed(2) + 'px');
+        el.style.setProperty('--my', ((e.clientY - r.top - r.height / 2) / r.height * 6).toFixed(2) + 'px');
+      });
+      el.addEventListener('pointerleave', function(){
+        el.style.removeProperty('--mx'); el.style.removeProperty('--my');
+      });
+    });
+
+    /* The card leans toward the cursor instead of at a fixed angle. Same
+       purpose as the flat tilt it replaces — the target answering — but the
+       direction now carries where you are on it. */
+    document.querySelectorAll('a.wcard').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        var dx = (e.clientX - r.left) / r.width - .5;
+        el.style.setProperty('--tilt', (dx * 1.4 - .5).toFixed(2) + 'deg');
+        el.style.setProperty('--my', (-2).toFixed(0) + 'px');
+      });
+      el.addEventListener('pointerleave', function(){
+        el.style.removeProperty('--tilt'); el.style.removeProperty('--my');
+      });
+    });
+
+    /* Figures count up on arrival. Reading a number to someone is revealing
+       content, which is the only thing that buys motion here — so it runs
+       once, on first intersection, and the label beside it never moves.
+       Whatever is in the DOM is the final value: the count is derived from
+       it, so the page is correct before the script runs and correct if it
+       never does. */
+    var tallies = document.querySelectorAll('[data-tally]');
+    if (tallies.length && 'IntersectionObserver' in window){
+      var tio = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          tio.unobserve(e.target);
+          var el = e.target;
+          var raw = el.textContent.trim();
+          var num = parseFloat(raw.replace(/[^\d.]/g, ''));
+          if (!isFinite(num)) return;
+          var pre = raw.slice(0, raw.search(/[\d]/));
+          var post = raw.slice(raw.search(/[\d]/) + String(raw.match(/[\d,.]+/)[0]).length);
+          var group = /,/.test(raw);
+          var t0 = 0, dur = 900;
+          el.classList.add('tally');
+          (function tick(t){
+            if (!t0) t0 = t;
+            var k = Math.min(1, (t - t0) / dur);
+            var eased = 1 - Math.pow(1 - k, 3);          // settles late, like --ease
+            var v = Math.round(num * eased);
+            el.textContent = pre + (group ? v.toLocaleString('en-US') : v) + post;
+            if (k < 1) requestAnimationFrame(tick);
+          })(performance.now());
+        });
+      }, { threshold:.6 });
+      tallies.forEach(function(el){ tio.observe(el); });
+    }
+  }
+
   /* ---- deletion test — review tool, absent from the site build ---- */
   var dt = document.getElementById('dt');
   if (dt) dt.addEventListener('click', function(){

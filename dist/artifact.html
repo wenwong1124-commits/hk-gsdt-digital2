@@ -315,6 +315,10 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
 /* spark burst — shared by buttons and cards. accentuates on hover only. */
 
 .btn{
+  /* One transform, three independent inputs: --mx/--my from the pointer,
+     --tilt from hover, --press from :active. Each defaults to a no-op, so
+     the element is untouched until something actually addresses it. */
+  transform:translate(var(--mx,0px), var(--my,0px)) rotate(var(--tilt,0deg)) scale(var(--press,1));
   position:relative;
   display:inline-flex; align-items:center; gap:8px;
   font-family:var(--sans); font-size:.9375rem; font-weight:500; letter-spacing:-.005em;
@@ -332,10 +336,10 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
   opacity:0; transform:scale(.5) rotate(-25deg); pointer-events:none;
   transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
 }
-.btn:hover{ background:var(--ink-hover); border-color:var(--ink-hover); transform:rotate(-1.2deg) }
+.btn:hover{ background:var(--ink-hover); border-color:var(--ink-hover); --tilt:-1.2deg }
 .btn:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 .btn--outline{ background:transparent; color:var(--ink); border-color:var(--rule-strong) }
-.btn--outline:hover{ background:transparent; border-color:var(--ink); transform:rotate(1deg) }
+.btn--outline:hover{ background:transparent; border-color:var(--ink); --tilt:1deg }
 
 /* --------------------------------------------------------------------------
    11. COMPONENT 07 — STATUS STAMP
@@ -431,6 +435,7 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 .work-row::-webkit-scrollbar-track{ background:transparent }
 
 .wcard{
+  transform:translate(var(--mx,0px), var(--my,0px)) rotate(var(--tilt,0deg)) scale(var(--press,1));
   flex:0 0 clamp(268px, 30vw, 340px);
   scroll-snap-align:start;
   display:flex; flex-direction:column;
@@ -440,7 +445,7 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   transition:border-color var(--dur-confirm) var(--ease),
              transform var(--dur-reveal) var(--ease);
 }
-a.wcard:hover{ border-color:var(--ink-3); transform:rotate(-.5deg) }
+a.wcard:hover{ border-color:var(--ink-3); --tilt:-.5deg }
 .wcard::after{
   content:""; position:absolute; top:-22px; right:6px;
   width:30px; height:30px; background:var(--spark) center/contain no-repeat;
@@ -1035,6 +1040,88 @@ figcaption{
 .reveal-stagger > *:nth-child(n+9){ animation-delay:560ms; transition-delay:560ms }
 @keyframes stagger-in{ from{ opacity:0; transform:translateY(12px) } }
 
+/* --------------------------------------------------------------------------
+   21b. MICRO-INTERACTIONS
+        Same rule as everything else in section 21: motion either reveals
+        content or confirms an action. Nothing here decorates, nothing loops,
+        and every one of them is a few pixels or a few milliseconds. The test
+        each had to pass: if you removed it, would the interface be harder to
+        read or harder to trust? If not, it is not here.
+   -------------------------------------------------------------------------- */
+
+/* Read position. A 2px line across the top of the page, growing with scroll.
+   Driven by a scroll timeline where the browser supports one — it then runs
+   off the main thread and costs nothing — and by a JS-set custom property
+   everywhere else. Both drive the same declaration. */
+.scroll-progress{
+  position:fixed; top:0; left:0; right:0; height:2px; z-index:70;
+  background:var(--accent-vivid); pointer-events:none;
+  transform:scaleX(var(--sp,0)); transform-origin:0 50%;
+}
+@supports (animation-timeline: scroll()){
+  .scroll-progress{
+    transform:scaleX(0);
+    animation:sp-grow linear both;
+    animation-timeline:scroll(root block);
+  }
+}
+@keyframes sp-grow{ to{ transform:scaleX(1) } }
+
+/* Press. The one piece of feedback a pointer cannot infer from hover: that
+   the click landed. Deliberately small — 0.985 reads as give, not as bounce. */
+.btn:active, a.wcard:active{ --press:.985 }
+.chip:active, .tag:active{ transform:scale(.97) }
+
+/* Grabbable. A sticker that lifts under the cursor says "pick me up" before
+   you find out by dragging. The shadow deepens with the lift, because a thing
+   that rises casts further. */
+.sticker{ transition:filter var(--dur-confirm) var(--ease) }
+.sticker:hover{ filter:drop-shadow(0 6px 7px rgba(23,24,26,.26)) }
+.sticker:active{ filter:drop-shadow(0 2px 3px rgba(23,24,26,.3)) }
+
+/* The mark answers the pointer. A rule drawn under the wordmark, left to
+   right, at the speed of a signature. */
+.brand{ position:relative }
+.brand::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+  background:var(--ink); transform:scaleX(0); transform-origin:0 50%;
+  transition:transform var(--dur-enter) var(--ease);
+}
+.brand:hover::after, .brand:focus-visible::after{ transform:scaleX(1) }
+
+/* The row says how much is left. The masks fade the edge the content runs
+   past and disappear at the ends, so the fade is information about position
+   rather than a permanent decoration. */
+.work-row{
+  --edge-l:0; --edge-r:1;
+  -webkit-mask-image:linear-gradient(90deg,
+    rgba(0,0,0,calc(1 - var(--edge-l))) 0, #000 90px,
+    #000 calc(100% - 90px), rgba(0,0,0,calc(1 - var(--edge-r))) 100%);
+  mask-image:linear-gradient(90deg,
+    rgba(0,0,0,calc(1 - var(--edge-l))) 0, #000 90px,
+    #000 calc(100% - 90px), rgba(0,0,0,calc(1 - var(--edge-r))) 100%);
+}
+
+/* A figure that counts up is being read to you. It runs once, on arrival,
+   and only on the digits — the label never moves. */
+.tally{ font-variant-numeric:tabular-nums }
+
+/* Copy confirmed. The address swaps to its own confirmation for a moment;
+   nothing appears, nothing is dismissed, and the word is the receipt. */
+.copy-line{ position:relative; cursor:copy }
+.copy-line[data-copied="1"]{ color:var(--accent) }
+.copy-line .copy-said{
+  position:absolute; inset:0; display:grid; place-items:center;
+  background:var(--paper); color:var(--accent);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--dur-confirm) var(--ease);
+}
+.copy-line[data-copied="1"] .copy-said{ opacity:1 }
+
+/* Cross-page navigation, once there is more than one page. One declaration,
+   and the browser cross-fades instead of flashing white. */
+@view-transition{ navigation:auto }
+
 @media (prefers-reduced-motion:reduce){
   /* every transform disabled. opacity fades retained. */
   .reveal{ transform:none }
@@ -1058,6 +1145,14 @@ figcaption{
   .collage .tile:hover .tile-cap,
   .collage .tile:focus-visible .tile-cap{ transform:translateX(-50%) }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
+  /* micro-interactions: every one that moves something is off. The two that
+     carry information without moving it stay — the row's edge mask, which is
+     opacity, and the copy confirmation, which is a word. */
+  .btn, .wcard{ --mx:0px; --my:0px; --tilt:0deg; --press:1 }
+  .chip:active, .tag:active{ transform:none }
+  .sticker:hover, .sticker:active{ filter:drop-shadow(0 3px 3px rgba(23,24,26,.22)) }
+  .brand::after{ display:none }
+  .scroll-progress{ display:none }
   *,*::before,*::after{ animation:none !important }
 }
 </style>
@@ -2010,7 +2105,7 @@ figcaption{
             <span class="stamp stamp--shipped">shipped · live</span>
             <span class="go" aria-hidden="true">↗</span>
           </div>
-          <h3>HandSync — motor timing as a cognitive signal</h3>
+          <h3>HandSync: motor timing as a cognitive signal</h3>
           <p>A hand-pose model tracks both hands through a timed task and writes a
              plain-language report.</p>
           <span class="proof-min">try it live ↗</span>
@@ -2264,6 +2359,24 @@ figcaption{
           <span>stagger-in</span><span>320ms, +70ms</span>
           <span class="decision">a group's children arrive in sequence — credentials, cards, chips, log</span></div>
         <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>read position</span><span>scroll-linked</span>
+          <span class="decision">2px accent line, scroll timeline where supported, rAF elsewhere</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>magnetism</span><span>pointer</span>
+          <span class="decision">buttons lean up to 4px toward the cursor; cards lean by ±0.7 degrees</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>press</span><span>instant</span>
+          <span class="decision">scale 0.985 while held; give, not bounce</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>tally</span><span>900ms, once</span>
+          <span class="decision">credential figures count up on arrival; the label never moves</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>row edges</span><span>scroll-linked</span>
+          <span class="decision">the carousel fades the side it runs past, and only that side</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
+          <span>copy receipt</span><span>1.4s</span>
+          <span class="decision">the address swaps to "copied"; a word, not a toast</span></div>
+        <div class="logrow" style="grid-template-columns:132px 90px 1fr">
           <span>cue-bob</span><span>2.2s loop</span>
           <span class="decision">scroll cue arrow — the one looping animation on the page</span></div>
       </div>
@@ -2283,7 +2396,19 @@ figcaption{
         <li>scroll-jacking</li>
         <li>typewriter effects</li>
         <li>animated gradients — there is no gradient</li>
+        <li>hover-triggered sound</li>
+        <li>anything that loops except the scroll cue</li>
       </ul>
+      <p class="t-small" style="margin-top:var(--s-3)">
+        The micro-interaction layer added in 21b is not an exception to any of this. Each one
+        answers something the visitor did, or reads them something they are looking at, and
+        each is a few pixels or under a second. The test every one had to pass: remove it, and
+        is the interface harder to read or harder to trust? A magnetic button says the target
+        is live before the click; a fading carousel edge says there is more; a figure that
+        counts up is being read aloud. None of them plays on its own, and under reduced motion
+        every one that moves is removed outright rather than slowed down — a magnetic button
+        with no magnetism is just a button.
+      </p>
       <p class="t-small" style="margin-top:var(--s-3)">
         <b style="font-weight:600">Amended:</b> "floating decorative shapes" was on this list
         and the sticker field is exactly that. The rule it breaks — every animation must
@@ -2341,7 +2466,7 @@ figcaption{
     </h2>
 
     <p class="t-body reveal" style="margin:var(--s-4) auto 0;color:var(--ink-2)">
-      From research to shipped — AI-powered experiences across health, wellbeing and everyday digital products.
+      From research to shipped: AI-powered experiences across health, wellbeing and everyday digital products.
     </p>
 
     <div class="reveal hero-cta" style="display:flex;gap:12px;justify-content:center;margin-top:var(--s-5);flex-wrap:wrap">
@@ -2355,9 +2480,9 @@ figcaption{
 
   <!-- credential strip (bento) -->
   <div class="creds t-micro reveal-stagger" style="text-align:center;color:var(--ink-2);border-top:0">
-    <div>20,000+ users served</div>
-    <div>Fortune 500 partnerships</div>
-    <div>4 products in trial</div>
+    <div><span data-tally>20,000</span>+ users served</div>
+    <div>Fortune <span data-tally>500</span> partnerships</div>
+    <div><span data-tally>4</span> products in trial</div>
     <div>MSc HCI · UCL</div>
   </div>
 
@@ -2374,7 +2499,7 @@ figcaption{
         <span class="stamp stamp--nda">under nda</span>
         <span class="go" aria-hidden="true">↗</span>
       </div>
-      <h3>CogniSpeak — a clinician-led cognitive test, made self-serve</h3>
+      <h3>CogniSpeak: a clinician-led cognitive test, made self-serve</h3>
       <p>The standard screening needs a trained administrator in the room, which caps how many people ever get assessed. I rebuilt it as a self-administered speech task.</p>
       <span class="proof-min">request demo access</span>
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 01 · 2025–present</span>
@@ -2386,7 +2511,7 @@ figcaption{
         <span class="stamp stamp--trial">in trial</span>
         <span class="go" aria-hidden="true">↗</span>
       </div>
-      <h3>CogniSpeak Community — the system behind the test</h3>
+      <h3>CogniSpeak Community: the system behind the test</h3>
       <p>Three user types, one system: the older adult taking the test, the NGO staff member chasing progress, and the clinician who needs a defensible record.</p>
       <span class="proof-min">read the log →</span>
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 02 · 2025–present</span>
@@ -2410,7 +2535,7 @@ figcaption{
         <span class="stamp stamp--shipped">shipped · live</span>
         <span class="go" aria-hidden="true">↗</span>
       </div>
-      <h3>HandSync — motor timing as a cognitive signal</h3>
+      <h3>HandSync: motor timing as a cognitive signal</h3>
       <p>A hand-pose model tracks both hands through a timed task, measures bilateral difference, and writes a plain-language report. Built end to end in a weekend.</p>
       <span class="proof-min">try it live ↗</span>
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 04 · 2026</span>
@@ -2423,7 +2548,7 @@ figcaption{
         <span class="go" aria-hidden="true">↗</span>
       </div>
       <h3>How I actually work with AI, daily</h3>
-      <p>Not a tools list — a working method, including where it fails. The prompting strategies that worked, the ones that produced confident nonsense, and what needed a human.</p>
+      <p>Not a tools list. A working method, including where it fails. The prompting strategies that worked, the ones that produced confident nonsense, and what needed a human.</p>
       <span class="proof-min">read the case →</span>
       <span class="caseno" style="margin-bottom:var(--s-3)">case no. 05 · ongoing</span>
       <div class="cover-tint tint-5"><span class="t-micro">the daily stack</span></div>
@@ -2436,12 +2561,12 @@ figcaption{
     <div class="log">
       <a class="logrow" href="#hkfyg" style="grid-template-columns:104px 1fr 24px">
         <span class="date">2023–2024</span>
-        <span class="decision">HKFYG — youth health &amp; wellness service ecosystem, Hong Kong</span>
+        <span class="decision">HKFYG: youth health &amp; wellness service ecosystem, Hong Kong</span>
         <span aria-hidden="true">→</span>
       </a>
       <a class="logrow" href="#onskin" style="grid-template-columns:104px 1fr 24px">
         <span class="date">2023</span>
-        <span class="decision">OnSkin — consumer skincare app redesign</span>
+        <span class="decision">OnSkin: consumer skincare app redesign</span>
         <span aria-hidden="true">→</span>
       </a>
     </div>
@@ -2956,6 +3081,138 @@ figcaption{
       wake();
     }, { passive:true });
   })();
+
+  /* ---- micro-interactions ------------------------------------------------
+     Five behaviours, one gate. Everything below moves something, so all of it
+     is skipped outright under prefers-reduced-motion rather than being
+     wrestled into a reduced form: a magnetic button with no magnetism is just
+     a button, and the CSS already resets the variables it would have set. */
+  var CALM = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Read position, for browsers without a scroll timeline. Where
+     `animation-timeline: scroll()` is supported the CSS drives the same line
+     off the main thread and this loop never runs. */
+  (function scrollProgress(){
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+    if (CSS.supports('animation-timeline: scroll()')) return;
+    var queued = false;
+    function paint(){
+      queued = false;
+      var max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.setProperty('--sp', max > 0 ? Math.min(1, scrollY / max) : 0);
+    }
+    addEventListener('scroll', function(){
+      if (!queued){ queued = true; requestAnimationFrame(paint); }
+    }, { passive:true });
+    addEventListener('resize', paint, { passive:true });
+    paint();
+  })();
+
+  /* The row's edges. Fading the side the content runs past is the only honest
+     way to say "there is more" on a track with no visible scrollbar, and the
+     fade has to disappear at each end or it stops meaning anything. */
+  document.querySelectorAll('.work-row').forEach(function(row){
+    function edges(){
+      var over = row.scrollWidth - row.clientWidth;
+      if (over <= 1){ row.style.setProperty('--edge-l', 0); row.style.setProperty('--edge-r', 0); return; }
+      row.style.setProperty('--edge-l', Math.min(1, row.scrollLeft / 90));
+      row.style.setProperty('--edge-r', Math.min(1, (over - row.scrollLeft) / 90));
+    }
+    row.addEventListener('scroll', edges, { passive:true });
+    addEventListener('resize', edges, { passive:true });
+    edges();
+  });
+
+  /* Copy the address. A mailto: is the wrong affordance on a desktop with no
+     mail client configured, and "copied" is a better receipt than a new tab
+     you did not want. The link still works — this only intercepts a plain
+     left click, so cmd-click and right-click behave normally. */
+  document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){
+    if (!navigator.clipboard) return;
+    var address = a.getAttribute('href').slice(7);
+    a.classList.add('copy-line');
+    var said = document.createElement('span');
+    said.className = 'copy-said'; said.textContent = 'copied';
+    said.setAttribute('aria-hidden', 'true');
+    a.appendChild(said);
+    a.addEventListener('click', function(e){
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      navigator.clipboard.writeText(address).then(function(){
+        a.dataset.copied = '1';
+        setTimeout(function(){ delete a.dataset.copied; }, 1400);
+      }, function(){ location.href = a.getAttribute('href'); });
+    });
+  });
+
+  if (!CALM.matches){
+    /* Magnetism. A control that leans a few pixels toward the cursor confirms
+       it is live before the click, which is the same job the hover tilt does
+       and the same budget: the pull is capped at 4px so it never becomes a
+       thing that moves away from you. */
+    document.querySelectorAll('.btn').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', ((e.clientX - r.left - r.width / 2) / r.width * 8).toFixed(2) + 'px');
+        el.style.setProperty('--my', ((e.clientY - r.top - r.height / 2) / r.height * 6).toFixed(2) + 'px');
+      });
+      el.addEventListener('pointerleave', function(){
+        el.style.removeProperty('--mx'); el.style.removeProperty('--my');
+      });
+    });
+
+    /* The card leans toward the cursor instead of at a fixed angle. Same
+       purpose as the flat tilt it replaces — the target answering — but the
+       direction now carries where you are on it. */
+    document.querySelectorAll('a.wcard').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        var dx = (e.clientX - r.left) / r.width - .5;
+        el.style.setProperty('--tilt', (dx * 1.4 - .5).toFixed(2) + 'deg');
+        el.style.setProperty('--my', (-2).toFixed(0) + 'px');
+      });
+      el.addEventListener('pointerleave', function(){
+        el.style.removeProperty('--tilt'); el.style.removeProperty('--my');
+      });
+    });
+
+    /* Figures count up on arrival. Reading a number to someone is revealing
+       content, which is the only thing that buys motion here — so it runs
+       once, on first intersection, and the label beside it never moves.
+       Whatever is in the DOM is the final value: the count is derived from
+       it, so the page is correct before the script runs and correct if it
+       never does. */
+    var tallies = document.querySelectorAll('[data-tally]');
+    if (tallies.length && 'IntersectionObserver' in window){
+      var tio = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          tio.unobserve(e.target);
+          var el = e.target;
+          var raw = el.textContent.trim();
+          var num = parseFloat(raw.replace(/[^\d.]/g, ''));
+          if (!isFinite(num)) return;
+          var pre = raw.slice(0, raw.search(/[\d]/));
+          var post = raw.slice(raw.search(/[\d]/) + String(raw.match(/[\d,.]+/)[0]).length);
+          var group = /,/.test(raw);
+          var t0 = 0, dur = 900;
+          el.classList.add('tally');
+          (function tick(t){
+            if (!t0) t0 = t;
+            var k = Math.min(1, (t - t0) / dur);
+            var eased = 1 - Math.pow(1 - k, 3);          // settles late, like --ease
+            var v = Math.round(num * eased);
+            el.textContent = pre + (group ? v.toLocaleString('en-US') : v) + post;
+            if (k < 1) requestAnimationFrame(tick);
+          })(performance.now());
+        });
+      }, { threshold:.6 });
+      tallies.forEach(function(el){ tio.observe(el); });
+    }
+  }
 
   /* ---- deletion test — review tool, absent from the site build ---- */
   var dt = document.getElementById('dt');

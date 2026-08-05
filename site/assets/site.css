@@ -340,6 +340,10 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
   --spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23C2531F' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='16' y1='1' x2='16' y2='8'/%3E%3Cline x1='27.6' y1='4.4' x2='22.6' y2='9.4'/%3E%3Cline x1='31' y1='16' x2='24' y2='16'/%3E%3Cline x1='27.6' y1='27.6' x2='22.6' y2='22.6'/%3E%3Cline x1='16' y1='31' x2='16' y2='24'/%3E%3Cline x1='4.4' y1='27.6' x2='9.4' y2='22.6'/%3E%3Cline x1='1' y1='16' x2='8' y2='16'/%3E%3Cline x1='4.4' y1='4.4' x2='9.4' y2='9.4'/%3E%3C/g%3E%3C/svg%3E");
 }
 .btn{
+  /* One transform, three independent inputs: --mx/--my from the pointer,
+     --tilt from hover, --press from :active. Each defaults to a no-op, so
+     the element is untouched until something actually addresses it. */
+  transform:translate(var(--mx,0px), var(--my,0px)) rotate(var(--tilt,0deg)) scale(var(--press,1));
   position:relative;
   display:inline-flex; align-items:center; gap:8px;
   font-family:var(--sans); font-size:.9375rem; font-weight:500; letter-spacing:-.005em;
@@ -357,10 +361,10 @@ body[data-deletion-test="1"] .pict-word{ display:inline }
   opacity:0; transform:scale(.5) rotate(-25deg); pointer-events:none;
   transition:opacity var(--dur-confirm) var(--ease), transform var(--dur-reveal) var(--ease);
 }
-.btn:hover{ background:var(--ink-hover); border-color:var(--ink-hover); transform:rotate(-1.2deg) }
+.btn:hover{ background:var(--ink-hover); border-color:var(--ink-hover); --tilt:-1.2deg }
 .btn:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 .btn--outline{ background:transparent; color:var(--ink); border-color:var(--rule-strong) }
-.btn--outline:hover{ background:transparent; border-color:var(--ink); transform:rotate(1deg) }
+.btn--outline:hover{ background:transparent; border-color:var(--ink); --tilt:1deg }
 
 /* --------------------------------------------------------------------------
    11. COMPONENT 07 — STATUS STAMP
@@ -456,6 +460,7 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
 .work-row::-webkit-scrollbar-track{ background:transparent }
 
 .wcard{
+  transform:translate(var(--mx,0px), var(--my,0px)) rotate(var(--tilt,0deg)) scale(var(--press,1));
   flex:0 0 clamp(268px, 30vw, 340px);
   scroll-snap-align:start;
   display:flex; flex-direction:column;
@@ -465,7 +470,7 @@ a.card:hover::after{ opacity:1; transform:scale(1) rotate(0deg) }
   transition:border-color var(--dur-confirm) var(--ease),
              transform var(--dur-reveal) var(--ease);
 }
-a.wcard:hover{ border-color:var(--ink-3); transform:rotate(-.5deg) }
+a.wcard:hover{ border-color:var(--ink-3); --tilt:-.5deg }
 .wcard::after{
   content:""; position:absolute; top:-22px; right:6px;
   width:30px; height:30px; background:var(--spark) center/contain no-repeat;
@@ -1065,6 +1070,89 @@ figcaption{
 .reveal-stagger > *:nth-child(n+9){ animation-delay:560ms; transition-delay:560ms }
 @keyframes stagger-in{ from{ opacity:0; transform:translateY(12px) } }
 
+
+/* --------------------------------------------------------------------------
+   21b. MICRO-INTERACTIONS
+        Same rule as everything else in section 21: motion either reveals
+        content or confirms an action. Nothing here decorates, nothing loops,
+        and every one of them is a few pixels or a few milliseconds. The test
+        each had to pass: if you removed it, would the interface be harder to
+        read or harder to trust? If not, it is not here.
+   -------------------------------------------------------------------------- */
+
+/* Read position. A 2px line across the top of the page, growing with scroll.
+   Driven by a scroll timeline where the browser supports one — it then runs
+   off the main thread and costs nothing — and by a JS-set custom property
+   everywhere else. Both drive the same declaration. */
+.scroll-progress{
+  position:fixed; top:0; left:0; right:0; height:2px; z-index:70;
+  background:var(--accent-vivid); pointer-events:none;
+  transform:scaleX(var(--sp,0)); transform-origin:0 50%;
+}
+@supports (animation-timeline: scroll()){
+  .scroll-progress{
+    transform:scaleX(0);
+    animation:sp-grow linear both;
+    animation-timeline:scroll(root block);
+  }
+}
+@keyframes sp-grow{ to{ transform:scaleX(1) } }
+
+/* Press. The one piece of feedback a pointer cannot infer from hover: that
+   the click landed. Deliberately small — 0.985 reads as give, not as bounce. */
+.btn:active, a.wcard:active{ --press:.985 }
+.chip:active, .tag:active{ transform:scale(.97) }
+
+/* Grabbable. A sticker that lifts under the cursor says "pick me up" before
+   you find out by dragging. The shadow deepens with the lift, because a thing
+   that rises casts further. */
+.sticker{ transition:filter var(--dur-confirm) var(--ease) }
+.sticker:hover{ filter:drop-shadow(0 6px 7px rgba(23,24,26,.26)) }
+.sticker:active{ filter:drop-shadow(0 2px 3px rgba(23,24,26,.3)) }
+
+/* The mark answers the pointer. A rule drawn under the wordmark, left to
+   right, at the speed of a signature. */
+.brand{ position:relative }
+.brand::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+  background:var(--ink); transform:scaleX(0); transform-origin:0 50%;
+  transition:transform var(--dur-enter) var(--ease);
+}
+.brand:hover::after, .brand:focus-visible::after{ transform:scaleX(1) }
+
+/* The row says how much is left. The masks fade the edge the content runs
+   past and disappear at the ends, so the fade is information about position
+   rather than a permanent decoration. */
+.work-row{
+  --edge-l:0; --edge-r:1;
+  -webkit-mask-image:linear-gradient(90deg,
+    rgba(0,0,0,calc(1 - var(--edge-l))) 0, #000 90px,
+    #000 calc(100% - 90px), rgba(0,0,0,calc(1 - var(--edge-r))) 100%);
+  mask-image:linear-gradient(90deg,
+    rgba(0,0,0,calc(1 - var(--edge-l))) 0, #000 90px,
+    #000 calc(100% - 90px), rgba(0,0,0,calc(1 - var(--edge-r))) 100%);
+}
+
+/* A figure that counts up is being read to you. It runs once, on arrival,
+   and only on the digits — the label never moves. */
+.tally{ font-variant-numeric:tabular-nums }
+
+/* Copy confirmed. The address swaps to its own confirmation for a moment;
+   nothing appears, nothing is dismissed, and the word is the receipt. */
+.copy-line{ position:relative; cursor:copy }
+.copy-line[data-copied="1"]{ color:var(--accent) }
+.copy-line .copy-said{
+  position:absolute; inset:0; display:grid; place-items:center;
+  background:var(--paper); color:var(--accent);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--dur-confirm) var(--ease);
+}
+.copy-line[data-copied="1"] .copy-said{ opacity:1 }
+
+/* Cross-page navigation, once there is more than one page. One declaration,
+   and the browser cross-fades instead of flashing white. */
+@view-transition{ navigation:auto }
+
 @media (prefers-reduced-motion:reduce){
   /* every transform disabled. opacity fades retained. */
   .reveal{ transform:none }
@@ -1088,5 +1176,13 @@ figcaption{
   .collage .tile:hover .tile-cap,
   .collage .tile:focus-visible .tile-cap{ transform:translateX(-50%) }
   .nav-underscore{ transition:opacity var(--dur-confirm) linear }
+  /* micro-interactions: every one that moves something is off. The two that
+     carry information without moving it stay — the row's edge mask, which is
+     opacity, and the copy confirmation, which is a word. */
+  .btn, .wcard{ --mx:0px; --my:0px; --tilt:0deg; --press:1 }
+  .chip:active, .tag:active{ transform:none }
+  .sticker:hover, .sticker:active{ filter:drop-shadow(0 3px 3px rgba(23,24,26,.22)) }
+  .brand::after{ display:none }
+  .scroll-progress{ display:none }
   *,*::before,*::after{ animation:none !important }
 }

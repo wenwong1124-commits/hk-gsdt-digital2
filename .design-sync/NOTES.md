@@ -40,6 +40,27 @@ Add a component to the design system and it appears here on the next build. Noth
   so lifting its markup yields an empty box; the builder bakes the ten cutouts in as `<img>`.
   If `slice_stickers.py` changes the `IMAGES` map, the `assert len(STICKERS) == 10` will fire.
 
+## The landing page card
+
+`components/Pages/LandingPage/` is the whole portfolio page as one card, built from
+`site/index.html` with the runtime copied to `_preview/site.js`. It is the strongest usage
+reference the bundle carries: every component in its real place and proportion, which no
+single-component card can show.
+
+Two things it must do that no other card does, both in `build_design_sync.py`:
+
+- **Force the reveals before the runtime loads.** A card is never scrolled, so the reveal
+  observer only ever fires for the first viewport and everything below it stays at opacity 0
+  for ever. The first version of this card was 90% blank. Marking them done *before*
+  `site.js` also lets the sticker field measure the final layout rather than the collapsed
+  one.
+- **Accept a mid-fall sticker still.** The pile takes 3-6s to settle and the render check
+  screenshots sooner, so the contact sheet catches it in flight. The card is live, so it
+  settles for anyone who opens it. Not worth chasing.
+
+If `site/index.html` gains a `<script>` beyond `./assets/site.js`, the strip-and-relink in
+the builder will not know about it.
+
 ## Known warnings, both benign
 
 - `[FONT_MISSING] "Segoe Script", "Bradley Hand"` — these are *fallbacks* in the `--hand` stack

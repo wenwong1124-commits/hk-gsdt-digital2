@@ -220,6 +220,78 @@ for name, sec_id, mode, pattern, note in FOUNDATIONS:
         continue
     add_component("Foundations", name, name, note, demo, note)
 
+# --- the landing page, as a card ---------------------------------------------
+# A composed page is the strongest usage reference this bundle can carry: it
+# shows the agent every component in its real place and real proportion, which
+# no single-component card can. It links the same styles.css as every other
+# card, plus the site runtime from _preview/ so the page behaves rather than
+# merely sits there.
+SITE = ROOT / "site" / "index.html"
+if SITE.exists():
+    page = SITE.read_text()
+    body = page[page.index("<body>") + 6: page.rindex("</body>")]
+    body = body.replace('<script src="./assets/site.js"></script>', "").strip()
+    files["_preview/site.js"] = (ROOT / "site" / "assets" / "site.js").read_text()
+
+    files["components/Pages/LandingPage/LandingPage.html"] = (
+        '<!-- @dsCard group="Pages" viewport="1440x1100" -->\n'
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        "<title>Landing page</title>\n"
+        '<link rel="stylesheet" href="../../../styles.css">\n'
+        "</head>\n<body>\n" + body + "\n"
+        # A card is a still of the page at rest, not a recording of its
+        # entrance. Left alone, everything below the first viewport stays at
+        # opacity 0 forever -- the reveal observer only ever fires for what
+        # actually scrolled into view, and a card is never scrolled. Marking
+        # the reveals done BEFORE the runtime loads also lets the sticker
+        # field measure the final layout rather than the collapsed one.
+        "<script>\n"
+        "document.querySelectorAll('.reveal, .reveal-stagger')\n"
+        "  .forEach(function(el){ el.dataset.in = '1'; });\n"
+        "</script>\n"
+        '<script src="../../../_preview/site.js"></script>\n'
+        "</body>\n</html>\n")
+
+    files["components/Pages/LandingPage/LandingPage.prompt.md"] = """The portfolio landing page, every component in its real place and proportion.
+
+## Why it is like this
+
+One page, one job: prove in sixty seconds that complex AI research becomes shipped
+digital health products. The order is the argument. Role and specialism before the
+claim; the claim before the evidence; the evidence before the ask.
+
+## The section order
+
+1. `.topbar` with `.brand` and `.nav` — the wordmark, then five routes.
+2. `.hero-banner` — `.metastrip` (role, employer, city), the `.t-hero` claim with two
+   `.pict` slots and one `.mk-under`, the specialism line at `--ink-2`, the range line
+   one weight quieter at `--ink-3`, then two `.btn`s. The `.stickers` field owns a band
+   below all of it and never overlaps the copy.
+3. `.bleed-rule`, then `.creds` — four figures, the numbers counting up on arrival.
+4. `.scrollcue`, `.row-hint`, `.work-row` — five `.wcard`s on a bleeding horizontal
+   track that fades the edge it runs past.
+5. `.log` — dated rows for work that does not warrant a card.
+6. `.stack` with `.chips` — the tools, floating over the statement above 900px.
+7. The closing `.t-h1`, the three role titles, and the contact `.metastrip`.
+8. `.foot`.
+
+## Rules this page follows that are easy to break
+
+- One loud element per viewport. The hero has the claim; the work row has the cards;
+  never both at once.
+- The accent appears on marks only, roughly once per screen.
+- Card tints say *which case*, never *what state*. State is the `.stamp`.
+- Every `.pict` carries `alt` equal to the exact word it replaces.
+- Prose is capped at `var(--prose)`. No paragraph runs wider.
+
+Read the markup in `LandingPage.html` for the exact composition, and each component's
+own `.prompt.md` for its shape in isolation.
+"""
+    components.append({"name": "LandingPage", "group": "Pages",
+                       "title": "Landing page", "subtitle": "the whole system composed",
+                       "path": "components/Pages/LandingPage/LandingPage.html"})
+
 # --- styles: tokens, fonts, stylesheet, and the one root that imports them ---
 # A rendered design receives ONLY this closure. Anything reachable from here
 # reaches every design built with the system; anything outside it reaches none.

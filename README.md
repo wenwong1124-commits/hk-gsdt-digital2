@@ -87,8 +87,8 @@ case pages exist.
 ## Sending it to Claude Design
 
 `python3 build_design_sync.py` writes `ds-bundle/` in the layout the Design System pane
-consumes — 23 cards (20 components, 3 foundations), the stylesheet, and the docs the design
-agent reads:
+consumes — 24 cards (20 components, 3 foundations, and the landing page itself), the
+stylesheet, and the docs the design agent reads:
 
 ```
 ds-bundle/
@@ -115,7 +115,11 @@ bundle's README and inlined into the design agent's system prompt, and for a sys
 component bundle it is the only thing teaching the agent the real class vocabulary. Every class
 and token it names is checked against the built stylesheets before shipping.
 
-**Verified**: `package-validate.mjs` exits clean, and its render check opens all 23 cards — every
+The **landing page ships as a card too** (`Pages/LandingPage`), built from `site/index.html`
+with the runtime in `_preview/`. A composed page shows every component in its real place and
+proportion, which no single-component card can — it is the best usage reference in the bundle.
+
+**Verified**: `package-validate.mjs` exits clean, and its render check opens all 24 cards — every
 one styled, with the system's own tokens and fonts applied. Two graded needs-work on the first
 pass and were fixed. That pass also caught a bug in the design system itself: `.chip` went
 absolute above 900px for every chip on the page rather than only those in `.stack`.

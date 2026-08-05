@@ -1,0 +1,76 @@
+# design-sync notes
+
+## What this repo is
+
+Not a JS package and not a Storybook. The design system is **one hand-authored HTML file**,
+`design-system.html`, carrying its own `<style>` blocks — no `package.json`, no `dist/`, no
+React, no components to compile. The skill's converter (`package-build.mjs`) cannot run here;
+this is the documented off-script case, and `build_design_sync.py` produces the upload layout
+directly.
+
+`shape` is recorded as `"css"` rather than `package`/`storybook`, and `componentCount` counts
+**preview cards**, not JS exports. `_ds_bundle.js` is an empty IIFE declaring zero components,
+which is the honest description and keeps `[BUNDLE_EXPORT]` correctly skipped.
+
+## Re-sync is one command
+
+    python3 build_design_sync.py
+    DS_CHROMIUM_PATH=<chromium> node <skill>/package-validate.mjs ds-bundle --render-sample 0
+
+The cards are lifted from the `.spec` blocks in `design-system.html` — label, demo, and the
+`spec-note` rationale, which becomes the "Why it is like this" section of each `.prompt.md`.
+Add a component to the design system and it appears here on the next build. Nothing in
+`ds-bundle/` is hand-maintained.
+
+## Re-sync risks
+
+- **`.spec` block parsing is structural.** `close_of()` counts `<div>` depth, and the demo is
+  matched as `<div class="spec-body…>` up to the `</div>` before `<p class="spec-note">`. A spec
+  block that loses its note, or gains a nested structure, silently drops out of the bundle. The
+  `assert len(components) >= 15` catches a wholesale break, not a single missing card — compare
+  the printed list against the design system's component index after any structural edit.
+- **Foundation patterns are scoped to their own `<section>`.** They were not, once: run against
+  the whole document, a greedy match ran to the last matching tag on the page and pulled half
+  the system into one card (16,130px tall). Keep them scoped.
+- **The CSS is linked, never inlined.** A rendered design receives only `styles.css`'s
+  transitive `@import` closure. An earlier version inlined the stylesheet into every card: the
+  cards looked perfect and proved nothing. If a card ever renders styled while a design built
+  with the system does not, this is why.
+- **The sticker field card is a still.** The live field is drawn by the page's own JavaScript,
+  so lifting its markup yields an empty box; the builder bakes the ten cutouts in as `<img>`.
+  If `slice_stickers.py` changes the `IMAGES` map, the `assert len(STICKERS) == 10` will fire.
+
+## Known warnings, both benign
+
+- `[FONT_MISSING] "Segoe Script", "Bradley Hand"` — these are *fallbacks* in the `--hand` stack
+  after Caveat. Caveat itself ships as base64 in `fonts/fonts.css` and always loads, so the
+  fallbacks never render. Not worth chasing.
+- `--u` and a few other tokens are defined but unreferenced. Harmless.
+
+## Verification, and what it caught
+
+`package-validate.mjs` exits clean; the render check opens all 23 cards. Two graded `needs-work`
+on the first pass and were fixed with per-card `viewport` attributes plus, for the collage, a
+card-scoped rule that reveals captions a still can never hover for. See `CARD_FIT` in the
+builder — each entry carries its reason.
+
+The `.prompt.md` generation also caught a real bug in the design system itself: `.chip` went
+`position:absolute` above 900px for *every* chip on the page, not only those inside `.stack`,
+which was scattering the tool chips across the component demo. Now scoped.
+
+## Playwright
+
+This environment has `playwright-core` and a pre-installed chromium, but the validator imports
+`playwright`. A one-file shim (`module.exports = require('playwright-core')`) placed in a
+`node_modules/` beside the validator, plus `DS_CHROMIUM_PATH`, makes the real render check run.
+Without it the validator fails `[RENDER_SKIPPED]`, and `--no-render-check` only downgrades that
+to a warning — it does not verify anything.
+
+## Upload
+
+**Never done from this repo yet.** `DesignSync` could not authorize: `/design-login` needs an
+interactive terminal, which claude.ai/code sessions do not have. The bundle is built, validated
+and graded; only the push is outstanding. Do it from a local Claude Code session, or from a
+workspace seeded by Claude Design's "Send to Claude Code Web".
+
+Record `projectId` in `config.json` the moment a target is settled — before anything uploads.

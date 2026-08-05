@@ -1,0 +1,8 @@
+{
+  "shape": "css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "buildCmd": "python3 build_design_sync.py",
+  "outDir": "ds-bundle",
+  "namespace": "WendyWongDS",
+  "note": "No projectId yet — the target has not been settled, because DesignSync could not authorize in the session that built this. Record it the moment a project is created or adopted, before anything uploads."
+}

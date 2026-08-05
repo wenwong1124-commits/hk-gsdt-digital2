@@ -23,7 +23,8 @@ health products.
 | `src/tokens.css` | The custom properties on their own, for importing elsewhere. |
 | `dist/artifact.html` | Publish copy, document skeleton stripped. |
 | `site/` | **The portfolio itself.** See below. |
-| `design-sync/` | Generated. The design system as Claude Design cards. |
+| `ds-bundle/` | Generated (gitignored). The design system as Claude Design cards. |
+| `.design-sync/` | The sync's durable inputs: `conventions.md`, `config.json`, `NOTES.md`. |
 
 Read `src/`. Ship or share `design-system.html`. Everything except
 `design-system.html` is generated — edit the source, then `python3 build.py`.
@@ -72,39 +73,44 @@ case pages exist.
 
 ## Sending it to Claude Design
 
-`python3 build_design_sync.py` writes `design-sync/` — 23 cards, 20 components and
-3 foundations, plus the stylesheet:
+`python3 build_design_sync.py` writes `ds-bundle/` in the layout the Design System pane
+consumes — 23 cards (20 components, 3 foundations), the stylesheet, and the docs the design
+agent reads:
 
 ```
-design-sync/
-  components/c01-nav-bar.html … c19-sticker-field.html
-  foundations/palette.html · type.html · grid.html
-  styles/tokens.css · design-system.css · fonts.css
-  _cards.json          the card index, if a target needs it explicitly
+ds-bundle/
+  styles.css            the import root: tokens + fonts + stylesheet
+  tokens/tokens.css · fonts/fonts.css · _ds_bundle.css
+  components/<Group>/<Name>/<Name>.html      the preview card
+  components/<Group>/<Name>/<Name>.prompt.md how to build with it
+  guidelines/ · README.md · _ds_sync.json · _ds_bundle.js
 ```
 
-**The components are not written twice.** Each card is lifted from that component's own
-`.spec` block in `design-system.html` — the same demo the system documents — so a card can
-never show something the system does not, and adding a component to the system adds a card
-on the next build. Two cards are exceptions, and both say so in the script: the sticker
-field is drawn by the page's own JavaScript, so the card bakes the ten cutouts in as a
-still; and the grid card takes a balanced two-column block rather than a regex slice.
+**Nothing in it is hand-written.** Each card is lifted from that component's own `.spec` block
+in `design-system.html` — the demo, its label, and its `spec-note` rationale, which becomes the
+"Why it is like this" section of the component's `.prompt.md`. Add a component to the system and
+it appears on the next build.
 
-Every preview is a **complete self-contained document**. The Design System pane renders each
-card in its own frame, and a card that renders unstyled is worse than no card, so nothing
-depends on a sibling path resolving. The cost is the stylesheet repeated per file. Fonts are
-the one exception — 218 KB of base64 per card would be absurd, so previews pull Figtree and
-Caveat from Google Fonts and the offline copy stays in `styles/fonts.css`.
+**Two things about this bundle are unusual, both deliberate.** There is no JavaScript: this
+system is CSS and markup, so `_ds_bundle.js` is an empty IIFE declaring zero components, and no
+`.d.ts` ships — a props interface for a component with no props would be fiction. And the CSS is
+linked, never inlined: a rendered design receives only `styles.css`'s transitive `@import`
+closure, so a card that inlined the stylesheet would look perfect and prove nothing.
 
-All 23 are render-checked headless before shipping: laid out, styled, Figtree resolving, no
-console errors, no horizontal overflow. That check is what caught `.chip` going absolute
-above 900px outside `.stack` — a bug that was scattering the chips on the component demo
-too, now scoped.
+`.design-sync/conventions.md` is the highest-leverage file here — it is prepended to the
+bundle's README and inlined into the design agent's system prompt, and for a system with no
+component bundle it is the only thing teaching the agent the real class vocabulary. Every class
+and token it names is checked against the built stylesheets before shipping.
 
-**Pushing needs an interactive terminal.** `DesignSync` authorizes through `/design-login`,
-which a remote session cannot run. Either open this repo in a local Claude Code session and
-push from there, or use Claude Design's **Send to Claude Code Web** on the target project,
-which seeds it into a workspace that is already authorized.
+**Verified**: `package-validate.mjs` exits clean, and its render check opens all 23 cards — every
+one styled, with the system's own tokens and fonts applied. Two graded needs-work on the first
+pass and were fixed. That pass also caught a bug in the design system itself: `.chip` went
+absolute above 900px for every chip on the page rather than only those in `.stack`.
+
+**Not yet uploaded.** `DesignSync` authorizes through `/design-login`, which needs an interactive
+terminal; a claude.ai/code session has none. Push from a local Claude Code session, or from a
+workspace seeded by Claude Design's "Send to Claude Code Web". `.design-sync/NOTES.md` carries
+the re-sync risks and the playwright shim that makes the render check run here.
 
 ## The four styles, in strict hierarchy
 

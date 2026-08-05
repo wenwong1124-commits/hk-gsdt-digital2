@@ -1,0 +1,9 @@
+# design-sync: regenerated build output and machine-local state.
+# The durable inputs under .design-sync/ (config.json, NOTES.md, conventions.md)
+# ARE committed — they are what makes the next sync cheap.
+ds-bundle/
+.ds-sync/
+.design-sync/.cache/
+.design-sync/node_modules
+node_modules/
+__pycache__/

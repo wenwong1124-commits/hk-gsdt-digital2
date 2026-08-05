@@ -1,8 +1,9 @@
 # Wendy Wong — Design System v1.0
 
-**Clinical field notebook.** The design system for a portfolio whose one job is to prove,
-to a hiring manager with sixty seconds, that complex AI research becomes scalable digital
-health products.
+**Clinical field notebook.** The design system for the portfolio of a **health AI product
+designer** — clinical workflows, screening tools, responsible AI experiences — whose one job
+is to prove, to a hiring manager with sixty seconds, that complex AI research becomes
+shipped digital health products.
 
 **The site:** https://claude.ai/code/artifact/ceff6783-aa9e-4fce-b1e9-0f725ed40bdf
 **The design system:** https://claude.ai/code/artifact/f83221d0-a6bd-45be-9d7a-1670724b147f
@@ -66,6 +67,14 @@ the nav as inert items — they are the site's shape, so they stay visible, but 
 `href` and no hover, because a nav item that goes nowhere is worse than one that waits.
 They read one ink weight below a live item (5.28:1, still AA) rather than being greyed out;
 the earlier hairline grey measured 1.47:1. `/05 contact` is an anchor on this page.
+
+**The positioning is one specialism, then its range.** The metastrip leads with *Health AI
+Product Designer*, the line under the headline names the specialism in full (clinical
+workflows, screening tools, responsible AI experiences), and a quieter third line says the
+method has also gone to wellbeing services and everyday products. Breadth reads as
+transferable expertise that way, rather than as a designer who does a bit of everything. The
+closing section lists the three role titles this fits, because a recruiter deciding which req
+to slot her into should not have to infer it.
 
 **No em-dashes in the page copy.** Each one was rewritten rather than swapped: a colon where
 it introduced, a full stop where it joined two sentences, parentheses for an aside. En-dashes

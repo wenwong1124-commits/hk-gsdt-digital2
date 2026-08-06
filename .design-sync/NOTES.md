@@ -81,11 +81,26 @@ which was scattering the tool chips across the component demo. Now scoped.
 
 ## Playwright
 
-This environment has `playwright-core` and a pre-installed chromium, but the validator imports
-`playwright`. A one-file shim (`module.exports = require('playwright-core')`) placed in a
-`node_modules/` beside the validator, plus `DS_CHROMIUM_PATH`, makes the real render check run.
-Without it the validator fails `[RENDER_SKIPPED]`, and `--no-render-check` only downgrades that
-to a warning — it does not verify anything.
+**On a normal machine, just install it** — `npm i -D playwright && npx playwright install
+chromium` — and the render check runs. Nothing below applies.
+
+The shim is only for sandboxes like claude.ai/code, which ship `playwright-core` and a
+pre-installed chromium while the validator imports `playwright`. There, a one-file shim
+(`module.exports = require('playwright-core')`) in a `node_modules/` beside the validator,
+plus `DS_CHROMIUM_PATH=<path-to-chromium>`, makes the real check run. Without either, the
+validator fails `[RENDER_SKIPPED]` — and `--no-render-check` only downgrades that to a
+warning, it does not verify anything.
+
+## Running it locally, from a clean clone
+
+Verified end to end from a fresh `git clone` of this branch: the bundle builds and validates
+with 24/24 previews rendering. `build_design_sync.py` uses only the Python standard library,
+so there is nothing to install for it.
+
+    git clone -b claude/portfolio-design-system-zefsse <repo> && cd hk-gsdt-digital2
+    python3 build_design_sync.py            # writes ds-bundle/ (gitignored, always rebuilt)
+    npm i -D playwright && npx playwright install chromium
+    claude                                  # then: /design-login, then: /design-sync
 
 ## Upload
 

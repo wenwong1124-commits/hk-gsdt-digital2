@@ -4,5 +4,11 @@
   "buildCmd": "python3 build_design_sync.py",
   "outDir": "ds-bundle",
   "namespace": "WendyWongDS",
-  "note": "No projectId yet — the target has not been settled, because DesignSync could not authorize in the session that built this. Record it the moment a project is created or adopted, before anything uploads."
+  "note": "No projectId yet: DesignSync could not authorize in the sessions that built this bundle. The target mode is decided (see 'target') \u2014 a new design-system project. Record projectId the moment it is created, before anything uploads.",
+  "target": {
+    "mode": "create-new",
+    "decidedBy": "user, 2026-08-05",
+    "proposedName": "Wendy Wong Design System",
+    "note": "The user chose a NEW design-system project. Do not offer an existing one. Check list_projects for a name collision first, confirm the name, then create_project, then record projectId here BEFORE anything uploads."
+  }
 }

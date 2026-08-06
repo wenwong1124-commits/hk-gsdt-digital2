@@ -89,9 +89,19 @@ to a warning — it does not verify anything.
 
 ## Upload
 
-**Never done from this repo yet.** `DesignSync` could not authorize: `/design-login` needs an
-interactive terminal, which claude.ai/code sessions do not have. The bundle is built, validated
-and graded; only the push is outstanding. Do it from a local Claude Code session, or from a
-workspace seeded by Claude Design's "Send to Claude Code Web".
+**Never done from this repo yet.** `DesignSync` could not authorize in any session that built
+this bundle: `/design-login` needs an interactive terminal, which claude.ai/code sessions do
+not have. Four attempts across two skill versions, same error every time. The bundle is built,
+validated and graded; only the push is outstanding.
 
-Record `projectId` in `config.json` the moment a target is settled — before anything uploads.
+**The target is already decided — do not re-ask.** The user chose a **new design-system
+project** (recorded in `config.json` under `target`). Proposed name: *Wendy Wong Design System*.
+Check `list_projects` for a collision first, confirm the name, `create_project`, then record
+`projectId` in `config.json` **before anything uploads**.
+
+Run it from a local Claude Code session, or from a workspace seeded by Claude Design's
+"Send to Claude Code Web". The whole thing is then:
+
+    python3 build_design_sync.py
+    DS_CHROMIUM_PATH=<chromium> node <skill>/package-validate.mjs ds-bundle --render-sample 0
+    # then /design-sync — it reads config.json, creates the project, uploads ds-bundle/
